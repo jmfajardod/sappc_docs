@@ -438,7 +438,7 @@ Compile documentation
     .. code-block:: bash
 
         cd ~/ansv_componente_3/docs/
-        make html
+        python3 -m pip install -r requirements_docs.txt
 
 2. Compile the documentation using the following command:
 
