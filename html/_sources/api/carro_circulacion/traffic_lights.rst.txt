@@ -1,0 +1,16 @@
+Traffic Lights Recognition
+==========================
+
+Traffic light detector and classifier based on a Faster Recursive Convolutional Neural Network (FasterRCNN) pre-trained on the COCO dataset. The detector is then trained using a transfer learning approach with the LISA Traffic Light Dataset, which contains 43000 images and more than 113000 traffic lights annotations. The dataset contains six classes: **Stop, Stop Left, Go, Go Left, Warning and Warning Left**.
+
+Trained model is available at: https://drive.google.com/file/d/1YuNVj-KRx8rd2PxfMlKb6fWUSGBeaemg/view?usp=sharing
+
+Class docs
+---------------------
+
+.. autoclass:: Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+   

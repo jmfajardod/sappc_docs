@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API" href="../api/index.html" />
+    <link rel="prev" title="Welcome to SAPPC documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAPPC
+            <img src="../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#download-ubuntu">Download Ubuntu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-previous-installations-of-cuda-and-nvidia-driver">Remove previous installations of CUDA and Nvidia Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-of-cuda-toolkit-and-nvidia-driver">Installation of CUDA Toolkit and Nvidia Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-opencv">Install OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-pytorch-and-torchvision">Install PyTorch and TorchVision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-ansv-repository">Clone ANSV repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compile-c-programs-for-data-acquisition">Compile C++ programs for data acquisition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-conditional-lane-detection-repo">Install conditional-lane detection repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-trained-models">Download trained models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lane-detection-model">Lane detection Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#traffic-light-detection-model">Traffic Light Detection Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optical-flow-model">Optical Flow Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#install-computer-vision-requeriments">Install computer vision requeriments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compile-documentation">Compile documentation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/guide/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<span id="install"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p><strong>SAPPC</strong> have been only tested in Ubuntu 20.04, althought it may work in other OS its performance have not been tested in other OS.</p>
+<section id="download-ubuntu">
+<h2>Download Ubuntu<a class="headerlink" href="#download-ubuntu" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Download ubuntu 20.04 from the link (Link viewed 13 Sept 2022)</p>
+<blockquote>
+<div><p><a class="reference external" href="https://releases.ubuntu.com/20.04.5/">https://releases.ubuntu.com/20.04.5/</a></p>
+</div></blockquote>
+</li>
+<li><p>Create a bootable USB following the instructions found in the next link:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview">https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview</a></p>
+</div></blockquote>
+</li>
+<li><p>Install Ubuntu 20.04 in the computer with the following options:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Ubuntu_installation_options.jpeg"><img alt="Ubuntu installation options" class="align-center" src="../_images/Ubuntu_installation_options.jpeg" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>After installation of the OS, reboot the computer, open a terminal, and execute the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt update
+sudo apt upgrade
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+</ol>
+</section>
+<section id="remove-previous-installations-of-cuda-and-nvidia-driver">
+<h2>Remove previous installations of CUDA and Nvidia Driver<a class="headerlink" href="#remove-previous-installations-of-cuda-and-nvidia-driver" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Search the “Software-updater” application using the search bar in the menu “Show applications” (Icon in grey):</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Software_updater.png"><img alt="Software-updater" class="align-center" src="../_images/Software_updater.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Click on settings:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Soft_updater_setting.png"><img alt="Software-updater settings" class="align-center" src="../_images/Soft_updater_setting.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Click on the “Additional Drivers” option in the top bar:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Additional_drivers_updater.png"><img alt="Additional drivers" class="align-center" src="../_images/Additional_drivers_updater.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Check that the option “X.Org X Server” is checked. If not the click on the “X.Org X Server” option and click “Apply Changes”.</p></li>
+<li><p>Reboot the computer.</p></li>
+<li><p>Delete all previous files of Nvidia Drivers using the commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get --purge remove <span class="s2">&quot;*cublas*&quot;</span> <span class="s2">&quot;cuda*&quot;</span> <span class="s2">&quot;nsight*&quot;</span>
+sudo apt-get --purge remove <span class="s2">&quot;*nvidia*&quot;</span>
+sudo rm -rf /usr/local/cuda*
+sudo /usr/bin/nvidia-uninstall
+sudo apt-get --purge remove <span class="s2">&quot;*nvidia*&quot;</span>
+sudo apt-get --purge remove <span class="s2">&quot;*cublas*&quot;</span> <span class="s2">&quot;cuda*&quot;</span> <span class="s2">&quot;nsight*&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+<li><p>Check that the “X.Org X Server” option in cliked in the “Additional Drivers” tab of the Software-updater application.</p></li>
+</ol>
+</section>
+<section id="installation-of-cuda-toolkit-and-nvidia-driver">
+<h2>Installation of CUDA Toolkit and Nvidia Driver<a class="headerlink" href="#installation-of-cuda-toolkit-and-nvidia-driver" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Install the Nvidia CUDA Toolkit version 11.7 following the instructions in:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Ubuntu&amp;target_version=20.04&amp;target_type=deb_local">https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Ubuntu&amp;target_version=20.04&amp;target_type=deb_local</a></p>
+<p>Or using the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/Downloads
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+sudo cp /var/cuda-repo-ubuntu2004-11-7-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+<li><p>Add the lines pointing to the Cuda Toolkit to the file “~/.bashrc”. To open the file use the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gedit ~/.bashrc
+</pre></div>
+</div>
+<p>And add the following lines at the end of the file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Nvidia path</span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>/usr/local/cuda/bin:<span class="nv">$PATH</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/Bashrc_Cuda11_7.png"><img alt="Bashrc Cuda11.7" class="align-center" src="../_images/Bashrc_Cuda11_7.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Close the terminal and open a new one. In the new terminal check the version of the Nvidia Driver and CUDA toolkit using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvidia-smi
+nvcc --version
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/Nvidia_smi_Cuda_11_7.png"><img alt="Nvidia-smi" class="align-center" src="../_images/Nvidia_smi_Cuda_11_7.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Download the Nvidia CUDA Toolkit version 11.4.2 (runfile) using the command</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/Downloads
+wget https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda_11.4.2_470.57.02_linux.run
+</pre></div>
+</div>
+<p>Or use the command found in the next link:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://developer.nvidia.com/cuda-11-4-2-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Ubuntu&amp;target_version=20.04&amp;target_type=runfile_local">https://developer.nvidia.com/cuda-11-4-2-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Ubuntu&amp;target_version=20.04&amp;target_type=runfile_local</a></p>
+</div></blockquote>
+</div></blockquote>
+</li>
+<li><p>Install the Nvidia CUDA Toolkit version 11.4.2 using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo sh cuda_11.4.2_470.57.02_linux.run --silent --toolkit --toolkitpath<span class="o">=</span>/usr/local/cuda-11.4
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Create the symbolic links that point to the Nvidia CUDA Toolkit version 11.4.2 using the command</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo ln -s /usr/local/cuda-11.4/ /usr/local/cuda
+sudo ln -s /usr/local/cuda-11.4/ /usr/local/cuda-11
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the files (symbolic links) already exist, then delete them using the commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo rm /usr/local/cuda
+sudo rm /usr/local/cuda-11
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Add the following lines to the end of the file “~/.bashrc”:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Nvidia path</span>
+<span class="nb">export</span> <span class="nv">CUDA_HOME</span><span class="o">=</span>/usr/local/cuda-11.4
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>/usr/local/cuda-11.4/bin:<span class="nv">$PATH</span>
+<span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/usr/local/cuda-11.4/lib64:/usr/local/cuda-11.4/extras/CUPTI/lib64:<span class="nv">$LD_LIBRARY_PATH</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Delete the line “export PATH=/usr/local/cuda/bin:$PATH” created when installing the Cuda Toolkit 11.7.</p>
+</div>
+<a class="reference internal image-reference" href="../_images/Bashrc_Cuda11_4.png"><img alt="Bashrc Cuda11.4" class="align-center" src="../_images/Bashrc_Cuda11_4.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+<li><p>Check that the CUDA Toolkit being used is the 11.4 using the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc --version
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/NVCC_Cuda_11_4.png"><img alt="Nvcc Cuda11.4" class="align-center" src="../_images/NVCC_Cuda_11_4.png" style="width: 100%;" /></a>
+</li>
+</ol>
+</section>
+<section id="install-opencv">
+<h2>Install OpenCV<a class="headerlink" href="#install-opencv" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Install the build tools and dependencies using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install build-essential cmake git pkg-config libgtk-3-dev <span class="se">\</span>
+libavcodec-dev libavformat-dev libswscale-dev libv4l-dev <span class="se">\</span>
+libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev <span class="se">\</span>
+gfortran openexr libatlas-base-dev python3-dev python3-numpy <span class="se">\</span>
+libtbb2 libtbb-dev libdc1394-22-dev libopenexr-dev <span class="se">\</span>
+libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev
+
+sudo apt install libeigen3-dev
+
+sudo apt install cmake-curses-gui
+sudo apt install cmake-qt-gui
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Clone the OpenCV and OpenCV contrib repositories using the commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir ~/opencv_build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ~/opencv_build
+git clone https://github.com/opencv/opencv.git
+git clone https://github.com/opencv/opencv_contrib.git
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once done, create a temporary build directory and navigate to it:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/opencv_build/opencv
+mkdir -p build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Set up the OpenCV build with CMake using the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake -D <span class="nv">CMAKE_BUILD_TYPE</span><span class="o">=</span>RELEASE <span class="se">\</span>
+-D <span class="nv">CMAKE_INSTALL_PREFIX</span><span class="o">=</span>/usr/local <span class="se">\</span>
+-D <span class="nv">INSTALL_C_EXAMPLES</span><span class="o">=</span>ON <span class="se">\</span>
+-D <span class="nv">INSTALL_PYTHON_EXAMPLES</span><span class="o">=</span>ON <span class="se">\</span>
+-D <span class="nv">OPENCV_GENERATE_PKGCONFIG</span><span class="o">=</span>ON <span class="se">\</span>
+-D <span class="nv">OPENCV_EXTRA_MODULES_PATH</span><span class="o">=</span>~/opencv_build/opencv_contrib/modules <span class="se">\</span>
+-D <span class="nv">BUILD_EXAMPLES</span><span class="o">=</span>ON ..
+-D <span class="nv">OPENCV_GENERATE_PKGCONFIG</span><span class="o">=</span>YES
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Compile the library with the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make -j8
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The number of cores used in the compilation can be changed by replacing the number 8 with the number of cores of the computer.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install the library using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo make install
+sudo ldconfig
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Add the path of the installation to the OS path in the ~/.bashrc. To open the file use the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gedit ~/.bashrc
+</pre></div>
+</div>
+<p>At the end of the file add the following lines:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python Site-packages</span>
+<span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>/usr/local/lib/python3.8/site-packages/:<span class="nv">$PYTHON_PATH</span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>/usr/local/lib/python3.8/site-packages/:<span class="nv">$PATH</span>
+
+<span class="c1"># Link to libraries</span>
+<span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/lib:/usr/lib:/usr/local/lib:<span class="nv">$LD_LIBRARY_PATH</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/Bashrc_Opencv.png"><img alt="Bashrc Opencv" class="align-center" src="../_images/Bashrc_Opencv.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+<li><p>In order to verify, type the following commands.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -c <span class="s1">&#39;import cv2; print(cv2.__version__)&#39;</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/Opencv_Version.png"><img alt="Opencv Version" class="align-center" src="../_images/Opencv_Version.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="install-pytorch-and-torchvision">
+<h2>Install PyTorch and TorchVision<a class="headerlink" href="#install-pytorch-and-torchvision" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Download Pytorch version 1.10.0 and TorchVision version 0.11.1 using the commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~
+git clone -b <span class="s1">&#39;v1.10.0&#39;</span> --single-branch --depth <span class="m">1</span> https://github.com/pytorch/pytorch
+git clone -b <span class="s1">&#39;v0.11.1&#39;</span> --single-branch --depth <span class="m">1</span> https://github.com/pytorch/vision
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Before installing it is needed to give permissions to the installation folder, use the following command, replacing “$USER” with the user in the computer:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo chown -R <span class="nv">$USER</span> /usr/local/lib/python3.8/dist-packages/
+sudo chown -R <span class="nv">$USER</span> /usr/local/bin/
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don’t forget to replace the $USER with the user in the computer.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install Pytorch using the commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/pytorch
+sudo apt install python3-pip
+python3 -m pip install setuptools
+python3 -m pip install typing_extensions
+
+python3 setup.py install
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install TorchVision using the commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/vision
+python3 setup.py install
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Reboot the computer.</p></li>
+<li><p>In order to verify, type the following commands.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -c <span class="s1">&#39;import torch; print(torch.__version__)&#39;</span>
+python3 -c <span class="s1">&#39;import torchvision; print(torchvision.__version__)&#39;</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/Pytorch_Version.png"><img alt="Pytorch Version" class="align-center" src="../_images/Pytorch_Version.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="clone-ansv-repository">
+<h2>Clone ANSV repository<a class="headerlink" href="#clone-ansv-repository" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Clone the repository using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~
+git clone https://github.com/jmfajardod/ansv_componente_3.git -b develop --depth <span class="m">1</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="compile-c-programs-for-data-acquisition">
+<h2>Compile C++ programs for data acquisition<a class="headerlink" href="#compile-c-programs-for-data-acquisition" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>To compile the programs written in C++ for the cameras data acquisition use the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente_3/Pista/Vision/Data_acquisition/
+mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake ..
+make
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="install-conditional-lane-detection-repo">
+<h2>Install conditional-lane detection repo<a class="headerlink" href="#install-conditional-lane-detection-repo" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Clone the Conditional-Lane-Detection repo using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~
+git clone https://github.com/jmfajardod/conditional-lane-detection.git
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install the requirements using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/conditional-lane-detection
+python3 -m pip install -r requirements/build.txt
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Compile the repo using the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 setup.py develop
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Copy (<strong>Merge and Replace</strong>) the <strong>mmdet folder</strong> from the <em>conditional-lane-detection</em> repo to the <em>ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Lane_detection/</em> folder and the <em>ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Lane_detection/</em> folder.</p></li>
+</ol>
+</section>
+<section id="download-trained-models">
+<h2>Download trained models<a class="headerlink" href="#download-trained-models" title="Permalink to this heading"></a></h2>
+<section id="lane-detection-model">
+<h3>Lane detection Model<a class="headerlink" href="#lane-detection-model" title="Permalink to this heading"></a></h3>
+<ol class="arabic">
+<li><p>Download the curvelanes_medium.pth model using the following link:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://virutalbuy-public.oss-cn-hangzhou.aliyuncs.com/share/CondLaneNet/models/curvelanes/curvelanes_medium.pth">https://virutalbuy-public.oss-cn-hangzhou.aliyuncs.com/share/CondLaneNet/models/curvelanes/curvelanes_medium.pth</a></p>
+</div></blockquote>
+</li>
+<li><p>Put the download model in the <strong>ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Lane_detection/models</strong> folder and the <strong>ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Lane_detection/models</strong> folder.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The models folder needs to be created inside the Lane_detection folder.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="traffic-light-detection-model">
+<h3>Traffic Light Detection Model<a class="headerlink" href="#traffic-light-detection-model" title="Permalink to this heading"></a></h3>
+<ol class="arabic">
+<li><p>Download the “best_model.pth” file from Google Drive:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://drive.google.com/drive/folders/1qzZtDXFJlMRljpnlxcRnbNjWouAJxR5h?usp=sharing">https://drive.google.com/drive/folders/1qzZtDXFJlMRljpnlxcRnbNjWouAJxR5h?usp=sharing</a></p>
+</div></blockquote>
+</li>
+<li><p>Then paste the model in the <strong>ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Traffic_light_recognition/</strong> folder and the <strong>ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Traffic_light_recognition/</strong> folder.</p></li>
+</ol>
+</section>
+<section id="optical-flow-model">
+<h3>Optical Flow Model<a class="headerlink" href="#optical-flow-model" title="Permalink to this heading"></a></h3>
+<ol class="arabic">
+<li><p>Download the RAFT models from the google drive of the authors using the following link, the file that is needed is called “raft-small.pth”.</p>
+<blockquote>
+<div><p><a class="reference external" href="https://drive.google.com/drive/folders/1sWDsfuZ3Up38EUQt7-JDTT1HcGHuJgvT">https://drive.google.com/drive/folders/1sWDsfuZ3Up38EUQt7-JDTT1HcGHuJgvT</a></p>
+</div></blockquote>
+</li>
+<li><p>Then paste the download model in the folder <strong>ansv_componente_3/Pista/Vision/Motorcycle_algorithms/RAFT/models/</strong>.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The models folder needs to be created inside the RAFT folder.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+<section id="install-computer-vision-requeriments">
+<h2>Install computer vision requeriments<a class="headerlink" href="#install-computer-vision-requeriments" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Install the requeriments using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente_3/docs/
+python3 -m pip install -r requirements_vision.txt
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="compile-documentation">
+<h2>Compile documentation<a class="headerlink" href="#compile-documentation" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Install the requeriments to compile the documentation using the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente_3/docs/
+make html
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Compile the documentation using the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente_3/docs/
+make html
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to build each time a file is changed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente_3/docs/
+sphinx-autobuild . _build/html
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to SAPPC documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/index.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

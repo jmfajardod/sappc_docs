@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enviroment creation &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAPPC
+            <img src="../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Enviroment creation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/guide/env_creation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="enviroment-creation">
+<span id="env-creation"></span><h1>Enviroment creation<a class="headerlink" href="#enviroment-creation" title="Permalink to this heading"></a></h1>
+<p>To create a new enviroment with a robotic platform and a task the user must create a class in which the robot and task is defined. To facilitate many of the required steps needed to create an <em>env</em> (enviroment) following the OpenAI Gym documentation <strong>FRobs_RL</strong> already has a class which implements most of the required functions needed by Gym. The class is called <strong>RobotBasicEnv</strong> and can be inherited by any enviroment regardless of the robot or task. The main functions already implemented in <strong>RobotBasicEnv</strong> are:</p>
+<ul class="simple">
+<li><p>step: This is the funcion that will be executed in each step of the RL loop.</p></li>
+<li><p>reset: The funcion called when the enviroment must be reset, wheter it may be because of the sucess or because the time limit has been reached.</p></li>
+<li><p>close: The funcion that is executed when the enviroment is closed. It mainly makes sure that all ROS Nodes and the Gazebo simulator are properly closed.</p></li>
+</ul>
+<p>To create a new enviroment the user must inherit the <strong>RobotBasicEnv</strong> and fill the next functions:</p>
+<ul class="simple">
+<li><p>_send_action: The function used to send the commands to the robot.</p></li>
+<li><p>_get_observation: The function to execute when observations from the enviroment are needed.</p></li>
+<li><p>_get_reward: The function that calculates and returns the reward based on the action of the agent.</p></li>
+<li><p>_check_if_done: The function to check if the robot sucess finished the task or reached the goal.</p></li>
+<li><p>_check_subs_and_pubs_connection (Optional): The function that check if the ROS subscribers and publishers are connected and properly receiving or sending messages.</p></li>
+<li><p>_set_episode_init_params (Optional): The function to set ROS or Gazebo initial parameters for the episode, e.g.: the initial position of the robot, the location of obstacles, etc.</p></li>
+</ul>
+<p>To create a new enviroment we recommend that the user creates two different classes a <strong>CustomRobotEnv</strong> and a <strong>CustomTaskEnv</strong>, in this way the principal funcions are separted in the following way:</p>
+<ul class="simple">
+<li><p>All processes related to the <em>robot</em> are located in the <strong>CustomRobotEnv</strong>, this can be the URDF model loading, controllers spawning, spawning the robot in the simulator, etc.</p></li>
+<li><p>The <strong>CustomTaskEnv</strong> inherits the <strong>CustomRobotEnv</strong> and are where all processes related directly to the task are implemented, this can be the way to send actions to the robot agent, the process to obtain observations, the reward funcion, etc.</p></li>
+</ul>
+<p>The previous arquitecture has the advantage that a <strong>CustomRobotEnv</strong> can be reused in many tasks, reducing the amount of code needed to create a new enviroment</p>
+<p>In the next step a guide will be shown to how to use the templates of the <strong>CustomRobotEnv</strong> and  <strong>CustomTaskEnv</strong> classes included in the <strong>FRobs_RL</strong> library.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Althought the previous separation in <strong>CustomRobotEnv</strong> and  <strong>CustomTaskEnv</strong> is recommended, the user can program the enviroment in any way inheriting the <strong>RobotBasicEnv</strong>.</p>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

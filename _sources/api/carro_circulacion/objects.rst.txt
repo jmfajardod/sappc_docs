@@ -1,0 +1,24 @@
+Object Recognition
+==================
+
+The object recognition is made through a Recursive Convolutional Neuronal Network (RCNN). The arquitecture of the model is YoloV5M6, which can be found in the following link: https://github.com/ultralytics/yolov5/blob/master/models/hub/yolov5m6.yaml.
+
+The model is taken from the repository of the authors and because of that, it is trained with the COCO dataset. 
+
+.. note::
+
+   As the model is hosted in PyTorch Hub a working internet connection is required to use it.
+
+The model is trained to detect the following classes: **Person, Cyclist, Car, Motorcycle, and Heavy Car**.
+
+The original repository of YoloV5 by Ultralytics can be found in the following link: https://github.com/ultralytics/yolov5 .
+
+
+Class docs
+---------------------
+
+.. autoclass:: Automovil_circulacion.Vision.Object_recognition.functions_object_detection.ObjectDetector
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:

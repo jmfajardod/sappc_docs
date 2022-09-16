@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">path_root</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_root</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">traffic_lights.inference.predict</span> <span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">traffic_lights.data.transforms</span> <span class="kn">import</span> <span class="n">get_transform</span>
+<span class="kn">from</span> <span class="nn">traffic_lights.inference.utils</span> <span class="kn">import</span> <span class="n">threshold_scores</span>
+<span class="kn">from</span> <span class="nn">traffic_lights.data.constants</span> <span class="kn">import</span> <span class="n">REVERSED_CLASS_LABEL_MAP</span>
+
+<div class="viewcode-block" id="TrafficLightDetector"><a class="viewcode-back" href="../../../../api/carro_circulacion/traffic_lights.html#Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector">[docs]</a><span class="k">class</span> <span class="nc">TrafficLightDetector</span><span class="p">:</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to detect traffic lights in images, the types of traffic lights detected will be Stop, Stop Left, Go, Go Left, Warning and Warning Left.</span>
+
+<span class="sd">        :param save_path: Path to save the results.</span>
+<span class="sd">        :type save_path: str</span>
+
+<span class="sd">        :param det_threshold: Threshold to filter the predictions, the higher the more confident the predictions will be but it will discard more predictions. Default: 0.3</span>
+<span class="sd">        :type det_threshold: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">det_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+        
+
+        <span class="n">current_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+        <span class="c1"># Define model and load it</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;best_model&quot;</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;.pth&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="c1"># Define prediction threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prediction_threshold</span> <span class="o">=</span> <span class="n">det_threshold</span>
+
+        <span class="c1"># Define constants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colourMap</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;go&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s2">&quot;goForward&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s2">&quot;goLeft&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="s2">&quot;warningLeft&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="s2">&quot;stopLeft&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># OpenCSV file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+
+        <span class="c1"># Create header</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;green_forward&quot;</span><span class="p">,</span> <span class="s2">&quot;green_left&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow_left&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;red_left&quot;</span><span class="p">]</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)):</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="n">header</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>
+
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TrafficLightDetector.detect"><a class="viewcode-back" href="../../../../api/carro_circulacion/traffic_lights.html#Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_image</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Detect traffic lights in an image.</span>
+
+<span class="sd">            :param frame_image: Image to detect the traffic lights.</span>
+<span class="sd">            :type frame_image: numpy.ndarray</span>
+
+<span class="sd">            :param time: Time of the image.</span>
+<span class="sd">            :type time: datetime.datetime</span>
+
+<span class="sd">            :return: Bounding boxes of the traffic lights detected, labels of the traffic lights detected</span>
+<span class="sd">            :rtype: list, list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Change image to RGB</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame_image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+
+        <span class="c1"># Transform image and get predictions</span>
+        <span class="n">transformed_image</span> <span class="o">=</span> <span class="n">get_transform</span><span class="p">()(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">model_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">([</span><span class="n">transformed_image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)])</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;boxes&quot;</span><span class="p">:</span> <span class="n">model_output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boxes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;confidence_scores&quot;</span><span class="p">:</span> <span class="n">model_output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">REVERSED_CLASS_LABEL_MAP</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">model_output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Threshold predictions</span>
+        <span class="n">thresholded_prediction</span> <span class="o">=</span> <span class="n">threshold_scores</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction_threshold</span><span class="p">)</span>
+        <span class="n">boxes</span>  <span class="o">=</span> <span class="n">thresholded_prediction</span><span class="p">[</span><span class="s2">&quot;boxes&quot;</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">thresholded_prediction</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Create counters for each type traffic light</span>
+        <span class="n">counter_green</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_green_forward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_green_left</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_yellow</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_yellow_left</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_red</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">counter_red_left</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">box</span><span class="p">,</span> <span class="n">classname</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;go&quot;</span><span class="p">:</span>
+                <span class="n">counter_green</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;goForward&quot;</span><span class="p">:</span>
+                <span class="n">counter_green_forward</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;goLeft&quot;</span><span class="p">:</span>
+                <span class="n">counter_green_left</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span>
+                <span class="n">counter_yellow</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;warningLeft&quot;</span><span class="p">:</span>
+                <span class="n">counter_yellow_left</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+                <span class="n">counter_red</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s2">&quot;stopLeft&quot;</span><span class="p">:</span>
+                <span class="n">counter_red_left</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Write to file</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="c1"># Time</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_green</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>          <span class="c1"># Green - go</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_green_forward</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>  <span class="c1"># Green Forward - goForward</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_green_left</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>     <span class="c1"># Green Left - goLeft</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_yellow</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>         <span class="c1"># Yellow - warning</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_yellow_left</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Yellow Left - warningLeft</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_red</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>            <span class="c1"># Red - stop</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter_red_left</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>       <span class="c1"># Red Left - stopLeft</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">labels</span></div>
+
+<div class="viewcode-block" id="TrafficLightDetector.vis_result"><a class="viewcode-back" href="../../../../api/carro_circulacion/traffic_lights.html#Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector.vis_result">[docs]</a>    <span class="k">def</span> <span class="nf">vis_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_vis</span><span class="p">,</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Visualize the results of the detection.</span>
+
+<span class="sd">            :param frame_vis: Image to visualize the results.</span>
+<span class="sd">            :type frame_vis: numpy.ndarray</span>
+
+<span class="sd">            :param boxes: List of boxes of the traffic lights detected.</span>
+<span class="sd">            :type boxes: list</span>
+
+<span class="sd">            :param labels: List of labels of the traffic lights detected.</span>
+<span class="sd">            :type labels: list</span>
+
+<span class="sd">            :return: Image with the results of the detection.</span>
+<span class="sd">            :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">box</span><span class="p">,</span> <span class="n">classname</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+
+            <span class="n">box_to_ints</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">box</span><span class="p">))</span>
+            <span class="n">min_coord</span> <span class="o">=</span> <span class="p">(</span><span class="n">box_to_ints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">box_to_ints</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">max_coord</span> <span class="o">=</span> <span class="p">(</span><span class="n">box_to_ints</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">box_to_ints</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">light_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colourMap</span><span class="p">[</span><span class="n">classname</span><span class="p">]</span>
+            <span class="n">text_location</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">min_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">30</span><span class="p">)</span>
+            
+            <span class="n">frame_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame_vis</span><span class="p">,</span> <span class="n">min_coord</span><span class="p">,</span> <span class="n">max_coord</span><span class="p">,</span> <span class="n">light_color</span><span class="p">,</span><span class="n">thickness</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">frame_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame_vis</span><span class="p">,</span> <span class="n">classname</span><span class="p">,</span> <span class="n">text_location</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">light_color</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">frame_vis</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

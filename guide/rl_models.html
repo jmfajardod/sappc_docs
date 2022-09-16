@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RL Models &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAPPC
+            <img src="../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>RL Models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/guide/rl_models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rl-models">
+<span id="id1"></span><h1>RL Models<a class="headerlink" href="#rl-models" title="Permalink to this heading"></a></h1>
+<p><strong>FRobs_RL</strong> include an API of all the RL algorithms implemented in <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">stable-baselines3</a>, namely <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html">PPO</a>, <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html">A2C</a>, <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/ddpg.html">DDPG</a>, <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html">DQN</a>, <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/sac.html">SAC</a> and <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/td3.html">TD3</a>. All of these have an API in which all the algorithm parameters are read from the ROS parameter server, which means that the parameters can be loaded from a YAML file or set/changed through the ROS CLI commands.</p>
+<p>In the API of the algorithms is configured the logging system, by default <strong>FRobs_RL</strong> saves the training logs in both CSV and Tensorboard files. In the API is also selected that the models are trained periodically in intervals set by the user in the YAML file, in case the user does not want to save the models they just need to change the associated parameter.</p>
+<p><strong>FRobs_RL</strong> include YAML templates for the parameters of all algorithms in the <a class="reference external" href="https://github.com/jmfajardod/frobs_rl/tree/main/config">config folder</a>. To use any of the algorithms the user just needs to create a config folder inside the ROS package where the enviroment to train is located, change the parameters as needed and call the algorithm from the Python script.</p>
+<section id="basic-yaml-parameters">
+<h2>Basic YAML parameters<a class="headerlink" href="#basic-yaml-parameters" title="Permalink to this heading"></a></h2>
+<p>All of the algorithms YAML file has the next parameters:</p>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="nt">model_params</span><span class="p">:</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Training</span><span class="w"></span>
+<span class="w">    </span><span class="nt">training_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">      </span><span class="c1"># The number of training steps to perform</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Save params</span><span class="w"></span>
+<span class="w">    </span><span class="nt">save_freq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"> </span><span class="c1"># The step interval to save a new model</span><span class="w"></span>
+<span class="w">    </span><span class="nt">save_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppo_model</span><span class="w"> </span><span class="c1"># Prefix of models saved</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trained_model_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trained_model</span><span class="w"> </span><span class="c1"># Name of final model to save</span><span class="w"></span>
+<span class="w">    </span><span class="nt">save_replay_buffer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Load model params</span><span class="w"></span>
+<span class="w">    </span><span class="nt">load_model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="w">    </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppo_model_5000_steps</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Logging parameters</span><span class="w"></span>
+<span class="w">    </span><span class="nt">log_folder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PPO_1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">log_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"> </span><span class="c1"># The number of episodes between logs</span><span class="w"></span>
+<span class="w">    </span><span class="nt">reset_num_timesteps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1"># If true, will reset the number of timesteps to 0 every training</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Use custom policy - Only MlpPolicy is supported (Only used when new model is created)</span><span class="w"></span>
+<span class="w">    </span><span class="nt">use_custom_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="w">    </span><span class="nt">policy_params</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">net_arch</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">400</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">300</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># List of hidden layer sizes</span><span class="w"></span>
+<span class="w">        </span><span class="nt">activation_fn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">relu</span><span class="w">  </span><span class="c1"># relu, tanh, elu or selu</span><span class="w"></span>
+<span class="w">        </span><span class="nt">features_extractor_class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FlattenExtractor</span><span class="w"> </span><span class="c1"># FlattenExtractor, BaseFeaturesExtractor or CombinedExtractor</span><span class="w"></span>
+<span class="w">        </span><span class="nt">optimizer_class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Adam</span><span class="w"> </span><span class="c1"># Adam, Adadelta, Adagrad, RMSprop or SGD</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In these parameters the user can select how many steps to train the model (<em>training_steps</em>), how often the models will be saved (<em>save_freq</em>), the name of the final model saved after all the training steps (<em>trained_model_name</em>), wheter to load a previously saved model and its name (<em>load_model</em>, <em>model_name</em>), etc.</p>
+<p>For the logging parameters the <strong>user needs to remember to</strong> change the log folder parameter every time a train script is executed, as <strong>FRobs_RL</strong> checks if the folder is created and will raise an error if a folder with the same name exists.</p>
+<p>Finally, the user can choose is they want a custom neural network (<em>use_custom_policy</em>) and its arquitecture/parameters like the optimizer or the activation function.</p>
+</section>
+<section id="algorithm-parameters">
+<h2>Algorithm parameters<a class="headerlink" href="#algorithm-parameters" title="Permalink to this heading"></a></h2>
+<p>The algorithm specific parameters are located below the general parameters shown above. The algorithm related parameters include wheter to use action noise, or <a class="reference external" href="https://arxiv.org/abs/2005.05719">gSDE folder</a>  along the algorithm parameters like the learning rate, batch size, etc. The default algorithm specific parameters for PPO are shown below:</p>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use SDE</span><span class="w"></span>
+<span class="nt">use_sde</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="nt">sde_params</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">sde_sample_freq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1</span><span class="w"></span>
+
+<span class="c1"># PPO parameters</span><span class="w"></span>
+<span class="nt">ppo_params</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">learning_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0003</span><span class="w"></span>
+<span class="w">    </span><span class="nt">n_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">    </span><span class="c1"># The number of steps to run for each environment per update (i.e. rollout buffer size is n_steps * n_envs where n_envs is number of environment copies running in parallel)</span><span class="w"></span>
+<span class="w">    </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1"># Minibatch size</span><span class="w"></span>
+<span class="w">    </span><span class="nt">n_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">     </span><span class="c1"># Number of epoch when optimizing the surrogate loss</span><span class="w"></span>
+<span class="w">    </span><span class="nt">gamma</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.99</span><span class="w"></span>
+<span class="w">    </span><span class="nt">gae_lambda</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.95</span><span class="w"></span>
+<span class="w">    </span><span class="nt">clip_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ent_coef</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w"></span>
+<span class="w">    </span><span class="nt">vf_coef</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span><span class="w"></span>
+<span class="w">    </span><span class="nt">max_grad_norm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="use-of-algorithms">
+<h2>Use of algorithms<a class="headerlink" href="#use-of-algorithms" title="Permalink to this heading"></a></h2>
+<p>After copying the YAML template to the config folder of the user ROS package the user just need to import the algorithm from the library and set the env, the save path where the models will be saved, the log path where all the logs will be saved and the location and name of the YAML paremeter file. After creating the algorithm the user needs to call the <em>train</em> method to initiate the learning process which will be the number of steps specific in the YAML file (<em>training_steps</em>).</p>
+<p>An example using the TD3 algorithm is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kobuki_maze_rl.task_env</span> <span class="kn">import</span> <span class="n">kobuki_maze</span>
+<span class="kn">from</span> <span class="nn">frobs_rl.common</span> <span class="kn">import</span> <span class="n">ros_gazebo</span><span class="p">,</span> <span class="n">ros_node</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+
+<span class="c1"># Import TD3 algorithm</span>
+<span class="kn">from</span> <span class="nn">frobs_rl.models.td3</span> <span class="kn">import</span> <span class="n">TD3</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># Kill all processes related to previous runs</span>
+    <span class="n">ros_node</span><span class="o">.</span><span class="n">ros_kill_all_processes</span><span class="p">()</span>
+
+    <span class="c1"># Launch Gazebo</span>
+    <span class="n">ros_gazebo</span><span class="o">.</span><span class="n">launch_Gazebo</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gui</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Start node</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;Start&quot;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;kobuki_maze_train&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Launch the task environment</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;KobukiMazeEnv-v0&#39;</span><span class="p">)</span>
+
+     <span class="c1">#--- Normalize action space</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">NormalizeActionWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1">#--- Normalize observation space</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">NormalizeObservWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1">#--- Set max steps</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">TimeLimitWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">15000</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+     <span class="c1">#--- Set the save and log path</span>
+    <span class="n">rospack</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">RosPack</span><span class="p">()</span>
+    <span class="n">pkg_path</span> <span class="o">=</span> <span class="n">rospack</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;kobuki_maze_rl&quot;</span><span class="p">)</span>
+
+
+    <span class="c1">#-- TD3</span>
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">pkg_path</span> <span class="o">+</span> <span class="s2">&quot;/models/td3/&quot;</span>
+    <span class="n">log_path</span> <span class="o">=</span> <span class="n">pkg_path</span> <span class="o">+</span> <span class="s2">&quot;/logs/td3/&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">TD3</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">log_path</span><span class="p">,</span> <span class="n">config_file_pkg</span><span class="o">=</span><span class="s2">&quot;kobuki_maze_rl&quot;</span><span class="p">,</span> <span class="n">config_filename</span><span class="o">=</span><span class="s2">&quot;td3.yaml&quot;</span><span class="p">)</span>
+
+
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">save_model</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">close_env</span><span class="p">()</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-algorithms">
+<h2>Custom algorithms<a class="headerlink" href="#custom-algorithms" title="Permalink to this heading"></a></h2>
+<p>While all the algorithms in <em>stable-baselines3</em> are included, the user can use the <strong>FRobs_RL</strong> library with their custom algorithms, althought the user must handle the model saving and logging processes.</p>
+<p>It is recommended that if the user wants to implement a new algorithm it is done inheriting the base RL class of stable-baselines3 located in the official website <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/modules/base.html">sb3 base RL class</a> or <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/base_class.py">Github repository</a></p>
+</section>
+<section id="basic-algorithm-api">
+<h2>Basic algorithm API<a class="headerlink" href="#basic-algorithm-api" title="Permalink to this heading"></a></h2>
+<p>Below is the documentation of the basic API of the RL algorithms inherited by every one of the included algorithms.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

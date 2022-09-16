@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using trained models &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAPPC
+            <img src="../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Using trained models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/guide/use_trained_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-trained-models">
+<span id="use-trained-model"></span><h1>Using trained models<a class="headerlink" href="#using-trained-models" title="Permalink to this heading"></a></h1>
+<p>After the user has trained the model they can use it without the need of an algorithm YAML parameter file and without the processes related to training like the saving of the replay buffer of the calculation of the loss function.</p>
+<p>To use a trained model the user just only needs to import the type of the model algorithm from the <strong>FRobs_RL</strong> library and use the <em>load_trained</em> function. After the trained model is loaded the user can use the <em>predict</em> function to obtain the action based on the observation.</p>
+<p>An example where a TD3 trained model is loaded and used in two episodes is shown below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kobuki_maze_rl.task_env</span> <span class="kn">import</span> <span class="n">kobuki_maze</span>
+<span class="kn">from</span> <span class="nn">frobs_rl.common</span> <span class="kn">import</span> <span class="n">ros_gazebo</span><span class="p">,</span> <span class="n">ros_node</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+
+<span class="c1"># Import TD3 algorithm</span>
+<span class="kn">from</span> <span class="nn">frobs_rl.models.td3</span> <span class="kn">import</span> <span class="n">TD3</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># Kill all processes related to previous runs</span>
+    <span class="n">ros_node</span><span class="o">.</span><span class="n">ros_kill_all_processes</span><span class="p">()</span>
+
+    <span class="c1"># Launch Gazebo</span>
+    <span class="n">ros_gazebo</span><span class="o">.</span><span class="n">launch_Gazebo</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gui</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Start node</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;Start&quot;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;kobuki_maze_train&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Launch the task environment</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;KobukiMazeEnv-v0&#39;</span><span class="p">)</span>
+
+     <span class="c1">#--- Normalize action space</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">NormalizeActionWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1">#--- Normalize observation space</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">NormalizeObservWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1">#--- Set max steps</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">TimeLimitWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">15000</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+     <span class="c1">#--- Set the save and log path</span>
+    <span class="n">rospack</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">RosPack</span><span class="p">()</span>
+    <span class="n">pkg_path</span> <span class="o">=</span> <span class="n">rospack</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;kobuki_maze_rl&quot;</span><span class="p">)</span>
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">pkg_path</span> <span class="o">+</span> <span class="s2">&quot;/models/dynamic/td3/&quot;</span>
+
+    <span class="c1">#-- TD3 trained</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">TD3</span><span class="o">.</span><span class="n">load_trained</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;trained_model&quot;</span><span class="p">)</span>
+
+
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">episodes</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">epi_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">epi_count</span> <span class="o">&lt;</span> <span class="n">episodes</span><span class="p">:</span>
+        <span class="n">action</span><span class="p">,</span> <span class="n">_states</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dones</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dones</span><span class="p">:</span>
+            <span class="n">epi_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;Episode: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">epi_count</span><span class="p">))</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
