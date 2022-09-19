@@ -1,0 +1,14 @@
+Dashboard GUI
+==================
+
+The Dashboard GUI algorithm put the information obtained from the vehicle in the image, e.g., GPS, speed, etc. The GUI is implemented in the Dashboard class. 
+
+Class docs
+---------------------
+
+.. autoclass:: Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard.Dashboard
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+   

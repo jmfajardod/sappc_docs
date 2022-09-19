@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -64,6 +67,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
 </ul>
 </li>
 </ul>
@@ -99,7 +103,7 @@
 <h2>How to run the Car’s public highway test<a class="headerlink" href="#how-to-run-the-car-s-public-highway-test" title="Permalink to this heading"></a></h2>
 <p>To run the Car’s public highway test (Carro Circulación), the following steps must be followed:</p>
 <ol class="arabic">
-<li><p>Open the <em>/ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py</em> file and edit the <strong>line 23</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
+<li><p>Open the <em>/ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py</em> file and edit <strong>line 23</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">22</span>    <span class="c1"># Open video</span>
 <span class="hll"><span class="linenos">23</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_02_09_2022_13_20_11&quot;</span>
@@ -244,7 +248,8 @@
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>Detection threshold of lane Detection</strong> : The detection threshold dictates with what confidence will be detected the lane lines. The higher the value, the more confident the algorithm will be to detect the lane lines, but with higher value more lanes will be dismissed. The value is between 0 and 1. The default value is 0.3.</p></li>
-<li><p><strong>Distance to the center of the lane</strong> : The distance to the center of the lane is the distance that will be needed to detect a lane change, i.e., if the distance of the lane detected is lower than this value the algorithm will <strong>NOT</strong> detect a lane change. The values is given in pixels. The default value is 100.</p></li>
+<li><p><strong>Distance threshold</strong> : The distance threshold is the distance that will be needed to detect a lane change, i.e., if the distance of the lane detected is lower than this value the algorithm will <strong>NOT</strong> detect a lane change. The values is given in pixels. The default value is 100.</p></li>
+<li><p><strong>Distance from center of image</strong>: The distance from the center of the image is the maximum distance to consider a lane line as a lane line to detect a lane change. The value is given in pixels. The default value is 100.</p></li>
 <li><p><strong>Number of frames to maintain detected lane</strong> : The number of frames to maintain detected lane is the number of frames that the algorithm will maintain the detected lane, even if the lane is not detected. This is done to avoid the detection of a lane change when the lane is not detected. The value is given in frames. The default value is 5.</p></li>
 </ul>
 </div></blockquote>
@@ -271,14 +276,17 @@
 <p class="caption" role="heading"><span class="caption-text">Functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="lanes.html">Lane Detection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lanes.html#output-format">Output format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lanes.html#class-docs">Class docs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="traffic_lights.html">Traffic Lights Recognition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="traffic_lights.html#output-format">Output format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="traffic_lights.html#class-docs">Class docs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="objects.html">Object Recognition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="objects.html#output-format">Output format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="objects.html#class-docs">Class docs</a></li>
 </ul>
 </li>

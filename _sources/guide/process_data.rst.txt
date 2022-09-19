@@ -1,0 +1,88 @@
+How to process the data
+=======================
+
+Depending on the origin of the data and the type of the test, different commands must be used to process the data.
+
+Process carro circulacion
+--------------------------------
+
+To process the data of the Car's public highway test (Carro Circulación), the following steps must be followed:
+
+1. Open the */ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py* file and edit **line 23**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Vehiculos/Automovil_circulacion/Vision/process_video.py
+        :language: python
+        :lines: 19-22
+        :lineno-start: 22
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+
+        python3 process_video.py
+
+Process moto circulacion
+--------------------------------
+
+To process the data of the Motorcycle's public highway test (Moto Circulación), the following steps must be followed:
+
+1. Open the */ansv_componente3/Vehiculos/Motocicleta_circulacion/Vision/process_video.py* file and edit the **line 23**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Vehiculos/Motocicleta_circulacion/Vision/process_video.py
+        :language: python
+        :lines: 21-24
+        :lineno-start: 21
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+
+        python3 process_video.py
+
+
+Process carro pista
+--------------------------------
+
+To process the data of the Car's track test (Carro pista), the following steps must be followed:
+
+1. Open the */ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py* file and edit  **line 29**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+        :language: python
+        :lines: 28-32
+        :lineno-start: 28
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+        
+        cd ~/ansv_componente3/Pista/Vision/Car_algorithms/
+        python3 car_vision_algorithms.py
+
+Process moto pista
+--------------------------------
+
+To process the data of the Motorcycle's track test (Moto pista), the following steps must be followed:
+
+1. Open the */ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py* file and edit  **line 30**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+        :language: python
+        :lines: 29-33
+        :lineno-start: 29
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+        
+        cd ~/ansv_componente3/Pista/Vision/Motorcycle_algorithms/
+        python3 motorcycle_vision_algorithms.py
+

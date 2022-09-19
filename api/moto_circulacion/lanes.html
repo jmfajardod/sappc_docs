@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -64,6 +67,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
 </ul>
 </li>
 </ul>
@@ -100,11 +104,21 @@
 <p>Repository of CondLaneNet: <a class="reference external" href="https://github.com/aliyun/conditional-lane-detection">https://github.com/aliyun/conditional-lane-detection</a></p>
 <p>Original paper: <a class="reference external" href="https://arxiv.org/abs/2105.05003">https://arxiv.org/abs/2105.05003</a></p>
 <p>Trained model is available at: <a class="reference external" href="https://drive.google.com/file/d/1HyLVlxXkitr3-JS_CJDVk1EKiOkt9k6p/view?usp=sharing">https://drive.google.com/file/d/1HyLVlxXkitr3-JS_CJDVk1EKiOkt9k6p/view?usp=sharing</a></p>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: Timestamp of the image</p></li>
+<li><p>Lane distance: Distance from the closest lane to the center of the image (In pixels)</p></li>
+<li><p>Lane change: If the vehicle is changing lanes (Given in a boolean format)</p></li>
+<li><p>Lane change direction: Direction of the lane change</p></li>
+</ul>
+</section>
 <section id="class-docs">
 <h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.</span></span><span class="sig-name descname"><span class="pre">LaneDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">det_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maintain_lane</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motocicleta_circulacion/Vision/Lane_detection/functions_lane_detection.html#LaneDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.</span></span><span class="sig-name descname"><span class="pre">LaneDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">det_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maintain_lane</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_from_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motocicleta_circulacion/Vision/Lane_detection/functions_lane_detection.html#LaneDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector" title="Permalink to this definition"></a></dt>
 <dd><p>Class to detect lanes in an image and lane changes in a video. The Lane change is detected when the closest lane to the center of the image changes from being on the left to being on the right or vice versa. To filter out false positives, the lane change is only detected when the lane change has a distance between the closest lane and the center of the image greater than 100 pixels. Also, to filter out false positives, the lane detected is maintained for 5 frames, i.e., the detection could fail for 5 frames and then the lane change is detected again.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -113,6 +127,7 @@
 <li><p><strong>det_threshold</strong> (<em>float</em>) – Threshold for heatmap, the higher the more confident the detection but it will discard more lanes. Default: 0.3</p></li>
 <li><p><strong>maintain_lane</strong> (<em>int</em>) – Number of frames to maintain the lane detection. Default: 5</p></li>
 <li><p><strong>distance_threshold</strong> (<em>int</em>) – Distance (in pixels) threshold to detect the lane change. Default: 100</p></li>
+<li><p><strong>distance_from_center</strong> (<em>int</em>) – Distance (in pixels) from the center of the image to detect a lane. Default: 100</p></li>
 </ul>
 </dd>
 </dl>

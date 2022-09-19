@@ -1,0 +1,55 @@
+Ramp Algorithm
+==================
+
+The ramp algorithm estimates the position and angle of the vehicle with respect to the camera using **Aruco markers**. The algorithm uses the Savitzky-Golay filter to estimate the velocity of the vehicle and know if the vehicle is stopped or not.
+
+.. note:: The Savitzky-Golay filter used to obtain the velocity is not as accurate as a GPS reading and **it is preferred to use the GPS readings when available to know if the vehicle is stopped or not**.
+
+The parameters related to the Aruco markers are the shown in the following excerpt of file:
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/ramp/ramp_algorithms.py
+    :language: python
+    :lines: 13-17
+    :lineno-start: 13
+    :linenos:
+
+.. note:: If the size or ID of the Aruco markers are changed, the parameters must be updated.
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame
+- **Pos X**: X position of the vehicle with respect to the camera. **The X position is the one in the direction of the ramp, i.e., the one direction in which the vehicle should not go backwards more that the maximum allowed distance**.
+- Pos Y: Y position of the vehicle with respect to the camera
+- Pos Z: Z position of the vehicle with respect to the camera
+- Ori roll: Roll angle of the vehicle with respect to the camera
+- Ori pitch: Pitch angle of the vehicle with respect to the camera
+- Ori yaw: Yaw angle of the vehicle with respect to the camera
+- Vel X: X velocity of the vehicle with respect to the camera
+- Vel Y: Y velocity of the vehicle with respect to the camera
+- Vel Z: Z velocity of the vehicle with respect to the camera
+- Abs Vel: Absolute velocity of the vehicle with respect to the camera
+- Stopped: Boolean indicating if the vehicle is stopped or not
+
+Class docs
+---------------------
+
+.. autoclass:: Car_algorithms.ramp.ramp_algorithms.RampStopChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Car_algorithms.ramp.ramp_algorithms.rotationMatrixToEulerAngles
+
+.. autofunction:: Car_algorithms.ramp.ramp_algorithms.sg_filter
+
+.. autofunction:: Car_algorithms.ramp.ramp_algorithms.smooth
+
+.. autofunction:: Car_algorithms.ramp.ramp_algorithms.get_Vel
+

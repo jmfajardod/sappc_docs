@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -64,6 +67,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
 </ul>
 </li>
 </ul>
@@ -96,14 +100,28 @@
              
   <section id="traffic-lights-recognition">
 <h1>Traffic Lights Recognition<a class="headerlink" href="#traffic-lights-recognition" title="Permalink to this heading"></a></h1>
-<p>Traffic light detector and classifier based on a Faster Recursive Convolutional Neural Network (FasterRCNN) pre-trained on the COCO dataset. The detector is then trained using a transfer learning approach with the LISA Traffic Light Dataset, which contains 43000 images and more than 113000 traffic lights annotations. The dataset contains six classes: <strong>Stop, Stop Left, Go, Go Left, Warning and Warning Left</strong>.</p>
+<p>Traffic light detector and classifier based on a Faster Recursive Convolutional Neural Network (FasterRCNN) pre-trained on the COCO dataset. The detector is then trained using a transfer learning approach with the LISA Traffic Light Dataset, which contains 43000 images and more than 113000 traffic lights annotations. The dataset contains seven classes: <strong>Stop, Stop Left, Go, Go Left, Go Forward, Warning and Warning Left</strong>.</p>
 <p>Trained model is available at: <a class="reference external" href="https://drive.google.com/file/d/1YuNVj-KRx8rd2PxfMlKb6fWUSGBeaemg/view?usp=sharing">https://drive.google.com/file/d/1YuNVj-KRx8rd2PxfMlKb6fWUSGBeaemg/view?usp=sharing</a></p>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: Timestamp of the image</p></li>
+<li><p>green: Counter of green lights detected in the frame.</p></li>
+<li><p>green forward: Counter of green lights detected in the frame that are pointing forward.</p></li>
+<li><p>green left: Counter of green lights detected in the frame that are pointing left.</p></li>
+<li><p>yellow: Counter of yellow lights (Warning) detected in the frame.</p></li>
+<li><p>yellow left: Counter of yellow lights (Warning) detected in the frame that are pointing left.</p></li>
+<li><p>red: Counter of red lights (Stop) detected in the frame.</p></li>
+<li><p>red left: Counter of red lights (Stop) detected in the frame that are pointing left.</p></li>
+</ul>
+</section>
 <section id="class-docs">
 <h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.</span></span><span class="sig-name descname"><span class="pre">TrafficLightDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">det_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Automovil_circulacion/Vision/Traffic_light_recognition/function_traffic_light_detection.html#TrafficLightDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Automovil_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector" title="Permalink to this definition"></a></dt>
-<dd><p>Class to detect traffic lights in images, the types of traffic lights detected will be Stop, Stop Left, Go, Go Left, Warning and Warning Left.</p>
+<dd><p>Class to detect traffic lights in images, the types of traffic lights detected will be Stop, Stop Left, Go, Go Left, Go Forward, Warning and Warning Left.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

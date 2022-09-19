@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pista.Vision.Car_algorithms.turn.turn_algorithms &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../guide/installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>Pista.Vision.Car_algorithms.turn.turn_algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Pista.Vision.Car_algorithms.turn.turn_algorithms</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Parameters of the Aruco markers located on the vehicle</span>
+<span class="n">MARKER_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span> <span class="c1"># In meters</span>
+<span class="n">MARKER_ID_BACK</span>   <span class="o">=</span> <span class="mi">16</span>
+<span class="n">MARKER_ID_MIDDLE</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">MARKER_ID_FRONT</span>  <span class="o">=</span> <span class="mi">14</span>
+
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1"># Functions for angle calculation</span>
+<span class="k">def</span> <span class="nf">rotationMatrixToEulerAngles</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to calculate the euler angles from a rotation matrix.</span>
+
+<span class="sd">        :param R: Rotation matrix</span>
+<span class="sd">        :type R: numpy.array</span>
+
+<span class="sd">        :return: Euler angles in radians</span>
+<span class="sd">        :rtype: numpy.array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">singular</span> <span class="o">=</span> <span class="n">sy</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">singular</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sy</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sy</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1"># Functions for velocity estimation</span>
+<span class="k">def</span> <span class="nf">sg_filter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Function to calculate the Savitzky-Golay filter coefficients.</span>
+
+<span class="sd">        :param x Vector of sample times</span>
+<span class="sd">        :type x: numpy.array</span>
+
+<span class="sd">        :param m Order of the smoothing polynomial</span>
+<span class="sd">        :type m: int</span>
+
+<span class="sd">        :param k Order of derivative</span>
+<span class="sd">        :type k: int</span>
+
+<span class="sd">        :return: Filter coefficients</span>
+<span class="sd">        :rtype: numpy.array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>        
+    <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span>
+    <span class="n">expa</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="n">exp_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">expa</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)):</span>
+        <span class="n">row_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">a_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row_data</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row_data</span><span class="p">))</span>
+    <span class="n">a_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a_array</span><span class="p">)</span>
+    <span class="n">a_array</span> <span class="o">=</span> <span class="n">a_array</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">Ai</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">a_array</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Ai</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to calculate a derivative using the Savitzky-Golay filter.</span>
+
+<span class="sd">        :param x Vector of sample times</span>
+<span class="sd">        :type x: numpy.array</span>
+
+<span class="sd">        :param y Vector of sample values</span>
+<span class="sd">        :type y: numpy.array</span>
+
+<span class="sd">        :param size Number of samples to use for smoothing. Default is 5.</span>
+<span class="sd">        :type size: int</span>
+
+<span class="sd">        :param order Order of the smoothing polynomial. Default is 2.</span>
+<span class="sd">        :type order: int</span>
+
+<span class="sd">        :param deriv Order of the derivative. Default is 0.</span>
+<span class="sd">        :type deriv: int</span>
+
+<span class="sd">        :return: Filtered vector of sample values</span>
+<span class="sd">        :rtype: numpy.array</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">deriv</span> <span class="o">&gt;</span> <span class="n">order</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;deriv must be &lt;= order&quot;</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">m</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">sg_filter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">order</span><span class="p">,</span> <span class="n">deriv</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">deriv</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">*=</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">deriv</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">get_Vel</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to calculate the velocity of the vehicle</span>
+
+<span class="sd">        :param time Vector of sample times</span>
+<span class="sd">        :type time: numpy.array</span>
+
+<span class="sd">        :param pos Vector of sample values</span>
+<span class="sd">        :type pos: numpy.array</span>
+
+<span class="sd">        :param size Number of samples to use for smoothing.</span>
+<span class="sd">        :type size: int</span>
+
+<span class="sd">        :param order Order of the smoothing polynomial.</span>
+<span class="sd">        :type order: int</span>
+
+<span class="sd">        :return: Estimated velocity from the position vector and the time vector</span>
+<span class="sd">        :rtype: numpy.array</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">smooth</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TurnChecker"><a class="viewcode-back" href="../../../../../api/carro_pista/turn_algorithm.html#Pista.Vision.Car_algorithms.turn.turn_algorithms.TurnChecker">[docs]</a><span class="k">class</span> <span class="nc">TurnChecker</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_csv_path</span><span class="p">,</span> <span class="n">video_path</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coefs</span><span class="p">,</span> <span class="n">vel_stopped</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">video_csv_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">=</span> <span class="n">video_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span> <span class="o">=</span> <span class="n">camera_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_coefs</span> <span class="o">=</span> <span class="n">dist_coefs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vel_stopped</span> <span class="o">=</span> <span class="n">vel_stopped</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span> <span class="o">=</span> <span class="n">view_image</span>
+
+        <span class="c1"># arUco parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arucoDict</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">Dictionary_get</span><span class="p">(</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DICT_4X4_50</span><span class="p">)</span>  <span class="c1"># Set aruco dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arucoParams</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DetectorParameters_create</span><span class="p">()</span>
+
+        <span class="c1"># Dict for storing the results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">process_video</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing video...&quot;</span><span class="p">)</span>
+        <span class="n">points_vis_traj_back</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">points_vis_traj_middle</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">points_vis_traj_front</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Processing turn:  </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span>  <span class="n">ii</span><span class="p">)</span>
+            <span class="c1"># Open video</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Video&#39;</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">frame_width</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Frame width x height: &quot;</span><span class="p">,</span> <span class="n">frame_width</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">)</span>
+
+                <span class="n">video_fps</span>    <span class="o">=</span> <span class="mi">15</span> <span class="c1">#int(cap.get(5))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Video FPS: &quot;</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">)</span>
+
+                <span class="n">video_fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>  <span class="c1"># Best</span>
+                <span class="n">out_area</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="s1">&#39;proccessed_area.avi&#39;</span><span class="p">,</span><span class="n">video_fourcc</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">,</span> <span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">))</span>
+
+            <span class="c1"># Read frame</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+
+                <span class="c1"># --------------------------------------------------#</span>
+                <span class="c1"># Process frame to check trajectory</span>
+                <span class="n">X_now</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">Y_now</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">Ori_yaw</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="p">(</span><span class="n">corners_traj</span><span class="p">,</span> <span class="n">ids_traj</span><span class="p">,</span> <span class="n">rejected_traj</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">detectMarkers</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arucoDict</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arucoParams</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ids_traj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># If the middle marker was found</span>
+                    <span class="k">if</span> <span class="n">MARKER_ID_MIDDLE</span> <span class="ow">in</span> <span class="n">ids_traj</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_traj</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="n">ids_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">==</span> <span class="n">MARKER_ID_MIDDLE</span><span class="p">:</span>
+                                <span class="c1"># Estimate pose of each marker and return the values rvec and tvec</span>
+                                <span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">,</span> <span class="n">markerPoints</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">estimatePoseSingleMarkers</span><span class="p">(</span>
+                                    <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">],</span> <span class="n">MARKER_SIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist_coefs</span><span class="p">)</span>
+
+                                <span class="c1"># Position</span>
+                                <span class="n">X_now</span> <span class="o">=</span> <span class="n">tvec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                <span class="n">Y_now</span> <span class="o">=</span> <span class="n">tvec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="n">Z_now</span> <span class="o">=</span> <span class="n">tvec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+                                <span class="c1"># Orientation</span>
+                                <span class="n">rot_matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="n">rvec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                                <span class="n">Ori_roll</span><span class="p">,</span> <span class="n">Ori_pitch</span><span class="p">,</span> <span class="n">Ori_yaw</span> <span class="o">=</span> <span class="n">rotationMatrixToEulerAngles</span><span class="p">(</span>
+                                    <span class="n">rot_matrix</span><span class="p">)</span>
+
+                                <span class="c1"># Visualize trajectory</span>
+                                <span class="n">x_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                <span class="n">y_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="n">x_centerPixel</span> <span class="o">=</span> <span class="n">x_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">y_centerPixel</span> <span class="o">=</span> <span class="n">y_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">points_vis_traj_middle</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">x_centerPixel</span><span class="p">],</span> <span class="p">[</span><span class="n">y_centerPixel</span><span class="p">]])</span>
+
+                                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                                    <span class="c1"># print(points_vis_traj)</span>
+                                    <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                                        <span class="n">x1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">x2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_middle</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">points_vis_traj_middle</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="k">if</span> <span class="n">MARKER_ID_FRONT</span> <span class="ow">in</span> <span class="n">ids_traj</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_traj</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="n">ids_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">==</span> <span class="n">MARKER_ID_FRONT</span><span class="p">:</span>
+                                <span class="c1"># Visualize trajectory</span>
+                                <span class="n">x_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                <span class="n">y_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="n">x_centerPixel</span> <span class="o">=</span> <span class="n">x_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">y_centerPixel</span> <span class="o">=</span> <span class="n">y_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">points_vis_traj_front</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">x_centerPixel</span><span class="p">],</span> <span class="p">[</span><span class="n">y_centerPixel</span><span class="p">]])</span>
+
+                                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                                    <span class="c1"># print(points_vis_traj)</span>
+                                    <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                                        <span class="n">x1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">x2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_front</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">points_vis_traj_front</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="k">if</span> <span class="n">MARKER_ID_BACK</span> <span class="ow">in</span> <span class="n">ids_traj</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_traj</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="n">ids_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">==</span> <span class="n">MARKER_ID_BACK</span><span class="p">:</span>
+                                <span class="c1"># Visualize trajectory</span>
+                                <span class="n">x_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                <span class="n">y_sum</span> <span class="o">=</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_traj</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="n">x_centerPixel</span> <span class="o">=</span> <span class="n">x_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">y_centerPixel</span> <span class="o">=</span> <span class="n">y_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                <span class="n">points_vis_traj_back</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">x_centerPixel</span><span class="p">],</span> <span class="p">[</span><span class="n">y_centerPixel</span><span class="p">]])</span>
+
+                                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                                    <span class="c1"># print(points_vis_traj)</span>
+                                    <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                                        <span class="n">x1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">[</span><span class="n">xx</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">x2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                        <span class="n">y2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_vis_traj_back</span><span class="p">[</span><span class="n">xx</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                        <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">points_vis_traj_back</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">points_vis_traj_middle</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">points_vis_traj_front</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">points_vis_traj_back</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="c1"># --------------------------------------------------#</span>
+                <span class="c1"># Add the result to the dict</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_X&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_Y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Ori_yaw&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Time&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X_now</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Y_now</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Ori_yaw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ori_yaw</span><span class="p">)</span>
+
+                <span class="c1">#----------------------------------------------------#</span>
+                <span class="c1"># Draw the results</span>
+                <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">drawDetectedMarkers</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="n">corners_traj</span><span class="p">,</span> <span class="n">ids_traj</span><span class="p">)</span>
+
+                <span class="n">out_area</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">)</span>
+
+                <span class="c1"># Visualize the results</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="p">:</span>
+                    <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;image ramp&#39;</span><span class="p">,</span> <span class="n">im_out_turn</span><span class="p">)</span>
+                    <span class="n">keypressed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">keypressed</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                        <span class="k">break</span>
+
+        <span class="c1"># Convert results to dataframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">out_area</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Video processed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------#</span>
+        <span class="c1"># Process the results to get velocity</span>
+
+        <span class="c1"># Fill the NaN values with the zero value</span>
+        <span class="n">data_velocity_est</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data_velocity_est</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="n">data_velocity_est</span><span class="p">)</span>
+
+        <span class="c1"># Params for filter</span>
+        <span class="n">size_window</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="c1"># Apply the filter</span>
+        <span class="n">time_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_velocity_est</span><span class="p">))),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">video_fps</span><span class="p">)</span> <span class="c1"># Assume a constant FPS of 15 </span>
+        <span class="n">time_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">time_data</span><span class="p">)</span>
+
+        <span class="n">pos_data</span> <span class="o">=</span> <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">vel_x</span> <span class="o">=</span> <span class="n">get_Vel</span><span class="p">(</span><span class="n">time_data</span><span class="p">,</span><span class="n">pos_data</span><span class="p">,</span> <span class="n">size_window</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vel_x</span>
+
+        <span class="n">pos_data</span> <span class="o">=</span> <span class="n">data_velocity_est</span><span class="p">[</span><span class="s1">&#39;Pos_Y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">vel_y</span> <span class="o">=</span> <span class="n">get_Vel</span><span class="p">(</span><span class="n">time_data</span><span class="p">,</span><span class="n">pos_data</span><span class="p">,</span> <span class="n">size_window</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_Y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vel_y</span>
+
+        <span class="c1"># Fill velocity with zero if there is no data or the velocity is too high</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Pos_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">10</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Pos_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Obtain absolute velocity</span>
+        <span class="n">abs_vel</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)):</span>
+            <span class="n">abs_vel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_X&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Vel_Y&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Abs_Vel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">abs_vel</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Velocity processed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># -----------------------------------------------------#</span>
+        <span class="c1"># Process the results to check if car is stopped in area</span>
+
+        <span class="n">stopped</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Abs_Vel&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">vel_stopped</span><span class="p">:</span>
+                <span class="n">stopped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stopped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Stopped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stopped</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stopped processed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># -----------------------------------------------------#</span>
+        <span class="c1"># Save data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="s2">&quot;turn_results.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data saved.&quot;</span><span class="p">)</span>
+        <span class="c1"># -----------------------------------------------------#</span>
+        <span class="c1"># Generate final video</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="s2">&quot;turn_results.csv&quot;</span><span class="p">)</span>
+        <span class="n">video_cap_area</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="s1">&#39;proccessed_area.avi&#39;</span><span class="p">)</span>
+        <span class="n">frame_width</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_cap_area</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_cap_area</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Frame width x height: &quot;</span><span class="p">,</span> <span class="n">frame_width</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">)</span>
+
+        <span class="n">video_fps</span>    <span class="o">=</span> <span class="mi">15</span> <span class="c1">#int(video_cap_area.get(5))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Video FPS: &quot;</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">)</span>
+
+        <span class="n">newcameramtx</span><span class="p">,</span> <span class="n">roi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getOptimalNewCameraMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist_coefs</span><span class="p">,</span> <span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">))</span>
+        <span class="n">x_roi</span><span class="p">,</span> <span class="n">y_roi</span><span class="p">,</span> <span class="n">w_roi</span><span class="p">,</span> <span class="n">h_roi</span> <span class="o">=</span> <span class="n">roi</span>
+
+        <span class="n">video_fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>  <span class="c1"># Best</span>
+        <span class="n">out_final</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span><span class="p">))):</span>
+            
+            <span class="k">if</span> <span class="n">out_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">name_video</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_csv</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Video&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">out_final</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="n">name_video</span> <span class="o">+</span> <span class="s1">&#39;_proccessed_ramp.avi&#39;</span><span class="p">,</span><span class="n">video_fourcc</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">,</span> <span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">))</span>
+
+            <span class="c1"># Read the frame</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">video_cap_area</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+                
+                <span class="c1"># Undistort the frame</span>
+                <span class="c1"># im_out_turn = cv2.undistort(frame, self.camera_matrix, self.dist_coefs, None, newcameramtx)</span>
+                <span class="c1"># im_out_turn = im_out_parking[y_roi:y_roi+h_roi, x_roi:x_roi+w_roi]</span>
+
+                <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;Time: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Time&#39;</span><span class="p">]),</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+                                            <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                <span class="n">str_pos</span> <span class="o">=</span> <span class="s1">&#39;X: </span><span class="si">{x_pos:2.2f}</span><span class="s1"> Y: </span><span class="si">{y_pos:2.2f}</span><span class="s1"> Yaw: </span><span class="si">{ori_z:2.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">x_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Pos_X&#39;</span><span class="p">]),</span> <span class="n">y_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Pos_Y&#39;</span><span class="p">]),</span> <span class="n">ori_z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Ori_yaw&#39;</span><span class="p">]))</span>
+                <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="n">str_pos</span><span class="p">,</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+                <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="s2">&quot;Stopped: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Stopped&#39;</span><span class="p">]),</span> <span class="p">(</span><span class="mi">1300</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                                            <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+
+                <span class="n">out_final</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">)</span>
+
+                <span class="c1"># Visualize the results</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="p">:</span>
+                    <span class="n">im_out_turn</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">im_out_turn</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;image ramp&#39;</span><span class="p">,</span> <span class="n">im_out_turn</span><span class="p">)</span>
+                    <span class="n">keypressed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">keypressed</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                        <span class="k">break</span>
+        
+        <span class="n">video_cap_area</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final video generated.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># -----------------------------------------------------#</span>
+        <span class="c1"># Remove intermediate files</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">+</span> <span class="s1">&#39;proccessed_area.avi&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

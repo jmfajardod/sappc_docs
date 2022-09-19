@@ -43,6 +43,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -78,9 +81,13 @@
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
  
@@ -131,6 +138,32 @@
   </ul></td>
 </tr></table>
 
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.get_Vel">get_Vel() (in module Car_algorithms.inline_parking.inline_parking_algorithms)</a>
+
+      <ul>
+        <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.get_Vel">(in module Car_algorithms.ramp.ramp_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.get_Vel">(in module Car_algorithms.reverse_parking.reverse_parking_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.get_Vel">(in module Car_algorithms.stop_lines.stop_lines_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.get_Vel">(in module Car_algorithms.turn.turn_algorithms)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.InlineParkingChecker">InlineParkingChecker (class in Car_algorithms.inline_parking.inline_parking_algorithms)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -158,12 +191,82 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.InlineParkingChecker.process_video">process_video() (Car_algorithms.inline_parking.inline_parking_algorithms.InlineParkingChecker method)</a>
+
+      <ul>
+        <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.RampStopChecker.process_video">(Car_algorithms.ramp.ramp_algorithms.RampStopChecker method)</a>
+</li>
+        <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker.process_video">(Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker method)</a>
+</li>
+        <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video">(Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker method)</a>
+</li>
+        <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.TurnChecker.process_video">(Car_algorithms.turn.turn_algorithms.TurnChecker method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/carro_circulacion/lanes.html#Automovil_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.project_lanes">project_lanes() (Automovil_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector method)</a>
 
       <ul>
         <li><a href="api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.project_lanes">(Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector method)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.RampStopChecker">RampStopChecker (class in Car_algorithms.ramp.ramp_algorithms)</a>
+</li>
+      <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker">ReverseParkingChecker (class in Car_algorithms.reverse_parking.reverse_parking_algorithms)</a>
+</li>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.rotationMatrixToEulerAngles">rotationMatrixToEulerAngles() (in module Car_algorithms.inline_parking.inline_parking_algorithms)</a>
+
+      <ul>
+        <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.rotationMatrixToEulerAngles">(in module Car_algorithms.ramp.ramp_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.rotationMatrixToEulerAngles">(in module Car_algorithms.reverse_parking.reverse_parking_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.rotationMatrixToEulerAngles">(in module Car_algorithms.stop_lines.stop_lines_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.rotationMatrixToEulerAngles">(in module Car_algorithms.turn.turn_algorithms)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.sg_filter">sg_filter() (in module Car_algorithms.inline_parking.inline_parking_algorithms)</a>
+
+      <ul>
+        <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.sg_filter">(in module Car_algorithms.ramp.ramp_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.sg_filter">(in module Car_algorithms.reverse_parking.reverse_parking_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.sg_filter">(in module Car_algorithms.stop_lines.stop_lines_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.sg_filter">(in module Car_algorithms.turn.turn_algorithms)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/inline_parking_algorithm.html#Car_algorithms.inline_parking.inline_parking_algorithms.smooth">smooth() (in module Car_algorithms.inline_parking.inline_parking_algorithms)</a>
+
+      <ul>
+        <li><a href="api/carro_pista/ramp_algorithm.html#Car_algorithms.ramp.ramp_algorithms.smooth">(in module Car_algorithms.ramp.ramp_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/reverse_parking_algorithm.html#Car_algorithms.reverse_parking.reverse_parking_algorithms.smooth">(in module Car_algorithms.reverse_parking.reverse_parking_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.smooth">(in module Car_algorithms.stop_lines.stop_lines_algorithms)</a>
+</li>
+        <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.smooth">(in module Car_algorithms.turn.turn_algorithms)</a>
+</li>
+      </ul></li>
+      <li><a href="api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker">StopLinesParkingChecker (class in Car_algorithms.stop_lines.stop_lines_algorithms)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -176,6 +279,10 @@
         <li><a href="api/moto_circulacion/traffic_lights.html#Motocicleta_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection.TrafficLightDetector">(class in Motocicleta_circulacion.Vision.Traffic_light_recognition.function_traffic_light_detection)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/carro_pista/turn_algorithm.html#Car_algorithms.turn.turn_algorithms.TurnChecker">TurnChecker (class in Car_algorithms.turn.turn_algorithms)</a>
+</li>
   </ul></td>
 </tr></table>
 

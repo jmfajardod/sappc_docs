@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../guide/installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard</h1><div class="highlight"><pre>
+<span></span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<div class="viewcode-block" id="Dashboard"><a class="viewcode-back" href="../../../../api/moto_circulacion/dashboard.html#Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard.Dashboard">[docs]</a><span class="k">class</span> <span class="nc">Dashboard</span><span class="p">:</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to add the dashboard information to the image.</span>
+
+<span class="sd">        :param gps_data_path: Path to the gps data file.</span>
+<span class="sd">        :type gps_data_path: str</span>
+
+<span class="sd">        :param dashboard_path: Path to the dashboard data file.</span>
+<span class="sd">        :type dashboard_path: str</span>
+
+<span class="sd">        :param Rpms_data_path: Path to the rpm data file.</span>
+<span class="sd">        :type Rpms_data_path: str</span>
+
+<span class="sd">        :param Helmets_data_path: Path to the helmet data file.</span>
+<span class="sd">        :type Helmets_data_path: str</span>
+
+<span class="sd">        :param date_test: Date of the test.</span>
+<span class="sd">        :type date_test: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps_data_path</span><span class="p">,</span> <span class="n">dashboard_data_path</span><span class="p">,</span> <span class="n">Rpms_data_path</span><span class="p">,</span> <span class="n">Helmet_data_path</span><span class="p">,</span> <span class="n">date_test</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># Data from GPS and dashboard in Pandas DataFrame</span>
+        <span class="n">data_gps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gps_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span> <span class="o">=</span> <span class="n">data_gps</span> <span class="c1">#data_gps.drop(data_gps.columns[[0, 9]], inplace=True, axis=1)</span>
+        <span class="n">data_dashboard</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dashboard_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span> <span class="o">=</span> <span class="n">data_dashboard</span> <span class="c1">#data_dashboard.drop(data_dashboard.columns[[0]], inplace=True, axis=1)</span>
+        <span class="n">data_rpms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">Rpms_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms</span> <span class="o">=</span> <span class="n">data_rpms</span> <span class="c1">#data_Rpms.drop(data_Rpms.columns[[0]], inplace=True, axis=1)</span>
+        <span class="n">data_helmet</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">Helmet_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span> <span class="o">=</span> <span class="n">data_helmet</span> <span class="c1">#data_Helmet.drop(data_Helmet.columns[[0]], inplace=True, axis=1)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_rpms</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+        <span class="c1"># Save date and time of data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">=</span> <span class="n">date_test</span>
+
+        <span class="c1"># Current path</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+        <span class="c1"># Load images</span>
+        <span class="n">speedometer_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/speedometer_2.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speedometer_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">speedometer_img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="c1"># Turn signals</span>
+        <span class="n">left_turn_light_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/left_turn_light.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_turn_light_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">left_turn_light_img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="n">right_turn_light_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/right_turn_light.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_turn_light_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">right_turn_light_img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="c1"># Shifts</span>
+        <span class="n">shifts_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_N_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="n">shifts_1_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_1_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_1_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_1_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="n">shifts_2_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_2_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_2_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_2_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="n">shifts_3_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_3_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_3_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_3_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="n">shifts_4_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_4_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_4_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_4_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="n">shifts_5_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/Shifts_5_motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts_5_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">shifts_5_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+
+        <span class="c1"># Motorcycle</span>
+        <span class="n">motorcycle_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/motorcycle.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">motorcycle_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">motorcycle_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.20</span><span class="p">)</span>
+
+        <span class="c1"># Helmet</span>
+        <span class="n">helmet_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/helmet_ok.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">helmet_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="n">helmet_icon_no</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/helmet_loose.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon_no</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">helmet_icon_no</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="c1"># On/Off</span>
+        <span class="n">off_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/turn_off.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">off_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">off_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.23</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.23</span><span class="p">)</span>
+        <span class="n">on_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/imgs/turn_on.png&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">on_icon</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.23</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.23</span><span class="p">)</span>
+
+        <span class="c1"># Init counters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Init objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_next</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_next</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_act</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_next</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="Dashboard.add_transparent_image"><a class="viewcode-back" href="../../../../api/moto_circulacion/dashboard.html#Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard.Dashboard.add_transparent_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_transparent_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">foreground</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to add transparent image to background image</span>
+<span class="sd">            </span>
+<span class="sd">            :param background: background image</span>
+<span class="sd">            :type background: numpy.ndarray</span>
+
+<span class="sd">            :param foreground: foreground image (transparent)</span>
+<span class="sd">            :type foreground: numpy.ndarray</span>
+
+<span class="sd">            :param x_offset: x offset of foreground image</span>
+<span class="sd">            :type x_offset: int</span>
+
+<span class="sd">            :param y_offset: y offset of foreground image</span>
+<span class="sd">            :type y_offset: int</span>
+
+<span class="sd">            :return: background image with foreground image</span>
+<span class="sd">            :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bg_h</span><span class="p">,</span> <span class="n">bg_w</span><span class="p">,</span> <span class="n">bg_channels</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">fg_h</span><span class="p">,</span> <span class="n">fg_w</span><span class="p">,</span> <span class="n">fg_channels</span> <span class="o">=</span> <span class="n">foreground</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">assert</span> <span class="n">bg_channels</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;background image should have exactly 3 channels (RGB). found:</span><span class="si">{</span><span class="n">bg_channels</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">fg_channels</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;foreground image should have exactly 4 channels (RGBA). found:</span><span class="si">{</span><span class="n">fg_channels</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># center by default</span>
+        <span class="k">if</span> <span class="n">x_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">x_offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">bg_w</span> <span class="o">-</span> <span class="n">fg_w</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">y_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">y_offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">bg_h</span> <span class="o">-</span> <span class="n">fg_h</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fg_w</span><span class="p">,</span> <span class="n">bg_w</span><span class="p">,</span> <span class="n">fg_w</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">bg_w</span> <span class="o">-</span> <span class="n">x_offset</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fg_h</span><span class="p">,</span> <span class="n">bg_h</span><span class="p">,</span> <span class="n">fg_h</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">bg_h</span> <span class="o">-</span> <span class="n">y_offset</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span>
+
+        <span class="c1"># clip foreground and background images to the overlapping regions</span>
+        <span class="n">bg_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">)</span>
+        <span class="n">bg_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">)</span>
+        <span class="n">fg_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_offset</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">fg_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_offset</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">foreground</span> <span class="o">=</span> <span class="n">foreground</span><span class="p">[</span><span class="n">fg_y</span><span class="p">:</span><span class="n">fg_y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">fg_x</span><span class="p">:</span><span class="n">fg_x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+        <span class="n">background_subsection</span> <span class="o">=</span> <span class="n">background</span><span class="p">[</span><span class="n">bg_y</span><span class="p">:</span><span class="n">bg_y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">bg_x</span><span class="p">:</span><span class="n">bg_x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+
+        <span class="c1"># separate alpha and color channels from the foreground image</span>
+        <span class="n">foreground_colors</span> <span class="o">=</span> <span class="n">foreground</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">alpha_channel</span> <span class="o">=</span> <span class="n">foreground</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mi">255</span>  <span class="c1"># 0-255 =&gt; 0.0-1.0</span>
+
+        <span class="c1"># construct an alpha_mask that matches the image shape</span>
+        <span class="n">alpha_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">alpha_channel</span><span class="p">,</span> <span class="n">alpha_channel</span><span class="p">,</span> <span class="n">alpha_channel</span><span class="p">))</span>
+
+        <span class="c1"># combine the background with the overlay image weighted by alpha</span>
+        <span class="n">composite</span> <span class="o">=</span> <span class="n">background_subsection</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha_mask</span><span class="p">)</span> <span class="o">+</span> <span class="n">foreground_colors</span> <span class="o">*</span> <span class="n">alpha_mask</span>
+
+        <span class="c1"># overwrite the section of the background image that has been updated</span>
+        <span class="n">background</span><span class="p">[</span><span class="n">bg_y</span><span class="p">:</span><span class="n">bg_y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">bg_x</span><span class="p">:</span><span class="n">bg_x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">composite</span>
+
+        <span class="k">return</span> <span class="n">background</span></div>
+
+<div class="viewcode-block" id="Dashboard.vis_data"><a class="viewcode-back" href="../../../../api/moto_circulacion/dashboard.html#Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard.Dashboard.vis_data">[docs]</a>    <span class="k">def</span> <span class="nf">vis_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">time_frame</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to visualize data on frame</span>
+
+<span class="sd">            :param frame: frame to visualize data on</span>
+<span class="sd">            :type frame: numpy.ndarray</span>
+
+<span class="sd">            :param time_frame: time of frame</span>
+<span class="sd">            :type time_frame: str</span>
+
+<span class="sd">            :return: frame with dashboard data</span>
+<span class="sd">            :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get GPS data</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span><span class="o">+</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_act</span>  <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_act</span> <span class="o">&lt;</span> <span class="n">time_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_next</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_act</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Get dashboard data</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span><span class="o">+</span><span class="mi">2</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span>  <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span> <span class="o">&lt;</span> <span class="n">time_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Get helmet data</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span><span class="o">+</span><span class="mi">2</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_act</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_act</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_act</span> <span class="o">&lt;</span> <span class="n">time_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_next</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_act</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Get rpms data</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span><span class="o">+</span><span class="mi">2</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">data_rpms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_act</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_act</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span>   <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_act</span> <span class="o">&lt;</span> <span class="n">time_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_next</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_rpms_act</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+        <span class="c1"># Put turn lights</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;left_signal_light&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_turn_light_img</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;right_signal_light&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_turn_light_img</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+
+        <span class="c1"># Put gear shifts pedals</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;gear_5&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_5_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;gear_4&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_4_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;gear_3&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_3_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;gear_2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_2_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;gear_1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_1_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shifts_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1770</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+        <span class="c1"># Put motorcycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">motorcycle_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1680</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">450</span><span class="p">)</span>
+
+        <span class="c1"># Put breaks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;pedal_brake&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">1840</span><span class="p">,</span> <span class="mi">705</span><span class="p">),</span> <span class="p">(</span><span class="mi">1864</span><span class="p">,</span> <span class="mi">735</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;lever_brake&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">1850</span><span class="p">,</span> <span class="mi">545</span><span class="p">),</span> <span class="p">(</span><span class="mi">1914</span><span class="p">,</span> <span class="mi">565</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Put footpegs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;footpeg_right&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">1852</span><span class="p">,</span> <span class="mi">740</span><span class="p">),</span> <span class="p">(</span><span class="mi">1875</span><span class="p">,</span> <span class="mi">753</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;footpeg_left&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">1720</span><span class="p">,</span> <span class="mi">740</span><span class="p">),</span> <span class="p">(</span><span class="mi">1750</span><span class="p">,</span> <span class="mi">753</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Put side stand</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;side_stand&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">1701</span><span class="p">,</span> <span class="mi">720</span><span class="p">),</span> <span class="p">(</span><span class="mi">1746</span><span class="p">,</span> <span class="mi">728</span><span class="p">),</span> <span class="p">(</span><span class="mi">219</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Put helmet</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_act</span><span class="p">[</span><span class="s1">&#39;fastened&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1550</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon_no</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1550</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+        <span class="c1"># Put on/off icon</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_rpms_act</span><span class="p">[</span><span class="s1">&#39;rpm&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1400</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">off_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1400</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+        <span class="c1"># Write LAT and LONG of GPS</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">380</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">380</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;GPS&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">Latitude_str</span> <span class="o">=</span> <span class="s2">&quot;LAT: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Lat_deg&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Lat_min&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Lat_dir&#39;</span><span class="p">])</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">Latitude_str</span> <span class="p">,</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+        <span class="n">Longitude_str</span> <span class="o">=</span> <span class="s2">&quot;LONG: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Long_deg&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Long_min&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Long_dir&#39;</span><span class="p">])</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">Longitude_str</span> <span class="p">,</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+        <span class="c1"># Put speedometer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">speedometer_img</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1700</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="c1"># Write speed to frame</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps_act</span><span class="p">[</span><span class="s1">&#39;Speed&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.852</span> <span class="c1"># Convert to km/h</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;Speed:&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="mi">1760</span><span class="p">,</span> <span class="mi">70</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="mi">1765</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot; km/h&quot;</span>    <span class="p">,</span> <span class="p">(</span><span class="mi">1755</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Write times</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;VID:  &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time_frame</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">850</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;GPS: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_gps_act</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">900</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;DAS: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">950</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># frame = cv2.putText(frame, &quot;HEL: &quot; + str(self.timedata_helmet_act) , (100, 1000), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)</span>
+        <span class="c1"># frame = cv2.putText(frame, &quot;RPM: &quot; + str(self.timedata_rpms_act) , (100, 1050), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)</span>
+
+        <span class="k">return</span> <span class="n">frame</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

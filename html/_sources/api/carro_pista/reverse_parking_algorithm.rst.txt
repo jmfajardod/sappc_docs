@@ -1,0 +1,61 @@
+Reverse Parking Algorithm
+=========================
+
+The reverse parking algorithm uses the **Aruco markers** to check if the vehicle is in the parking spot or not, and if the vehicle is stopped or not. To check if the vehicle is stopped a Savitzky-Golay filter is used to estimate the speed of the vehicle from the position of markers.
+
+.. note:: The Savitzky-Golay filter used to obtain the velocity is not as accurate as a GPS reading and **it is preferred to use the GPS readings when available to know if the vehicle is stopped or not**.
+
+The parameters related to the Aruco markers are the shown in the following excerpt of file:
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/reverse_parking/reverse_parking_algorithms.py
+    :language: python
+    :lines: 13-17
+    :lineno-start: 13
+    :linenos:
+
+.. note:: If the size or ID of the Aruco markers are changed, the parameters must be updated.
+
+The parameters related to **reverse parking spots** are the shown in the following excerpt of file. The **AREA_PARKING** is the area of the parking spot, and the **AREA_ALLOWED** is the area that the markers must be inside to be considered in the parking spot.
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/reverse_parking/reverse_parking_algorithms.py
+    :language: python
+    :lines: 19-58
+    :lineno-start: 19
+    :linenos:
+
+.. note:: If the  **Reverse parking spots** or the **camera position** are changed, the **parameters must be updated**.
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame.
+- In area: Variable that indicates if the vehicle is in the parking spot or not. 1 if the vehicle is in the parking spot, 0 otherwise.
+- Pos X: X position of the vehicle.
+- Pos Y: Y position of the vehicle.
+- Ori Yaw: Yaw orientation of the vehicle.
+- Vel X: X velocity of the vehicle.
+- Vel Y: Y velocity of the vehicle.
+- Abs Vel: Absolute velocity of the vehicle.
+- Stopped in area: Variable that indicates if the vehicle is stopped in the parking spot or not. **True** if the vehicle is stopped in the parking spot, **False** otherwise.
+
+Class docs
+---------------------
+
+.. autoclass:: Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Car_algorithms.reverse_parking.reverse_parking_algorithms.rotationMatrixToEulerAngles
+
+.. autofunction:: Car_algorithms.reverse_parking.reverse_parking_algorithms.sg_filter
+
+.. autofunction:: Car_algorithms.reverse_parking.reverse_parking_algorithms.smooth
+
+.. autofunction:: Car_algorithms.reverse_parking.reverse_parking_algorithms.get_Vel

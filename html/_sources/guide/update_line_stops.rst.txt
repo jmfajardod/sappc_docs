@@ -1,0 +1,4 @@
+Update lines for Line stop maneuvers
+====================================
+
+If the line for line stop maneuver is changed or the camera is moved, the line for line stop maneuver must be updated. 

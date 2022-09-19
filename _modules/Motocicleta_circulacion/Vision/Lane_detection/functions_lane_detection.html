@@ -116,9 +116,12 @@
 
 <span class="sd">        :param distance_threshold: Distance (in pixels) threshold to detect the lane change. Default: 100</span>
 <span class="sd">        :type distance_threshold: int</span>
+
+<span class="sd">        :param distance_from_center: Distance (in pixels) from the center of the image to detect a lane. Default: 100</span>
+<span class="sd">        :type distance_from_center: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">det_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">maintain_lane</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">distance_threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">det_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">maintain_lane</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">distance_threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distance_from_center</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 
         <span class="n">current_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
 
@@ -166,6 +169,9 @@
 
         <span class="c1"># Define the distance threshold to detect the lane change</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span> <span class="o">=</span> <span class="n">distance_threshold</span>
+
+        <span class="c1"># Define the distance from the center of the image to detect a lane</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_from_center</span> <span class="o">=</span> <span class="n">distance_from_center</span>
 
         <span class="c1"># Define the counter to maintain the lane detection message in video</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_change_lane</span> <span class="o">=</span> <span class="mi">0</span>
@@ -271,7 +277,7 @@
 <span class="sd">            :rtype: list, list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">threshold_px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span> 
+        <span class="n">threshold_px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_from_center</span>
 
         <span class="n">projected_lanes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">crossing_points</span> <span class="o">=</span>  <span class="p">[]</span>
@@ -391,7 +397,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="c1"># If the sign of the lane has changed and has a distance of more than 100 pixels</span>
                 <span class="c1"># a lane change has occurred</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span><span class="o">-</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span><span class="o">-</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">changed_lane</span> <span class="o">=</span> <span class="kc">True</span>
@@ -476,7 +482,6 @@
         <span class="n">frame_saved</span><span class="p">[</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">img_vis</span>
 
         <span class="k">return</span> <span class="n">frame_saved</span></div></div>
-
 </pre></div>
 
            </div>

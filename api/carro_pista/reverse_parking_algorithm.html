@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reverse Parking Algorithm &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Stop Lines Algorithm" href="stop_lines_algorithm.html" />
+    <link rel="prev" title="Ramp Algorithm" href="ramp_algorithm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../carro_circulacion/index.html">Carro Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Carro pista</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test">How to run the Car’s track test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test-data-acquisition-pipeline">How to run the Car’s track test data acquisition pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#description-of-the-car-s-track-test-algorithms">Description of the Car’s track test algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#parameters-to-change">Parameters to change</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#algorithms-used">Algorithms used</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="turn_algorithm.html">Turn Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="inline_parking_algorithm.html">Inline parking Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ramp_algorithm.html">Ramp Algorithm</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Reverse Parking Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stop_lines_algorithm.html">Stop Lines Algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API</a> &raquo;</li>
+          <li><a href="index.html">Carro pista</a> &raquo;</li>
+      <li>Reverse Parking Algorithm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/carro_pista/reverse_parking_algorithm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reverse-parking-algorithm">
+<h1>Reverse Parking Algorithm<a class="headerlink" href="#reverse-parking-algorithm" title="Permalink to this heading"></a></h1>
+<p>The reverse parking algorithm uses the <strong>Aruco markers</strong> to check if the vehicle is in the parking spot or not, and if the vehicle is stopped or not. To check if the vehicle is stopped a Savitzky-Golay filter is used to estimate the speed of the vehicle from the position of markers.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Savitzky-Golay filter used to obtain the velocity is not as accurate as a GPS reading and <strong>it is preferred to use the GPS readings when available to know if the vehicle is stopped or not</strong>.</p>
+</div>
+<p>The parameters related to the Aruco markers are the shown in the following excerpt of file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">13</span><span class="c1"># Parameters of the Aruco markers located on the vehicle</span>
+<span class="linenos">14</span><span class="n">MARKER_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span>
+<span class="linenos">15</span><span class="n">MARKER_ID_BACK</span>   <span class="o">=</span> <span class="mi">16</span>
+<span class="linenos">16</span><span class="n">MARKER_ID_MIDDLE</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="linenos">17</span><span class="n">MARKER_ID_FRONT</span>  <span class="o">=</span> <span class="mi">14</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the size or ID of the Aruco markers are changed, the parameters must be updated.</p>
+</div>
+<p>The parameters related to <strong>reverse parking spots</strong> are the shown in the following excerpt of file. The <strong>AREA_PARKING</strong> is the area of the parking spot, and the <strong>AREA_ALLOWED</strong> is the area that the markers must be inside to be considered in the parking spot.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">19</span><span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="linenos">20</span><span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="linenos">21</span><span class="c1"># Areas to check if the vehicle is in the parking space</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="n">AREA_PARKING</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">303</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">117</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 1</span>
+<span class="linenos">24</span>                         <span class="p">[</span><span class="mi">331</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">110</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">25</span>                         <span class="p">[</span><span class="mi">415</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">101</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">26</span>                         <span class="p">[</span><span class="mi">507</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">96</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">27</span>                         <span class="p">[</span><span class="mi">574</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">97</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">28</span>                         <span class="p">[</span><span class="mi">611</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">96</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 2</span>
+<span class="linenos">29</span>                         <span class="p">[</span><span class="mi">623</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">169</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">30</span>                         <span class="p">[</span><span class="mi">631</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">231</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">31</span>                         <span class="p">[</span><span class="mi">635</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">305</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">32</span>                         <span class="p">[</span><span class="mi">636</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">371</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">33</span>                         <span class="p">[</span><span class="mi">633</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">442</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">34</span>                         <span class="p">[</span><span class="mi">629</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">504</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 3</span>
+<span class="linenos">35</span>                         <span class="p">[</span><span class="mi">572</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">511</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">36</span>                         <span class="p">[</span><span class="mi">514</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">518</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">37</span>                         <span class="p">[</span><span class="mi">451</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">520</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">38</span>                         <span class="p">[</span><span class="mi">379</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">519</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">39</span>                         <span class="p">[</span><span class="mi">320</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">516</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 4 </span>
+<span class="linenos">40</span>                         <span class="p">[</span><span class="mi">312</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">440</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">41</span>                         <span class="p">[</span><span class="mi">302</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">364</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">42</span>                         <span class="p">[</span><span class="mi">299</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">294</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">43</span>                         <span class="p">[</span><span class="mi">297</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">234</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">44</span>                         <span class="p">[</span><span class="mi">299</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">167</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+<span class="linenos">45</span>                         <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span><span class="n">AREA_ALLOWED_FRONT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">[</span><span class="mi">334</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">25</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 1</span>
+<span class="linenos">48</span>                                <span class="p">[</span><span class="mi">564</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">21</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 2</span>
+<span class="linenos">49</span>                                <span class="p">[</span><span class="mi">575</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">414</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 3</span>
+<span class="linenos">50</span>                                <span class="p">[</span><span class="mi">344</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">423</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 4 </span>
+<span class="linenos">51</span>                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span><span class="n">AREA_ALLOWED_BACK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="p">[</span><span class="mi">361</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">232</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 1</span>
+<span class="linenos">54</span>                                <span class="p">[</span><span class="mi">570</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">221</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 2</span>
+<span class="linenos">55</span>                                <span class="p">[</span><span class="mi">578</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">511</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 3</span>
+<span class="linenos">56</span>                                <span class="p">[</span><span class="mi">364</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">518</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="c1"># 4 </span>
+<span class="linenos">57</span>                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="linenos">58</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the  <strong>Reverse parking spots</strong> or the <strong>camera position</strong> are changed, the <strong>parameters must be updated</strong>.</p>
+</div>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: timestamp of the frame.</p></li>
+<li><p>In area: Variable that indicates if the vehicle is in the parking spot or not. 1 if the vehicle is in the parking spot, 0 otherwise.</p></li>
+<li><p>Pos X: X position of the vehicle.</p></li>
+<li><p>Pos Y: Y position of the vehicle.</p></li>
+<li><p>Ori Yaw: Yaw orientation of the vehicle.</p></li>
+<li><p>Vel X: X velocity of the vehicle.</p></li>
+<li><p>Vel Y: Y velocity of the vehicle.</p></li>
+<li><p>Abs Vel: Absolute velocity of the vehicle.</p></li>
+<li><p>Stopped in area: Variable that indicates if the vehicle is stopped in the parking spot or not. <strong>True</strong> if the vehicle is stopped in the parking spot, <strong>False</strong> otherwise.</p></li>
+</ul>
+</section>
+<section id="class-docs">
+<h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Car_algorithms.reverse_parking.reverse_parking_algorithms.</span></span><span class="sig-name descname"><span class="pre">ReverseParkingChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_stopped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#ReverseParkingChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Class to check if the vehicle is in the reverse parking area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_csv_path</strong> (<em>str</em>) – Path to the video csv file</p></li>
+<li><p><strong>video_path</strong> (<em>str</em>) – Path to the video file</p></li>
+<li><p><strong>camera_matrix</strong> (<em>numpy.array</em>) – Camera matrix</p></li>
+<li><p><strong>dist_coeffs</strong> (<em>numpy.array</em>) – Distortion coefficients</p></li>
+<li><p><strong>vel_stopped</strong> (<em>float</em>) – Velocity threshold to consider the vehicle stopped</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the image with the parking area. Default is False</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker.process_video">
+<span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#ReverseParkingChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.ReverseParkingChecker.process_video" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate the estimate the position and velocity of the vehicle in the ramp maneuver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="functions-docs">
+<h2>Functions docs<a class="headerlink" href="#functions-docs" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.rotationMatrixToEulerAngles">
+<span class="sig-prename descclassname"><span class="pre">Car_algorithms.reverse_parking.reverse_parking_algorithms.</span></span><span class="sig-name descname"><span class="pre">rotationMatrixToEulerAngles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#rotationMatrixToEulerAngles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.rotationMatrixToEulerAngles" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate the euler angles from a rotation matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>R</strong> (<em>numpy.array</em>) – Rotation matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Euler angles in radians</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.sg_filter">
+<span class="sig-prename descclassname"><span class="pre">Car_algorithms.reverse_parking.reverse_parking_algorithms.</span></span><span class="sig-name descname"><span class="pre">sg_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#sg_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.sg_filter" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate the Savitzky-Golay filter coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Order of the smoothing polynomial</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Order of derivative</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filter coefficients</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.smooth">
+<span class="sig-prename descclassname"><span class="pre">Car_algorithms.reverse_parking.reverse_parking_algorithms.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.smooth" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate a derivative using the Savitzky-Golay filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>y</strong> (<em>numpy.array</em>) – Vector of sample values</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Number of samples to use for smoothing. Default is 5.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the smoothing polynomial. Default is 2.</p></li>
+<li><p><strong>deriv</strong> (<em>int</em>) – Order of the derivative. Default is 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered vector of sample values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Car_algorithms.reverse_parking.reverse_parking_algorithms.get_Vel">
+<span class="sig-prename descclassname"><span class="pre">Car_algorithms.reverse_parking.reverse_parking_algorithms.</span></span><span class="sig-name descname"><span class="pre">get_Vel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/reverse_parking/reverse_parking_algorithms.html#get_Vel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.reverse_parking.reverse_parking_algorithms.get_Vel" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate the velocity of the vehicle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>pos</strong> (<em>numpy.array</em>) – Vector of sample values</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Number of samples to use for smoothing.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the smoothing polynomial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated velocity from the position vector and the time vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ramp_algorithm.html" class="btn btn-neutral float-left" title="Ramp Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stop_lines_algorithm.html" class="btn btn-neutral float-right" title="Stop Lines Algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

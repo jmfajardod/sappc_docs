@@ -1,0 +1,458 @@
+.. _install:
+
+Installation
+============
+
+**SAPPC** have been only tested in Ubuntu 20.04, althought it may work in other OS its performance have not been tested in other OS.
+
+
+Download Ubuntu
+----------------
+
+1. Download ubuntu 20.04 from the link (Link viewed 13 Sept 2022)
+
+    https://releases.ubuntu.com/20.04.5/
+
+2. Create a bootable USB following the instructions found in the next link:
+
+
+    https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview
+
+3. Install Ubuntu 20.04 in the computer with the following options:
+
+
+    .. image:: ../_static/img/Ubuntu_installation_options.jpeg
+        :width: 100%
+        :align: center
+        :alt: Ubuntu installation options
+
+4. After installation of the OS, reboot the computer, open a terminal, and execute the following commands:
+
+    .. code-block:: bash
+
+        sudo apt update
+        sudo apt upgrade
+    
+5. Reboot the computer.
+
+
+Remove previous installations of CUDA and Nvidia Driver
+-------------------------------------------------------
+
+1. Search the "Software-updater" application using the search bar in the menu "Show applications" (Icon in grey):
+
+    .. image:: ../_static/img/Software_updater.png
+        :width: 100%
+        :align: center
+        :alt: Software-updater
+
+2. Click on settings:
+
+    .. image:: ../_static/img/Soft_updater_setting.png
+        :width: 100%
+        :align: center
+        :alt: Software-updater settings
+
+3. Click on the "Additional Drivers" option in the top bar:
+
+    .. image:: ../_static/img/Additional_drivers_updater.png
+        :width: 100%
+        :align: center
+        :alt: Additional drivers
+
+4. Check that the option "X.Org X Server" is checked. If not the click on the "X.Org X Server" option and click "Apply Changes".
+5. Reboot the computer.
+6. Delete all previous files of Nvidia Drivers using the commands:
+
+    .. code-block:: bash
+
+        sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*" 
+        sudo apt-get --purge remove "*nvidia*"
+        sudo rm -rf /usr/local/cuda*
+        sudo /usr/bin/nvidia-uninstall
+        sudo apt-get --purge remove "*nvidia*"
+        sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*" 
+
+7. Reboot the computer.
+8. Check that the "X.Org X Server" option in cliked in the "Additional Drivers" tab of the Software-updater application.
+
+
+Installation of CUDA Toolkit and Nvidia Driver
+----------------------------------------------
+
+1. Install the Nvidia CUDA Toolkit version 11.7 following the instructions in:
+
+    https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_local
+
+    Or using the following commands:
+
+    .. code-block:: bash
+
+        cd ~/Downloads
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+        sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        wget https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+        sudo dpkg -i cuda-repo-ubuntu2004-11-7-local_11.7.0-515.43.04-1_amd64.deb
+        sudo cp /var/cuda-repo-ubuntu2004-11-7-local/cuda-*-keyring.gpg /usr/share/keyrings/
+        sudo apt-get update
+        sudo apt-get -y install cuda
+
+2. Reboot the computer.
+3. Add the lines pointing to the Cuda Toolkit to the file "~/.bashrc". To open the file use the command:
+
+    .. code-block:: bash
+
+        gedit ~/.bashrc
+
+    And add the following lines at the end of the file:
+
+    .. code-block:: bash
+
+        # Nvidia path
+        export PATH=/usr/local/cuda/bin:$PATH
+
+
+    .. image:: ../_static/img/Bashrc_Cuda11_7.png
+        :width: 100%
+        :align: center
+        :alt: Bashrc Cuda11.7
+
+4. Close the terminal and open a new one. In the new terminal check the version of the Nvidia Driver and CUDA toolkit using the following commands:
+
+    .. code-block:: bash
+
+        nvidia-smi
+        nvcc --version
+
+    .. image:: ../_static/img/Nvidia_smi_Cuda_11_7.png
+        :width: 100%
+        :align: center
+        :alt: Nvidia-smi
+
+5. Download the Nvidia CUDA Toolkit version 11.4.2 (runfile) using the command
+
+    .. code-block:: bash
+
+        cd ~/Downloads
+        wget https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda_11.4.2_470.57.02_linux.run
+
+    Or use the command found in the next link:
+
+        https://developer.nvidia.com/cuda-11-4-2-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=runfile_local
+
+6. Install the Nvidia CUDA Toolkit version 11.4.2 using the command:
+
+    .. code-block:: bash
+
+        sudo sh cuda_11.4.2_470.57.02_linux.run --silent --toolkit --toolkitpath=/usr/local/cuda-11.4
+
+7. Create the symbolic links that point to the Nvidia CUDA Toolkit version 11.4.2 using the command
+
+    .. code-block:: bash
+
+        sudo ln -s /usr/local/cuda-11.4/ /usr/local/cuda
+        sudo ln -s /usr/local/cuda-11.4/ /usr/local/cuda-11
+
+    .. note::  If the files (symbolic links) already exist, then delete them using the commands:
+
+        .. code-block:: bash
+
+            sudo rm /usr/local/cuda
+            sudo rm /usr/local/cuda-11
+
+8. Add the following lines to the end of the file "~/.bashrc":
+
+    .. code-block:: bash
+
+        # Nvidia path
+        export CUDA_HOME=/usr/local/cuda-11.4
+        export PATH=/usr/local/cuda-11.4/bin:$PATH
+        export LD_LIBRARY_PATH=/usr/local/cuda-11.4/lib64:/usr/local/cuda-11.4/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+
+    .. note:: Delete the line "export PATH=/usr/local/cuda/bin:$PATH" created when installing the Cuda Toolkit 11.7.
+
+    .. image:: ../_static/img/Bashrc_Cuda11_4.png
+        :width: 100%
+        :align: center
+        :alt: Bashrc Cuda11.4
+
+9. Reboot the computer.
+10. Check that the CUDA Toolkit being used is the 11.4 using the command:
+
+    .. code-block:: bash
+
+        nvcc --version
+
+    .. image:: ../_static/img/NVCC_Cuda_11_4.png
+        :width: 100%
+        :align: center
+        :alt: Nvcc Cuda11.4
+
+
+Install OpenCV
+--------------
+
+1. Install the build tools and dependencies using the following commands:
+
+    .. code-block:: bash
+
+        sudo apt install build-essential cmake git pkg-config libgtk-3-dev \
+        libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
+        libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev \
+        gfortran openexr libatlas-base-dev python3-dev python3-numpy \
+        libtbb2 libtbb-dev libdc1394-22-dev libopenexr-dev \
+        libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev
+
+        sudo apt install libeigen3-dev 
+
+        sudo apt install cmake-curses-gui
+        sudo apt install cmake-qt-gui
+
+2. Clone the OpenCV and OpenCV contrib repositories using the commands:
+
+    .. code-block:: bash
+
+        mkdir ~/opencv_build && cd ~/opencv_build
+        git clone https://github.com/opencv/opencv.git
+        git clone https://github.com/opencv/opencv_contrib.git
+
+3. Once done, create a temporary build directory and navigate to it:
+
+
+    .. code-block:: bash
+
+        cd ~/opencv_build/opencv
+        mkdir -p build && cd build
+
+4. Set up the OpenCV build with CMake using the following command:
+
+    .. code-block:: bash
+
+        cmake -D CMAKE_BUILD_TYPE=RELEASE \
+        -D CMAKE_INSTALL_PREFIX=/usr/local \
+        -D INSTALL_C_EXAMPLES=ON \
+        -D INSTALL_PYTHON_EXAMPLES=ON \
+        -D OPENCV_GENERATE_PKGCONFIG=ON \
+        -D OPENCV_EXTRA_MODULES_PATH=~/opencv_build/opencv_contrib/modules \
+        -D BUILD_EXAMPLES=ON ..
+        -D OPENCV_GENERATE_PKGCONFIG=YES
+
+5. Compile the library with the command:
+
+    .. code-block:: bash
+
+        make -j8
+
+    .. note:: The number of cores used in the compilation can be changed by replacing the number 8 with the number of cores of the computer.
+
+6. Install the library using the command:
+
+    .. code-block:: bash
+
+        sudo make install
+        sudo ldconfig
+
+7. Add the path of the installation to the OS path in the ~/.bashrc. To open the file use the following command:
+
+    .. code-block:: bash
+
+        gedit ~/.bashrc
+
+    At the end of the file add the following lines:
+
+    .. code-block:: bash
+
+        # Python Site-packages
+        export PYTHONPATH=/usr/local/lib/python3.8/site-packages/:$PYTHON_PATH
+        export PATH=/usr/local/lib/python3.8/site-packages/:$PATH
+
+        # Link to libraries
+        export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH
+
+    .. image:: ../_static/img/Bashrc_Opencv.png
+        :width: 100%
+        :align: center
+        :alt: Bashrc Opencv
+
+8. Reboot the computer.
+9. In order to verify, type the following commands.
+
+    .. code-block:: bash
+
+        python3 -c 'import cv2; print(cv2.__version__)'
+
+    .. image:: ../_static/img/Opencv_Version.png
+        :width: 100%
+        :align: center
+        :alt: Opencv Version
+
+Install PyTorch and TorchVision
+-------------------------------
+
+1. Download Pytorch version 1.10.0 and TorchVision version 0.11.1 using the commands:
+
+    .. code-block:: bash
+
+        cd ~
+        git clone -b 'v1.10.0' --single-branch --depth 1 https://github.com/pytorch/pytorch
+        git clone -b 'v0.11.1' --single-branch --depth 1 https://github.com/pytorch/vision
+
+2. Before installing it is needed to give permissions to the installation folder, use the following command, replacing "$USER" with the user in the computer:
+
+    .. code-block:: bash
+
+        sudo chown -R $USER /usr/local/lib/python3.8/dist-packages/
+        sudo chown -R $USER /usr/local/bin/
+
+    .. note:: Don't forget to replace the $USER with the user in the computer.
+
+3. Install Pytorch using the commands:
+
+    .. code-block:: bash
+
+        cd ~/pytorch
+        sudo apt install python3-pip
+        python3 -m pip install setuptools
+        python3 -m pip install typing_extensions
+
+        python3 setup.py install
+
+4. Install TorchVision using the commands:
+
+    .. code-block:: bash
+
+        cd ~/vision
+        python3 setup.py install
+
+5. Reboot the computer.
+6. In order to verify, type the following commands.
+
+    .. code-block:: bash
+
+        python3 -c 'import torch; print(torch.__version__)'
+        python3 -c 'import torchvision; print(torchvision.__version__)'
+
+    .. image:: ../_static/img/Pytorch_Version.png
+        :width: 100%
+        :align: center
+        :alt: Pytorch Version
+
+
+Clone ANSV repository
+---------------------
+
+1. Clone the repository using the command:
+
+    .. code-block:: bash
+
+        cd ~
+        git clone https://github.com/jmfajardod/ansv_componente_3.git -b develop --depth 1
+
+
+Compile C++ programs for data acquisition
+-----------------------------------------
+
+1. To compile the programs written in C++ for the cameras data acquisition use the following commands:
+
+    .. code-block:: bash
+
+        cd ~/ansv_componente_3/Pista/Vision/Data_acquisition/
+        mkdir build && cd build
+        cmake ..
+        make
+
+Install conditional-lane detection repo
+---------------------------------------
+
+1. Clone the Conditional-Lane-Detection repo using the command:
+
+    .. code-block:: bash
+
+        cd ~
+        git clone https://github.com/jmfajardod/conditional-lane-detection.git
+
+2. Install the requirements using the command:
+
+    .. code-block:: bash
+
+        cd ~/conditional-lane-detection
+        python3 -m pip install -r requirements/build.txt
+
+3. Compile the repo using the command:
+
+    .. code-block:: bash
+
+        python3 setup.py develop
+
+4. Copy (**Merge and Replace**) the **mmdet folder** from the *conditional-lane-detection* repo to the *ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Lane_detection/* folder and the *ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Lane_detection/* folder.
+
+Download trained models
+-----------------------
+
+Lane detection Model
+~~~~~~~~~~~~~~~~~~~~
+
+1. Download the curvelanes_medium.pth model using the following link:
+
+    https://virutalbuy-public.oss-cn-hangzhou.aliyuncs.com/share/CondLaneNet/models/curvelanes/curvelanes_medium.pth
+
+2. Put the download model in the **ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Lane_detection/models** folder and the **ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Lane_detection/models** folder.
+
+    .. note:: The models folder needs to be created inside the Lane_detection folder.
+
+Traffic Light Detection Model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Download the "best_model.pth" file from Google Drive:
+
+    https://drive.google.com/drive/folders/1qzZtDXFJlMRljpnlxcRnbNjWouAJxR5h?usp=sharing
+
+2. Then paste the model in the **ansv_componente_3/Vehiculos/Automovil_circulacion/Vision/Traffic_light_recognition/** folder and the **ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Traffic_light_recognition/** folder.
+
+Optical Flow Model
+~~~~~~~~~~~~~~~~~~
+
+1. Download the RAFT models from the google drive of the authors using the following link, the file that is needed is called "raft-small.pth".
+
+    https://drive.google.com/drive/folders/1sWDsfuZ3Up38EUQt7-JDTT1HcGHuJgvT
+
+2. Then paste the download model in the folder **ansv_componente_3/Pista/Vision/Motorcycle_algorithms/RAFT/models/**.
+
+    .. note:: The models folder needs to be created inside the RAFT folder.
+
+Install computer vision requeriments
+--------------------------------------
+
+1. Install the requeriments using the following commands:
+
+    .. code-block:: bash
+
+        cd ~/ansv_componente_3/docs/
+        python3 -m pip install -r requirements_vision.txt
+
+Compile documentation
+---------------------
+
+1. Install the requeriments to compile the documentation using the following command:
+
+    .. code-block:: bash
+
+        cd ~/ansv_componente_3/docs/
+        python3 -m pip install -r requirements_docs.txt
+
+2. Compile the documentation using the following command:
+
+    .. code-block:: bash
+
+        cd ~/ansv_componente_3/docs/
+        make html
+
+
+    .. note:: If you want to build each time a file is changed:
+
+        .. code-block:: bash
+
+            cd ~/ansv_componente_3/docs/
+            sphinx-autobuild . _build/html
+
+

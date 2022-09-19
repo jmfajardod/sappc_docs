@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -64,6 +67,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
 </ul>
 </li>
 </ul>
@@ -104,6 +108,20 @@
 </div>
 <p>The model is trained to detect the following classes: <strong>Person, Cyclist, Car, Motorcycle, and Heavy Car</strong>.</p>
 <p>The original repository of YoloV5 by Ultralytics can be found in the following link: <a class="reference external" href="https://github.com/ultralytics/yolov5">https://github.com/ultralytics/yolov5</a> .</p>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: Timestamp of the frame.</p></li>
+<li><p>Object upfront: Type of object detected in front of the vehicle. The possible values are: (1) Person, (2) Cyclist, (3) Car, (4) Motorcycle, (5) Heavy Car.</p></li>
+<li><p>Persons: Counter of the number of persons detected in the frame.</p></li>
+<li><p>Cyclists: Counter of the number of cyclists detected in the frame.</p></li>
+<li><p>Cars: Counter of the number of cars detected in the frame.</p></li>
+<li><p>Motorcycles: Counter of the number of motorcycles detected in the frame.</p></li>
+<li><p>Heavy Cars: Counter of the number of heavy cars detected in the frame.</p></li>
+<li><p>Traffic Light: Type of traffic light detected in the frame. <strong>Discard this result and instead use the traffic light recognition algorithm</strong>.</p></li>
+</ul>
+</section>
 <section id="class-docs">
 <h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
 <dl class="py class">

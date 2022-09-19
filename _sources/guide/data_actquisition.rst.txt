@@ -1,0 +1,45 @@
+How to use the data acquisition pipeline
+========================================
+
+The data acquisition pipeline can be used in two ways: to acquire data from the camera and save it to a file, or simply visualize it.
+
+Saving Car's track test data
+----------------------------
+
+To save the car's track data to a file, the following steps must be followed:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./save_camera_threads_car
+
+Saving Motorcycles' track test data
+-----------------------------------
+
+To save the motorcycles' track data to a file, the following steps must be followed:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./save_camera_threads_motorcycle
+
+Save all camera data
+--------------------
+
+In rare cases a user might want to save all the data from all the cameras. This can be done by running the following command:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./save_camera_threads
+
+Only Visualize data
+-------------------
+
+To only visualize the data from the cameras, the following steps must be followed:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./view_camera_threads
+

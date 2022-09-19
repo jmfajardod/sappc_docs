@@ -1,0 +1,136 @@
+Carro pista
+==================
+
+How to run the Car's track test
+----------------------------------------
+
+To run the Car's track test (Carro pista), the following steps must be followed:
+
+1. Open the */ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py* file and edit  **line 29**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+        :language: python
+        :lines: 28-32
+        :lineno-start: 28
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+        
+        cd ~/ansv_componente3/Pista/Vision/Car_algorithms/
+        python3 car_vision_algorithms.py
+
+How to run the Car's track test data acquisition pipeline
+---------------------------------------------------------
+
+The data acquisition pipeline can be used in two ways: to acquire data from the camera and save it to a file, or simply visualize it.
+
+Saving data to a file
+~~~~~~~~~~~~~~~~~~~~~~
+
+To save data to a file, the following steps must be followed:
+
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./save_camera_threads_car
+
+
+Visualizing data
+~~~~~~~~~~~~~~~~~
+
+To visualize data, the following steps must be followed:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./view_camera_threads
+
+
+Description of the Car's track test algorithms
+-------------------------------------------------------
+
+The algorithms used in the Car's track test are based on the detection of the **Aruco markers** located on the vehicle.  The main file of the process is located in */ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py.
+
+First in the *car_vision_algorithms.py* file the camera calibration matrix and distortion coefficients are loaded.  These values are obtained from the calibration process of the camera, which can be done following the instructions in the link: https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+    :language: python
+    :lines: 22-26
+    :lineno-start: 22
+    :linenos:
+
+Then, the test folder is selected and opened to know the date and time of the test.
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+    :language: python
+    :lines: 28-32
+    :lineno-start: 28
+    :linenos:
+
+With the path of the test folder, all the videos used for the Car's track test are loaded:
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+    :language: python
+    :lines: 34-92
+    :lineno-start: 34
+    :linenos:
+
+After the videos are loaded, a thread is created to process each of the files, according to the algorithm needed for that video, e.g., the video from post 6 to 9 need the stop line algorithm. All the threads will be executed simultaneously and will be creating a processed video file as well as a CSV file.
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+    :language: python
+    :lines: 97-147
+    :lineno-start: 97
+    :linenos:
+
+Finally, the application will wait for all the threads to finish and then will stop.
+
+.. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
+    :language: python
+    :lines: 149-160
+    :lineno-start: 149
+    :linenos:
+
+Parameters to change
+--------------------
+
+Aruco markers parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Among the parameters that can be changed in the Car's track test are the ones related to the **Aruco markers**. If the size or ID of the Aruco markers are changed, all the files must be updated with the new values. All the files have a first section in which the aruco markers parameters are defined. An example of this is shown below:
+
+.. code-block:: python
+
+   # Parameters of the Aruco markers located on the vehicle
+   MARKER_SIZE = 0.20
+   MARKER_ID_BACK   = 16
+   MARKER_ID_MIDDLE = 15
+   MARKER_ID_FRONT  = 14
+
+Parking spots or line stops parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The other relevant parameters to change are the ones related to the parking spots or line stops. The guide to change these parameters is located in ???? and ???? depending on the algorithm used. If the parking spots are change then it is necessary to update the files **inline_parking_algorithms** and **reverse_parking_algorithms**. If the line stops are changed then it is necessary to update the file **stop_lines_algorithms**.
+
+
+Velocity threshold
+~~~~~~~~~~~~~~~~~~~~
+
+The velocity threshold is the minimum velocity that the vehicle must have to be considered as moving. This value is used in various algorithms and can be changed in the file **car_vision_algorithms.py**. As of now the value is set to 0.05 m/s.
+
+Algorithms used
+--------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Functions
+
+   turn_algorithm
+   inline_parking_algorithm
+   ramp_algorithm
+   reverse_parking_algorithm
+   stop_lines_algorithm

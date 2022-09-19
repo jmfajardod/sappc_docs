@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../guide/installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="n">path_root</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_root</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;/home/ansv/ansv_componente_3/Vehiculos/Motocicleta_circulacion/Vision/Lane_detection&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">NaN</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">import</span> <span class="nn">mmcv</span>
+<span class="kn">from</span> <span class="nn">mmcv.parallel</span> <span class="kn">import</span> <span class="n">MMDataParallel</span>
+<span class="kn">from</span> <span class="nn">mmcv.runner</span> <span class="kn">import</span> <span class="n">load_checkpoint</span>
+<span class="kn">from</span> <span class="nn">mmdet.models</span> <span class="kn">import</span> <span class="n">build_detector</span>
+<span class="kn">from</span> <span class="nn">mmcv.image.photometric</span> <span class="kn">import</span> <span class="n">imnormalize</span>
+
+<span class="kn">import</span> <span class="nn">albumentations</span> <span class="k">as</span> <span class="nn">A</span>
+<span class="kn">from</span> <span class="nn">albumentations.pytorch.transforms</span> <span class="kn">import</span> <span class="n">ToTensorV2</span>
+
+
+
+<span class="kn">from</span> <span class="nn">tools_mmdet.condlanenet.common</span> <span class="kn">import</span> <span class="n">COLORS</span>
+<span class="kn">from</span> <span class="nn">tools_mmdet.condlanenet.post_process</span> <span class="kn">import</span> <span class="n">CondLanePostProcessor</span>
+
+
+<div class="viewcode-block" id="LaneDetector"><a class="viewcode-back" href="../../../../api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector">[docs]</a><span class="k">class</span> <span class="nc">LaneDetector</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to detect lanes in an image and lane changes in a video. The Lane change is detected when the closest lane to the center of the image changes from being on the left to being on the right or vice versa. To filter out false positives, the lane change is only detected when the lane change has a distance between the closest lane and the center of the image greater than 100 pixels. Also, to filter out false positives, the lane detected is maintained for 5 frames, i.e., the detection could fail for 5 frames and then the lane change is detected again.</span>
+
+<span class="sd">        :param save_path: Path to save the results.</span>
+<span class="sd">        :type save_path: str</span>
+
+<span class="sd">        :param det_threshold: Threshold for heatmap, the higher the more confident the detection but it will discard more lanes. Default: 0.3</span>
+<span class="sd">        :type det_threshold: float</span>
+
+<span class="sd">        :param maintain_lane: Number of frames to maintain the lane detection. Default: 5</span>
+<span class="sd">        :type maintain_lane: int</span>
+
+<span class="sd">        :param distance_threshold: Distance (in pixels) threshold to detect the lane change. Default: 100</span>
+<span class="sd">        :type distance_threshold: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">det_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">maintain_lane</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">distance_threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+
+        <span class="n">current_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+        <span class="c1"># Load model</span>
+        <span class="n">model_path</span> <span class="o">=</span>  <span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/models/curvelanes_medium.pth&quot;</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">mmcv</span><span class="o">.</span><span class="n">Config</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">current_path</span> <span class="o">+</span> <span class="s2">&quot;/configs/condlanenet/curvelanes/curvelanes_medium_test.py&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">build_detector</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">MMDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="c1"># Define pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_bbox</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">]</span>
+        <span class="n">img_norm_cfg</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">75.3</span><span class="p">,</span> <span class="mf">76.6</span><span class="p">,</span> <span class="mf">77.6</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">50.5</span><span class="p">,</span> <span class="mf">53.8</span><span class="p">,</span> <span class="mf">54.3</span><span class="p">],</span> <span class="n">to_rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">img_metas</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;mask_shape&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+            <span class="s1">&#39;hm_shape&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+            <span class="s1">&#39;ori_shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">720</span><span class="p">,</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;img_shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">320</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;down_scale&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s1">&#39;hm_down_scale&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+            <span class="s1">&#39;img_norm_cfg&#39;</span><span class="p">:</span> <span class="n">img_norm_cfg</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Define post-processing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hm_thr</span> <span class="o">=</span> <span class="n">det_threshold</span> <span class="c1"># Threshold for heatmap - Default: 0.3</span>
+        <span class="n">mask_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_processor</span> <span class="o">=</span> <span class="n">CondLanePostProcessor</span><span class="p">(</span><span class="n">hm_thr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hm_thr</span><span class="p">,</span> <span class="n">mask_size</span><span class="o">=</span><span class="n">mask_size</span><span class="p">,</span> <span class="n">use_offset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nms_thr</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Define transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_1</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">A</span><span class="o">.</span><span class="n">Crop</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span> <span class="n">always_apply</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">A</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">always_apply</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_2</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">ToTensorV2</span><span class="p">(</span><span class="n">always_apply</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="c1"># Define the counter to maintain the lane detection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maintain_lane</span> <span class="o">=</span> <span class="n">maintain_lane</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Define the distance threshold to detect the lane change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span> <span class="o">=</span> <span class="n">distance_threshold</span>
+
+        <span class="c1"># Define the counter to maintain the lane detection message in video</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_change_lane</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Define variables of lane detection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Open CSV file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+
+        <span class="c1"># Create header</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Lane_distance&#39;</span><span class="p">,</span> <span class="s2">&quot;Lane_change&quot;</span><span class="p">,</span> <span class="s2">&quot;Lane_change_direction&quot;</span><span class="p">]</span>
+
+        <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)):</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="n">header</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>
+        <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LaneDetector.adjust_result"><a class="viewcode-back" href="../../../../api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.adjust_result">[docs]</a>    <span class="k">def</span> <span class="nf">adjust_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanes</span><span class="p">,</span> <span class="n">crop_bbox</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to adjust the result to the original image size.</span>
+
+<span class="sd">            :param lanes: List of lanes detected.</span>
+<span class="sd">            :type lanes: list</span>
+
+<span class="sd">            :param crop_bbox: Bounding box of the crop.</span>
+<span class="sd">            :type crop_bbox: list</span>
+
+<span class="sd">            :param img_shape: Shape of the original image.</span>
+<span class="sd">            :type img_shape: tuple</span>
+
+<span class="sd">            :return: List of lanes adjusted to the original image size.</span>
+<span class="sd">            :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Define the ratio to adjust the result comparing the original image and the cropped image</span>
+        <span class="n">h_img</span><span class="p">,</span> <span class="n">w_img</span> <span class="o">=</span> <span class="n">img_shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">ratio_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">crop_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">crop_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">w_img</span>
+        <span class="n">ratio_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">crop_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">crop_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">h_img</span>
+        <span class="n">offset_x</span><span class="p">,</span> <span class="n">offset_y</span> <span class="o">=</span> <span class="n">crop_bbox</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">lanes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lanes</span><span class="p">)):</span>
+                <span class="n">pts</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">lanes</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+                    <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ratio_x</span> <span class="o">+</span> <span class="n">offset_x</span><span class="p">))</span>
+                    <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">ratio_y</span> <span class="o">+</span> <span class="n">offset_y</span><span class="p">))</span>
+                    <span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pt</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="LaneDetector.vis_one"><a class="viewcode-back" href="../../../../api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.vis_one">[docs]</a>    <span class="k">def</span> <span class="nf">vis_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">img_input</span><span class="p">,</span> <span class="n">lane_width</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">use_color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to visualize the result of the lane detection.</span>
+
+<span class="sd">            :param results: List of lanes detected.</span>
+<span class="sd">            :type results: list</span>
+
+<span class="sd">            :param img_input: Image to draw the lanes.</span>
+<span class="sd">            :type img_input: numpy.ndarray</span>
+
+<span class="sd">            :param lane_width: Width of the lane. Default: 40</span>
+<span class="sd">            :type lane_width: int, optional</span>
+
+<span class="sd">            :param use_color: Color to draw the lanes. Default: None</span>
+<span class="sd">            :type use_color: list, optional</span>
+
+<span class="sd">            :return: Image with the lanes drawn.</span>
+<span class="sd">            :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lane</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lane</span><span class="p">)):</span>
+                <span class="n">lane</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">lane</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">lane</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">1</span><span class="p">])])</span>
+            <span class="n">lane_tuple</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">lane</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lane_tuple</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">use_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">use_color</span> <span class="o">=</span> <span class="n">COLORS</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">img_input</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img_input</span><span class="p">,</span> <span class="n">lane_tuple</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">lane_tuple</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">use_color</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">img_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img_input</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">img_input</span></div>
+
+<div class="viewcode-block" id="LaneDetector.project_lanes"><a class="viewcode-back" href="../../../../api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.project_lanes">[docs]</a>    <span class="k">def</span> <span class="nf">project_lanes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="mi">720</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to project the lanes onto the image and check if the lane is valid.</span>
+<span class="sd">            The validation is based on a distance (distance_threshold) from the center of the image to the lane.</span>
+
+<span class="sd">            :param result: List of lanes</span>
+<span class="sd">            :type result: list</span>
+
+<span class="sd">            :param img_width: Width of the image, defaults to 1280</span>
+<span class="sd">            :type img_width: int, optional</span>
+
+<span class="sd">            :param img_height: Height of the image, defaults to 720</span>
+<span class="sd">            :type img_height: int, optional</span>
+
+<span class="sd">            :return: List of valid lanes, Crossing points of the lane with the bottom of the image</span>
+<span class="sd">            :rtype: list, list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">threshold_px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span> 
+
+        <span class="n">projected_lanes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">crossing_points</span> <span class="o">=</span>  <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">lane</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">lane_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lane</span><span class="p">)</span>
+            <span class="n">num_points</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="n">lane_len</span> <span class="o">&lt;</span> <span class="n">num_points</span><span class="p">:</span>
+                <span class="n">num_points</span> <span class="o">=</span> <span class="n">lane_len</span>
+
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_points</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lane</span><span class="p">[</span><span class="n">lane_len</span><span class="o">-</span><span class="n">num_points</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lane</span><span class="p">[</span><span class="n">lane_len</span><span class="o">-</span><span class="n">num_points</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">ii</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1"># Linear regression with the points of the lane</span>
+            <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">std_err</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+            <span class="n">new_point</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img_height</span> <span class="o">*</span> <span class="n">slope</span> <span class="o">+</span> <span class="n">intercept</span><span class="p">)</span>
+            <span class="n">half_width</span> <span class="o">=</span> <span class="n">img_width</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="c1"># Check if the crossing point is valid</span>
+            <span class="k">if</span> <span class="n">new_point</span> <span class="o">&gt;</span> <span class="n">half_width</span><span class="o">-</span><span class="n">threshold_px</span> <span class="ow">and</span> <span class="n">new_point</span> <span class="o">&lt;</span> <span class="n">half_width</span><span class="o">+</span><span class="n">threshold_px</span><span class="p">:</span>
+                <span class="n">crossing_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_point</span><span class="p">)</span>
+                <span class="n">new_point</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">new_point</span><span class="p">),</span> <span class="n">img_height</span><span class="p">]</span>
+                <span class="n">lane</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_point</span><span class="p">)</span>
+                <span class="n">projected_lanes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lane</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="n">projected_lanes</span><span class="p">,</span> <span class="n">crossing_points</span></div>
+
+<div class="viewcode-block" id="LaneDetector.detect"><a class="viewcode-back" href="../../../../api/moto_circulacion/lanes.html#Motocicleta_circulacion.Vision.Lane_detection.functions_lane_detection.LaneDetector.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">crop_frame_bbox</span><span class="o">=</span><span class="p">[</span><span class="mi">107</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">]):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to detect the lanes in the image.</span>
+
+<span class="sd">            :param frame: Image to detect the lanes</span>
+<span class="sd">            :type frame: numpy.ndarray</span>
+
+<span class="sd">            :param time: Time of the image</span>
+<span class="sd">            :type time: datetime</span>
+
+<span class="sd">            :param crop_frame_bbox: Bounding box of the image to crop, the lanes will be detected ONLY in the cropped image. Used to remove unwanted parts of the image. (x_min, x_max, y_min, y_max). Default: [107, 1000, 0, 1920]</span>
+<span class="sd">            :type crop_frame_bbox: list</span>
+
+<span class="sd">            :return: Image with the lanes detected</span>
+<span class="sd">            :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Frame in orig size</span>
+        <span class="n">frame_orig_size</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Crop the frame and resize</span>
+        <span class="n">frame_cropped</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="n">cropped_size</span> <span class="o">=</span> <span class="n">frame_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">frame_resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame_cropped</span><span class="p">,</span> <span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">))</span>
+        <span class="n">frame_resized_orig</span> <span class="o">=</span> <span class="n">frame_resized</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Pre-processing</span>
+        <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_1</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">frame_resized</span><span class="p">)</span>
+        <span class="n">transformed_image</span> <span class="o">=</span> <span class="n">transformed</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">]</span>
+        <span class="n">transformed_image</span> <span class="o">=</span> <span class="n">imnormalize</span><span class="p">(</span><span class="n">transformed_image</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="mf">75.3</span><span class="p">,</span> <span class="mf">76.6</span><span class="p">,</span> <span class="mf">77.6</span><span class="p">]),</span> <span class="n">std</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">50.5</span><span class="p">,</span> <span class="mf">53.8</span><span class="p">,</span> <span class="mf">54.3</span><span class="p">]),</span> <span class="n">to_rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">transformed_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_2</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">transformed_image</span><span class="p">)</span>
+        <span class="n">tensor_img</span> <span class="o">=</span> <span class="n">transformed_2</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">]</span>
+        <span class="n">tensor_img</span> <span class="o">=</span> <span class="n">tensor_img</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="n">img_arr</span> <span class="o">=</span> <span class="n">tensor_img</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">img_arr</span> <span class="o">=</span> <span class="n">img_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">img_arr</span> <span class="o">=</span> <span class="n">img_arr</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Prepare data structure</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;img_metas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_metas</span><span class="p">,</span>
+            <span class="s2">&quot;img&quot;</span><span class="p">:</span> <span class="n">tensor_img</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Run model</span>
+        <span class="n">seeds</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">return_loss</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">thr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hm_thr</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># Post-processing</span>
+        <span class="n">downscale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_metas</span><span class="p">[</span><span class="s1">&#39;down_scale&#39;</span><span class="p">]</span>
+        <span class="n">lanes</span><span class="p">,</span> <span class="n">seeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_processor</span><span class="p">(</span><span class="n">seeds</span><span class="p">,</span> <span class="n">downscale</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_result</span><span class="p">(</span> <span class="n">lanes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_bbox</span><span class="p">,</span> <span class="p">[</span><span class="mi">320</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># If at least one lane is detected</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">img_vis</span> <span class="o">=</span> <span class="n">frame_resized_orig</span>
+            <span class="c1">#img_vis = self.vis_one(result, frame_resized_orig, None) #TODO Check visualization</span>
+
+            <span class="c1"># Project the lanes and validate the crossing points</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">lane_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_lanes</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
+
+            <span class="c1"># If at least one lane is valid after projection</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lane_points</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="c1"># Update the counter to maintain the lane detection</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maintain_lane</span>
+
+                <span class="c1"># Calculate the distance between the lane and the center of the image</span>
+                <span class="c1"># Only take the lane closest to the center</span>
+                <span class="n">lane_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">point</span> <span class="o">-</span> <span class="mi">1280</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">lane_points</span><span class="p">]</span>
+                <span class="n">abs_points</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">lane_points</span><span class="p">]</span>
+                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">lane_points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">index_max_dist</span> <span class="o">=</span> <span class="n">abs_points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">abs_points</span><span class="p">))</span>
+                    <span class="n">lane_points</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_max_dist</span><span class="p">)</span>
+                    <span class="n">abs_points</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_max_dist</span><span class="p">)</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_max_dist</span><span class="p">)</span>
+
+                <span class="c1"># If the distance is different from the previous frame</span>
+                <span class="c1"># the lane has changed</span>
+                <span class="n">changed_lane</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">direction_change</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># First detection of the lane</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># If the sign of the lane has changed and has a distance of more than 100 pixels</span>
+                <span class="c1"># a lane change has occurred</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span><span class="o">-</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">changed_lane</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">count_change_lane</span> <span class="o">=</span> <span class="mi">30</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sign_change_lane</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+                        <span class="n">direction_change</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sign_change_lane</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+                        <span class="n">direction_change</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+                <span class="c1"># Write to file</span>
+                <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>  <span class="c1"># time</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">lane_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>   <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>         <span class="c1"># Lane Distance</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">changed_lane</span><span class="p">)</span>     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>         <span class="c1"># Lane change</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">direction_change</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>         <span class="c1"># Lane change direction</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+                <span class="c1"># Visualize the closest lane</span>
+                <span class="c1"># img_vis = self.vis_one(result, img_vis, use_color=(0,255,255)) #TODO Check visualization</span>
+
+            <span class="c1"># If no lane is valid after projection</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Decrease the counter to maintain the lane detection</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># Write to file</span>
+                <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="c1"># time</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">NaN</span><span class="p">)</span>   <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane Distance</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane change</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane change direction</span>
+                <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+        <span class="c1"># If no lane is detected</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img_vis</span> <span class="o">=</span> <span class="n">frame_resized_orig</span>
+
+            <span class="c1"># Decrease the counter to maintain the lane detection</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_maintain_dist</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prev_lane_sign</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">init_dist</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Write to file</span>
+            <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="c1"># time</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">NaN</span><span class="p">)</span>   <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane Distance</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane change</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>    <span class="c1"># Lane change direction</span>
+            <span class="n">data_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+
+
+        <span class="c1"># Visualize the center of the image (Red lines)</span>
+        <span class="n">point1</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1280</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="mi">720</span><span class="p">)</span>
+        <span class="n">point2</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1280</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="mi">720</span> <span class="o">-</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">point3</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1280</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="mi">720</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="n">point4</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1280</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="mi">720</span> <span class="o">-</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">img_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img_vis</span><span class="p">,</span> <span class="n">point1</span><span class="p">,</span> <span class="n">point2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">img_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img_vis</span><span class="p">,</span> <span class="n">point3</span><span class="p">,</span> <span class="n">point4</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># If the lane has changed, put text on the image</span>
+        <span class="c1"># for certain amount of frames</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_change_lane</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_change_lane</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign_change_lane</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+                <span class="n">img_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_vis</span><span class="p">,</span> <span class="s1">&#39;Changed lane &#39;</span> <span class="p">,</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">650</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign_change_lane</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+                <span class="n">img_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_vis</span><span class="p">,</span> <span class="s1">&#39;Changed lane &#39;</span> <span class="p">,</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">650</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+        <span class="c1"># Save and visualize final result</span>
+        <span class="n">img_vis</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img_vis</span><span class="p">,</span> <span class="p">(</span><span class="n">cropped_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cropped_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">frame_saved</span> <span class="o">=</span> <span class="n">frame_orig_size</span>
+        <span class="n">frame_saved</span><span class="p">[</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">crop_frame_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">img_vis</span>
+
+        <span class="k">return</span> <span class="n">frame_saved</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
