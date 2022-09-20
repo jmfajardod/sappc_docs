@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">from</span> <span class="nn">imutils</span> <span class="kn">import</span> <span class="n">rotate</span><span class="p">,</span> <span class="n">rotate_bound</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># import the transforms module</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">transforms</span> <span class="k">as</span> <span class="n">T</span>
+
+<span class="kn">import</span> <span class="nn">imutils</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">imageio</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1"># Marker specifications</span>
+<span class="n">MARKER_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span>
+<span class="n">MARKER_ID_BACK</span>   <span class="o">=</span> <span class="mi">11</span>
+
+<span class="c1"># Set device</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+
+<span class="c1">#  Draw functions</span>
+<div class="viewcode-block" id="draw_keypoints_per_person"><a class="viewcode-back" href="../../../api/moto_pista/push_vehicle_algorithm.html#Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_keypoints_per_person">[docs]</a><span class="k">def</span> <span class="nf">draw_keypoints_per_person</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">all_keypoints</span><span class="p">,</span> <span class="n">all_scores</span><span class="p">,</span> <span class="n">confs</span><span class="p">,</span> <span class="n">keypoint_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">conf_threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to draw the person keypoints on the image.</span>
+
+<span class="sd">        :param img: image on which the keypoints are to be drawn</span>
+<span class="sd">        :type img: numpy.ndarray</span>
+
+<span class="sd">        :param all_keypoints: list of keypoints for all the persons</span>
+<span class="sd">        :type all_keypoints: list</span>
+
+<span class="sd">        :param all_scores: list of scores for all the persons</span>
+<span class="sd">        :type all_scores: list</span>
+
+<span class="sd">        :param confs: list of confidence scores for all the persons</span>
+<span class="sd">        :type confs: list</span>
+
+<span class="sd">        :param keypoint_threshold: threshold for the keypoint score. Default is 2</span>
+<span class="sd">        :type keypoint_threshold: int</span>
+
+<span class="sd">        :param conf_threshold: threshold for the confidence score. Default is 0.9</span>
+<span class="sd">        :type conf_threshold: float</span>
+
+<span class="sd">        :return: image with the keypoints drawn, list of valid points</span>
+<span class="sd">        :rtype: numpy.ndarray, list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># initialize a set of colors from the rainbow spectrum</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;rainbow&#39;</span><span class="p">)</span>
+    <span class="c1"># create a copy of the image</span>
+    <span class="n">img_copy</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">valid_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># iterate for every person detected</span>
+    <span class="k">for</span> <span class="n">person_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_keypoints</span><span class="p">)):</span>
+      <span class="c1"># check the confidence score of the detected person</span>
+      <span class="k">if</span> <span class="n">confs</span><span class="p">[</span><span class="n">person_id</span><span class="p">]</span><span class="o">&gt;</span><span class="n">conf_threshold</span><span class="p">:</span>
+        <span class="c1"># grab the keypoint-locations for the detected person</span>
+        <span class="n">keypoints</span> <span class="o">=</span> <span class="n">all_keypoints</span><span class="p">[</span><span class="n">person_id</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="c1"># grab the keypoint-scores for the keypoints</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">all_scores</span><span class="p">[</span><span class="n">person_id</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="c1"># iterate for every keypoint-score</span>
+        <span class="k">for</span> <span class="n">kp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)):</span>
+            <span class="c1"># check the confidence score of detected keypoint</span>
+            <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="n">kp</span><span class="p">]</span><span class="o">&gt;</span><span class="n">keypoint_threshold</span><span class="p">:</span>
+                <span class="c1"># convert the keypoint float-array to a python-list of intergers</span>
+                <span class="n">keypoint</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">keypoints</span><span class="p">[</span><span class="n">kp</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+                <span class="n">valid_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keypoint</span><span class="p">)</span>
+                <span class="c1"># pick the color at the specific color-id</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+                <span class="c1"># draw a cirle over the keypoint location</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img_copy</span><span class="p">,</span> <span class="n">keypoint</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Convert to numpy array</span>
+    <span class="n">valid_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valid_points</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img_copy</span><span class="p">,</span> <span class="n">valid_points</span></div>
+
+<span class="k">def</span> <span class="nf">draw_skeleton_per_person</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">limbs</span><span class="p">,</span> <span class="n">all_keypoints</span><span class="p">,</span> <span class="n">all_scores</span><span class="p">,</span> <span class="n">confs</span><span class="p">,</span> <span class="n">keypoint_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">conf_threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to draw the person skeleton on the image.</span>
+
+<span class="sd">        :param img: image on which the skeleton is to be drawn</span>
+<span class="sd">        :type img: numpy.ndarray</span>
+
+<span class="sd">        :param output: output of the model</span>
+<span class="sd">        :type output: dict</span>
+
+<span class="sd">        :param limbs: list of limbs</span>
+<span class="sd">        :type limbs: list</span>
+
+<span class="sd">        :param all_keypoints: list of keypoints for all the persons</span>
+<span class="sd">        :type all_keypoints: list</span>
+
+<span class="sd">        :param all_scores: list of scores for all the persons</span>
+<span class="sd">        :type all_scores: list</span>
+
+<span class="sd">        :param confs: list of confidence scores for all the persons</span>
+<span class="sd">        :type confs: list</span>
+
+<span class="sd">        :param keypoint_threshold: threshold for the keypoint score. Default is 2</span>
+<span class="sd">        :type keypoint_threshold: int</span>
+
+<span class="sd">        :param conf_threshold: threshold for the confidence score. Default is 0.9</span>
+<span class="sd">        :type conf_threshold: float</span>
+
+<span class="sd">        :return: image with the skeleton drawn</span>
+<span class="sd">        :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># initialize a set of colors from the rainbow spectrum</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;rainbow&#39;</span><span class="p">)</span>
+    <span class="c1"># create a copy of the image</span>
+    <span class="n">img_copy</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># check if the keypoints are detected</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;keypoints&quot;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+      <span class="c1"># pick a set of N color-ids from the spectrum</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="o">//</span><span class="nb">len</span><span class="p">(</span><span class="n">all_keypoints</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="c1"># iterate for every person detected</span>
+      <span class="n">valid_points</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">person_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_keypoints</span><span class="p">)):</span>
+
+            <span class="c1"># check the confidence score of the detected person</span>
+            <span class="k">if</span> <span class="n">confs</span><span class="p">[</span><span class="n">person_id</span><span class="p">]</span><span class="o">&gt;</span><span class="n">conf_threshold</span><span class="p">:</span>
+                <span class="c1"># grab the keypoint-locations for the detected person</span>
+                <span class="n">keypoints</span> <span class="o">=</span> <span class="n">all_keypoints</span><span class="p">[</span><span class="n">person_id</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+                <span class="c1"># iterate for every limb </span>
+                <span class="k">for</span> <span class="n">limb_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">limbs</span><span class="p">)):</span>
+                    <span class="c1"># pick the start-point of the limb</span>
+                    <span class="n">limb_loc1</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[</span><span class="n">limbs</span><span class="p">[</span><span class="n">limb_id</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                    <span class="c1"># pick the start-point of the limb</span>
+                    <span class="n">limb_loc2</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[</span><span class="n">limbs</span><span class="p">[</span><span class="n">limb_id</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                    <span class="c1"># consider limb-confidence score as the minimum keypoint score among the two keypoint scores</span>
+                    <span class="n">limb_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">all_scores</span><span class="p">[</span><span class="n">person_id</span><span class="p">,</span> <span class="n">limbs</span><span class="p">[</span><span class="n">limb_id</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">all_scores</span><span class="p">[</span><span class="n">person_id</span><span class="p">,</span> <span class="n">limbs</span><span class="p">[</span><span class="n">limb_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
+                    <span class="c1"># check if limb-score is greater than threshold</span>
+                    <span class="k">if</span> <span class="n">limb_score</span> <span class="o">&gt;</span> <span class="n">keypoint_threshold</span><span class="p">:</span>
+
+                        <span class="c1"># pick the color at a specific color-id</span>
+                        <span class="n">color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cmap</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">person_id</span><span class="p">])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+                        <span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+                        <span class="c1"># draw the line for the limb</span>
+                        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img_copy</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">limb_loc1</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">limb_loc2</span><span class="p">),</span> <span class="n">color</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img_copy</span>
+
+<span class="c1"># get the limbs</span>
+<span class="k">def</span> <span class="nf">get_limbs_from_keypoints</span><span class="p">(</span><span class="n">keypoints</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to get the limbs from the keypoints.</span>
+
+<span class="sd">        :param keypoints: list of keypoints</span>
+<span class="sd">        :type keypoints: list</span>
+
+<span class="sd">        :return: list of limbs</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">limbs</span> <span class="o">=</span> <span class="p">[</span>       
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_eye&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;nose&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_eye&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_ear&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_eye&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;nose&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_eye&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_ear&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_shoulder&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_elbow&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_elbow&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_wrist&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_shoulder&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_elbow&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_elbow&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_wrist&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_hip&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_knee&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_knee&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_ankle&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_hip&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_knee&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_knee&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_ankle&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_shoulder&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_shoulder&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_hip&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_hip&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_shoulder&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;right_hip&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_shoulder&#39;</span><span class="p">),</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;left_hip&#39;</span><span class="p">)]</span>
+        <span class="p">]</span>
+    <span class="k">return</span> <span class="n">limbs</span>
+
+
+<span class="k">class</span> <span class="nc">PushMotorcycleChecker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to check if the person is pushing correctly the motorcycle. It uses a CNN model to detect the person and Aruco markers to detect the motorcycle.</span>
+<span class="sd">        Comparing the position of the person with respect to the motorcycle, it checks if the person is pushing correctly the motorcycle.</span>
+
+<span class="sd">        :param video_post_csv_path: path to the csv file containing the data</span>
+<span class="sd">        :type video_post_csv_path: str</span>
+
+<span class="sd">        :param video_post_path: path to the video file</span>
+<span class="sd">        :type video_post_path: str</span>
+
+<span class="sd">        :param camera_matrix: camera matrix</span>
+<span class="sd">        :type camera_matrix: numpy.ndarray</span>
+
+<span class="sd">        :param dist_coeffs: distortion coefficients</span>
+<span class="sd">        :type dist_coeffs: numpy.ndarray</span>
+
+<span class="sd">        :param view_image: flag to view the image. Default is False</span>
+<span class="sd">        :type view_image: bool</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_post_csv_path</span><span class="p">,</span> <span class="n">video_post_path</span><span class="p">,</span>
+                <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coefs</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span> <span class="o">=</span> <span class="n">view_image</span>
+
+        <span class="c1"># create a model object from the keypointrcnn_resnet50_fpn class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">keypointrcnn_resnet50_fpn</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">trainable_backbone_layers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># call the eval() method to prepare the model for inference mode.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c1"># Move the model to GPU</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># create the list of keypoints.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keypoints</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nose&#39;</span><span class="p">,</span><span class="s1">&#39;left_eye&#39;</span><span class="p">,</span><span class="s1">&#39;right_eye&#39;</span><span class="p">,</span><span class="s1">&#39;left_ear&#39;</span><span class="p">,</span><span class="s1">&#39;right_ear&#39;</span><span class="p">,</span><span class="s1">&#39;left_shoulder&#39;</span><span class="p">,</span><span class="s1">&#39;right_shoulder&#39;</span><span class="p">,</span><span class="s1">&#39;left_elbow&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;right_elbow&#39;</span><span class="p">,</span><span class="s1">&#39;left_wrist&#39;</span><span class="p">,</span><span class="s1">&#39;right_wrist&#39;</span><span class="p">,</span><span class="s1">&#39;left_hip&#39;</span><span class="p">,</span><span class="s1">&#39;right_hip&#39;</span><span class="p">,</span><span class="s1">&#39;left_knee&#39;</span><span class="p">,</span> <span class="s1">&#39;right_knee&#39;</span><span class="p">,</span> <span class="s1">&#39;left_ankle&#39;</span><span class="p">,</span><span class="s1">&#39;right_ankle&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">limbs</span> <span class="o">=</span> <span class="n">get_limbs_from_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keypoints</span><span class="p">)</span>
+
+        <span class="c1"># Compose transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">T</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()])</span>
+
+        <span class="c1"># Aruco parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arucoDict</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">Dictionary_get</span><span class="p">(</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DICT_4X4_50</span><span class="p">)</span>  <span class="c1"># Set aruco dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arucoParams</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DetectorParameters_create</span><span class="p">()</span>
+
+        <span class="c1"># Open CSV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">video_post_csv_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv_push</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Open video</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_path</span> <span class="o">=</span> <span class="n">video_post_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Video&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Set camera properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1920</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1080</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">video_fps</span> <span class="o">=</span> <span class="mi">15</span>
+
+        <span class="c1"># Open VideoWriter</span>
+        <span class="n">video_fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>  <span class="c1"># Best</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_push</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="s1">&#39;proccessed_push.avi&#39;</span><span class="p">,</span><span class="n">video_fourcc</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">process_video</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to check if the person is pushing correctly the motorcycle</span>
+
+<span class="sd">            :return: None. The results are saved in a video and a csv file.</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing video...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set empty dictionary for results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv_push</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Processing push:  </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ii</span><span class="p">))</span>
+
+            <span class="c1"># Read frame</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv_push</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+                
+                <span class="c1"># Transform frame</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="p">))</span>
+                <span class="n">frame_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                
+                <span class="c1"># forward-pass the model</span>
+                <span class="c1"># the input is a list, hence the output will also be a list</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">([</span><span class="n">frame_tensor</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># Pass output to cpu</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+                <span class="c1"># Convert output to keypoints</span>
+                <span class="n">keypoints_img</span><span class="p">,</span> <span class="n">valid_points</span> <span class="o">=</span> <span class="n">draw_keypoints_per_person</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;keypoints&quot;</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;keypoints_scores&quot;</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">],</span><span class="n">keypoint_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+                <span class="c1"># Put current time on right bottom corner</span>
+                <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_time</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="o">-</span><span class="mi">250</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="o">-</span><span class="mi">50</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="n">mean_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">valid_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">mean_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">valid_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="n">mean_x</span><span class="p">,</span> <span class="n">mean_y</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Center&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">mean_x</span><span class="p">,</span> <span class="n">mean_y</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                <span class="c1"># Detect Aruco</span>
+                <span class="p">(</span><span class="n">corners_push</span><span class="p">,</span> <span class="n">ids_push</span><span class="p">,</span> <span class="n">rejected_area</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">detectMarkers</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arucoDict</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arucoParams</span><span class="p">)</span>
+                <span class="c1"># Draw the results</span>
+                <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">drawDetectedMarkers</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="n">corners_push</span><span class="p">,</span> <span class="n">ids_push</span><span class="p">)</span>
+
+                <span class="c1">#- Update dataframe</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_X&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_Y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Holding_left&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+                <span class="c1"># If both a person and a marker are detected</span>
+                <span class="k">if</span> <span class="n">ids_push</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">MARKER_ID_BACK</span> <span class="ow">in</span> <span class="n">ids_push</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids_push</span><span class="p">)):</span>
+                                <span class="k">if</span> <span class="n">ids_push</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">==</span> <span class="n">MARKER_ID_BACK</span><span class="p">:</span>
+                                    <span class="c1"># Get center of marker</span>
+                                    <span class="n">x_sum</span> <span class="o">=</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                    <span class="n">y_sum</span> <span class="o">=</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                                    <span class="n">x_centerPixel</span> <span class="o">=</span> <span class="n">x_sum</span><span class="o">/</span><span class="mf">4.0</span>
+                                    <span class="n">y_centerPixel</span> <span class="o">=</span> <span class="n">y_sum</span><span class="o">/</span><span class="mf">4.0</span>
+
+                                    <span class="c1"># Draw center of marker</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x_centerPixel</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_centerPixel</span><span class="p">)),</span> <span class="mi">10</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                                    <span class="c1"># Draw each corner of marker</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Red</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Yellow</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Magenta</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Cyan</span>
+
+                                    <span class="c1"># Cyan - Red line angle</span>
+                                    <span class="n">angle_rotate_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                    <span class="n">angle_rotate_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_rotate_1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">180</span>
+
+                                    <span class="c1"># Magenta - Yellow line angle</span>
+                                    <span class="n">angle_rotate_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">corners_push</span><span class="p">[</span><span class="n">jj</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                    <span class="n">angle_rotate_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_rotate_2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">180</span>
+
+                                    <span class="c1"># Average angle</span>
+                                    <span class="n">angle_rotate</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle_rotate_1</span> <span class="o">+</span> <span class="n">angle_rotate_2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+
+                                    <span class="c1"># Create points of marker and person</span>
+                                    <span class="n">x_marker</span> <span class="o">=</span> <span class="n">x_centerPixel</span>
+                                    <span class="n">y_marker</span> <span class="o">=</span> <span class="n">y_centerPixel</span>
+                                    <span class="n">marker_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_marker</span><span class="p">,</span> <span class="n">y_marker</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+                                    <span class="n">x_person</span> <span class="o">=</span> <span class="n">mean_x</span>
+                                    <span class="n">y_person</span> <span class="o">=</span> <span class="n">mean_y</span>
+                                    <span class="n">person_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_person</span><span class="p">,</span> <span class="n">y_person</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Orig Person x: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x_person</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; y: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">y_person</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                                    <span class="c1"># Pass center point coordinates of person to frame in center of marker</span>
+                                    <span class="n">rotation_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_rotate</span><span class="p">)),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_rotate</span><span class="p">)),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                                                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_rotate</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_rotate</span><span class="p">)),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                                                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+                                    
+                                    <span class="n">position_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_marker</span><span class="p">,</span> <span class="n">y_marker</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+                                    <span class="n">position_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">position_vector</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+                                    <span class="c1"># Tranform matrix </span>
+                                    <span class="n">transform_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">rotation_matrix</span><span class="p">,</span> <span class="n">position_vector</span><span class="p">))</span>
+
+                                    <span class="c1"># Inverse transform matrix</span>
+                                    <span class="n">transform_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">transform_matrix</span><span class="p">)</span> 
+
+                                    <span class="c1"># Transform person point to marker frame</span>
+                                    <span class="n">person_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person_point</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+                                    <span class="n">person_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">person_point</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                                    <span class="n">person_point_transformed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">transform_matrix</span><span class="p">,</span> <span class="n">person_point</span><span class="p">)</span>
+
+                                    <span class="c1"># Put person point in frame</span>
+                                    <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Rotated Person x: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; y: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                                    <span class="c1"># Save results to dataframe</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                                    <span class="c1"># If person is in behind marker</span>
+                                    <span class="k">if</span> <span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                                        <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Behind motorcycle&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Holding_left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+                                    <span class="k">if</span> <span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                        <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;In front of motorcycle&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                                        <span class="c1"># If person is left of marker</span>
+                                        <span class="k">if</span> <span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                                            <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Left of motorcycle&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Holding_left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">person_point_transformed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                                            <span class="n">keypoints_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="s2">&quot;Right of motorcycle&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Holding_left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Holding_left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Holding_left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+                <span class="c1"># Save image</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">out_push</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">)</span>
+
+                <span class="c1"># Show result</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="p">:</span>
+                    <span class="n">im_out_push</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">keypoints_img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;push vehicle image&#39;</span><span class="p">,</span> <span class="n">im_out_push</span><span class="p">)</span>
+                    <span class="n">keypressed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">keypressed</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                        <span class="k">break</span>
+
+        <span class="c1"># Close video</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_push</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+        <span class="c1"># Convert results to dataframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="s2">&quot;push_results.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

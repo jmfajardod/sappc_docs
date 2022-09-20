@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -53,6 +56,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../carro_circulacion/index.html">Carro Circulación</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Carro pista</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test">How to run the Car’s track test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test-data-acquisition-pipeline">How to run the Car’s track test data acquisition pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#description-of-the-car-s-track-test-algorithms">Description of the Car’s track test algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#parameters-to-change">Parameters to change</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="index.html#algorithms-used">Algorithms used</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Turn Algorithm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="inline_parking_algorithm.html">Inline parking Algorithm</a></li>
@@ -63,6 +70,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_pista/index.html">Moto pista</a></li>
 </ul>
 </li>
 </ul>
@@ -131,7 +139,34 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="Car_algorithms.turn.turn_algorithms.TurnChecker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Car_algorithms.turn.turn_algorithms.</span></span><span class="sig-name descname"><span class="pre">TurnChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_stopped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/turn/turn_algorithms.html#TurnChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.turn.turn_algorithms.TurnChecker" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Class to estimate the position and orientation of the vehicle in a turn.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_csv_path</strong> (<em>str</em>) – Path to the csv file containing the video data</p></li>
+<li><p><strong>video_path</strong> (<em>str</em>) – Path to the video file</p></li>
+<li><p><strong>camera_matrix</strong> (<em>numpy.array</em>) – Camera matrix</p></li>
+<li><p><strong>dist_coefs</strong> (<em>numpy.array</em>) – Distortion coefficients</p></li>
+<li><p><strong>vel_stopped</strong> (<em>float</em>) – Threshold for the velocity to consider the vehicle stopped</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the images. Default is False</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Car_algorithms.turn.turn_algorithms.TurnChecker.process_video">
+<span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/turn/turn_algorithms.html#TurnChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.turn.turn_algorithms.TurnChecker.process_video" title="Permalink to this definition"></a></dt>
+<dd><p>Function to process the video and estimate the position and orientation of the vehicle in a turn.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 </section>
 <section id="functions-docs">
@@ -157,18 +192,19 @@
 <dt class="sig sig-object py" id="Car_algorithms.turn.turn_algorithms.sg_filter">
 <span class="sig-prename descclassname"><span class="pre">Car_algorithms.turn.turn_algorithms.</span></span><span class="sig-name descname"><span class="pre">sg_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/turn/turn_algorithms.html#sg_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.turn.turn_algorithms.sg_filter" title="Permalink to this definition"></a></dt>
 <dd><p>Function to calculate the Savitzky-Golay filter coefficients.</p>
-<p>:param x Vector of sample times
-:type x: numpy.array</p>
-<p>:param m Order of the smoothing polynomial
-:type m: int</p>
-<p>:param k Order of derivative
-:type k: int</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Filter coefficients</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Order of the smoothing polynomial</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Order of derivative</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.array</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filter coefficients</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -177,22 +213,21 @@
 <dt class="sig sig-object py" id="Car_algorithms.turn.turn_algorithms.smooth">
 <span class="sig-prename descclassname"><span class="pre">Car_algorithms.turn.turn_algorithms.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/turn/turn_algorithms.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.turn.turn_algorithms.smooth" title="Permalink to this definition"></a></dt>
 <dd><p>Function to calculate a derivative using the Savitzky-Golay filter.</p>
-<p>:param x Vector of sample times
-:type x: numpy.array</p>
-<p>:param y Vector of sample values
-:type y: numpy.array</p>
-<p>:param size Number of samples to use for smoothing. Default is 5.
-:type size: int</p>
-<p>:param order Order of the smoothing polynomial. Default is 2.
-:type order: int</p>
-<p>:param deriv Order of the derivative. Default is 0.
-:type deriv: int</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Filtered vector of sample values</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>y</strong> (<em>numpy.array</em>) – Vector of sample values</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Number of samples to use for smoothing. Default is 5.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the smoothing polynomial. Default is 2.</p></li>
+<li><p><strong>deriv</strong> (<em>int</em>) – Order of the derivative. Default is 0.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.array</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered vector of sample values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -201,20 +236,20 @@
 <dt class="sig sig-object py" id="Car_algorithms.turn.turn_algorithms.get_Vel">
 <span class="sig-prename descclassname"><span class="pre">Car_algorithms.turn.turn_algorithms.</span></span><span class="sig-name descname"><span class="pre">get_Vel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/turn/turn_algorithms.html#get_Vel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.turn.turn_algorithms.get_Vel" title="Permalink to this definition"></a></dt>
 <dd><p>Function to calculate the velocity of the vehicle</p>
-<p>:param time Vector of sample times
-:type time: numpy.array</p>
-<p>:param pos Vector of sample values
-:type pos: numpy.array</p>
-<p>:param size Number of samples to use for smoothing.
-:type size: int</p>
-<p>:param order Order of the smoothing polynomial.
-:type order: int</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Estimated velocity from the position vector and the time vector</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>numpy.array</em>) – Vector of sample times</p></li>
+<li><p><strong>pos</strong> (<em>numpy.array</em>) – Vector of sample values</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Number of samples to use for smoothing.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the smoothing polynomial.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.array</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated velocity from the position vector and the time vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
 </dd></dl>

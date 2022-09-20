@@ -1,0 +1,40 @@
+Push Vehicle Algorithm
+==========================
+
+The push vehicle algorithm checks if the driver is pushing correctly the vehicle. The algorithm uses a CNN model to detect the person. After the person is detected, the algorithm calculates its center of mass. The vehicle is detected through an Aruco marker located on top of the vehicle. By comparing the center of mass of the person with the center of the vehicle, the algorithm can determine if the person is pushing the vehicle correctly.
+
+The parameters related to the Aruco markers are the shown in the following excerpt of file:
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/push_motorcycle/push_motorcycle_functions.py
+    :lines: 24-27
+    :lineno-start: 24
+    :linenos:
+
+.. note:: If the size or ID of the Aruco markers are changed, the parameters must be updated.
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame.
+- Pos X: X coordinate of the center of mass of the person.
+- Pos Y: Y coordinate of the center of mass of the person.
+- Holding left: True if the person is holding the vehicle from the left side. False otherwise.
+
+
+Class docs
+---------------------
+
+.. autoclass:: Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.PushMotorcycleChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_keypoints_per_person
+
+.. autofunction:: Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_skeleton_per_person

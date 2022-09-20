@@ -21,3 +21,9 @@ API documentation.
 
    carro_pista/index
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Moto pista
+
+   moto_pista/index
+

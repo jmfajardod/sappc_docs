@@ -1,0 +1,17 @@
+Moto pista
+==================
+
+
+Algorithms used
+--------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Functions
+
+   stop_lines_algorithm
+   low_vel_slalom_algorithm
+   high_vel_slalom_algorithm
+   push_vehicle_algorithm
+   eights_algorithm
+

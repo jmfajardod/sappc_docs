@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>High Velocity Slalom Algorithm &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Push Vehicle Algorithm" href="push_vehicle_algorithm.html" />
+    <link rel="prev" title="Low Velocity Slalom Algorithm" href="low_vel_slalom_algorithm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../carro_circulacion/index.html">Carro Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Moto pista</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#algorithms-used">Algorithms used</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="stop_lines_algorithm.html">Stop Lines Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="low_vel_slalom_algorithm.html">Low Velocity Slalom Algorithm</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">High Velocity Slalom Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="push_vehicle_algorithm.html">Push Vehicle Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eights_algorithm.html">Eights Algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API</a> &raquo;</li>
+          <li><a href="index.html">Moto pista</a> &raquo;</li>
+      <li>High Velocity Slalom Algorithm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/moto_pista/high_vel_slalom_algorithm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="high-velocity-slalom-algorithm">
+<h1>High Velocity Slalom Algorithm<a class="headerlink" href="#high-velocity-slalom-algorithm" title="Permalink to this heading"></a></h1>
+<p>The high velocity slalom algorithm checks if the vehicle realized the slalom in the correct way, i.e., if the vehicle passes the cones in the correct order and side. The algorithm uses optical flow to estimate the position of the vehicle. After obtaining the moving pixels, which correspond to the vehicle, the center of mass of the moving pixels is calculated. The center of mass is compared to manually coded reference points, which are located at the center of the cones.</p>
+<p>The position of the cones are manually obtained and are shown in the following excerpt.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">34</span><span class="c1"># Poste 1</span>
+<span class="linenos">35</span><span class="n">CONE_POS_X_1</span> <span class="o">=</span> <span class="mi">430</span>
+<span class="linenos">36</span><span class="n">CONE_POS_Y_1</span> <span class="o">=</span> <span class="mi">307</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">39</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">40</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">41</span><span class="c1"># Poste 2</span>
+<span class="linenos">42</span><span class="n">CONE_POS_X_2</span> <span class="o">=</span> <span class="mi">442</span>
+<span class="linenos">43</span><span class="n">CONE_POS_Y_2</span> <span class="o">=</span> <span class="mi">325</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">46</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">47</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">48</span><span class="c1"># Poste 3</span>
+<span class="linenos">49</span><span class="n">CONE_POS_X_3</span> <span class="o">=</span> <span class="mi">413</span>
+<span class="linenos">50</span><span class="n">CONE_POS_Y_3</span> <span class="o">=</span> <span class="mi">344</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">53</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">54</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">55</span><span class="c1"># Poste 4</span>
+<span class="linenos">56</span><span class="n">CONE_POS_X_4</span> <span class="o">=</span> <span class="mi">502</span>
+<span class="linenos">57</span><span class="n">CONE_POS_Y_4</span> <span class="o">=</span> <span class="mi">338</span>
+<span class="linenos">58</span>
+<span class="linenos">59</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">60</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">61</span><span class="c1">#-------------------------------------------------------------#</span>
+<span class="linenos">62</span><span class="c1"># Poste 5</span>
+<span class="linenos">63</span><span class="n">CONE_POS_X_5</span> <span class="o">=</span> <span class="mi">494</span>
+<span class="linenos">64</span><span class="n">CONE_POS_Y_5</span> <span class="o">=</span> <span class="mi">301</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the  <strong>cone position</strong> or the <strong>camera position</strong> are changed, the <strong>parameters must be updated</strong>.</p>
+</div>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: timestamp of the frame.</p></li>
+<li><p>Pos X: X position of the center of mass.</p></li>
+<li><p>Pos Y: Y position of the center of mass.</p></li>
+<li><p>Crossed cone: Direction of the cone crossed. Left or Right.</p></li>
+</ul>
+</section>
+<section id="class-docs">
+<h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.slalom.high_vel_slalom_functions.SlalomHighVelocityChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.slalom.high_vel_slalom_functions.</span></span><span class="sig-name descname"><span class="pre">SlalomHighVelocityChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_post_csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_post_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/slalom/high_vel_slalom_functions.html#SlalomHighVelocityChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.slalom.high_vel_slalom_functions.SlalomHighVelocityChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Class to check if the vehicle has done the slalom at high velocity in the correct way. To estimate the trajectory of the vehicle, the optical flow is used.
+The position of the cones is manually set in the code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_post_csv_path</strong> (<em>str</em>) – path to the csv file with the video information</p></li>
+<li><p><strong>video_post_path</strong> (<em>str</em>) – path to the video file</p></li>
+<li><p><strong>camera_matrix</strong> (<em>np.array</em>) – camera matrix</p></li>
+<li><p><strong>dist_coefs</strong> (<em>np.array</em>) – distortion coefficients</p></li>
+<li><p><strong>post</strong> (<em>int</em>) – post number. From 1 to 5.</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – if True, it shows the image with the optical flow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.slalom.high_vel_slalom_functions.SlalomHighVelocityChecker.process_video">
+<span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/slalom/high_vel_slalom_functions.html#SlalomHighVelocityChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.slalom.high_vel_slalom_functions.SlalomHighVelocityChecker.process_video" title="Permalink to this definition"></a></dt>
+<dd><p>Function to check if the vehicle has done the slalom at high velocity in the correct way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="functions-docs">
+<h2>Functions docs<a class="headerlink" href="#functions-docs" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.slalom.high_vel_slalom_functions.load_image">
+<span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.slalom.high_vel_slalom_functions.</span></span><span class="sig-name descname"><span class="pre">load_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/slalom/high_vel_slalom_functions.html#load_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.slalom.high_vel_slalom_functions.load_image" title="Permalink to this definition"></a></dt>
+<dd><p>Function to load image from file to GPU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>imfile</strong> – path to the image file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>image in GPU</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.slalom.high_vel_slalom_functions.load_array_gpu">
+<span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.slalom.high_vel_slalom_functions.</span></span><span class="sig-name descname"><span class="pre">load_array_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/slalom/high_vel_slalom_functions.html#load_array_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.slalom.high_vel_slalom_functions.load_array_gpu" title="Permalink to this definition"></a></dt>
+<dd><p>Function to load array to GPU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> – array to load</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>array in GPU</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.slalom.high_vel_slalom_functions.viz">
+<span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.slalom.high_vel_slalom_functions.</span></span><span class="sig-name descname"><span class="pre">viz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flo</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/slalom/high_vel_slalom_functions.html#viz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.slalom.high_vel_slalom_functions.viz" title="Permalink to this definition"></a></dt>
+<dd><p>Function to visualize the optical flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>torch.Tensor</em>) – image</p></li>
+<li><p><strong>flo</strong> (<em>torch.Tensor</em>) – optical flow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="low_vel_slalom_algorithm.html" class="btn btn-neutral float-left" title="Low Velocity Slalom Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="push_vehicle_algorithm.html" class="btn btn-neutral float-right" title="Push Vehicle Algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

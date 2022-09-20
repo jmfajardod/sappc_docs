@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motorcycle_algorithms.slalom.low_vel_slalom_functions &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>Motorcycle_algorithms.slalom.low_vel_slalom_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Motorcycle_algorithms.slalom.low_vel_slalom_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">current_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">motorcycle_vision_algorithms_path</span> <span class="o">=</span> <span class="n">current_file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;slalom&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">motorcycle_raft_vision_algorithms_path</span> <span class="o">=</span> <span class="n">motorcycle_vision_algorithms_path</span> <span class="o">+</span> <span class="s2">&quot;RAFT/core&quot;</span>
+
+<span class="c1"># Add path to RAFT</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">motorcycle_vision_algorithms_path</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">motorcycle_raft_vision_algorithms_path</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">RAFT.core.raft</span> <span class="kn">import</span> <span class="n">RAFT</span>
+<span class="kn">from</span> <span class="nn">RAFT.core.utils</span> <span class="kn">import</span> <span class="n">flow_viz</span>
+<span class="kn">from</span> <span class="nn">RAFT.core.utils.utils</span> <span class="kn">import</span> <span class="n">InputPadder</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">imutils</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">imageio</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1"># Poste 12</span>
+<span class="n">CONE_POS_X_12</span> <span class="o">=</span> <span class="p">[</span><span class="mi">203</span><span class="p">,</span> <span class="mi">565</span><span class="p">]</span>
+<span class="n">CONE_POS_Y_12</span> <span class="o">=</span> <span class="p">[</span><span class="mi">195</span><span class="p">,</span> <span class="mi">310</span><span class="p">]</span>
+
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1"># Poste 13</span>
+<span class="n">CONE_POS_X_13</span> <span class="o">=</span> <span class="mi">418</span>
+<span class="n">CONE_POS_Y_13</span> <span class="o">=</span> <span class="mi">297</span>
+
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1"># Poste 14</span>
+<span class="n">CONE_POS_X_14</span> <span class="o">=</span> <span class="mi">530</span>
+<span class="n">CONE_POS_Y_14</span> <span class="o">=</span> <span class="mi">185</span>
+
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1">#-------------------------------------------------------------#</span>
+<span class="c1"># Poste 15</span>
+<span class="n">CONE_POS_X_15</span> <span class="o">=</span> <span class="mi">590</span>
+<span class="n">CONE_POS_Y_15</span> <span class="o">=</span> <span class="mi">270</span>
+
+
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
+
+
+<div class="viewcode-block" id="load_image"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_image">[docs]</a><span class="k">def</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">imfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to load image from file to GPU.</span>
+
+<span class="sd">        :param imfile: path to the image file</span>
+
+<span class="sd">        :return: image in GPU</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">imfile</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_array_gpu"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_array_gpu">[docs]</a><span class="k">def</span> <span class="nf">load_array_gpu</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to load array to GPU.</span>
+
+<span class="sd">        :param img: array to load</span>
+
+<span class="sd">        :return: array in GPU</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="viz"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.viz">[docs]</a><span class="k">def</span> <span class="nf">viz</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">flo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to visualize the optical flow.</span>
+
+<span class="sd">        :param img: image</span>
+<span class="sd">        :type img: torch.Tensor</span>
+
+<span class="sd">        :param flo: optical flow</span>
+<span class="sd">        :type flo: torch.Tensor</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">flo</span> <span class="o">=</span> <span class="n">flo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    
+    <span class="c1"># map flow to rgb image</span>
+    <span class="n">flo</span> <span class="o">=</span> <span class="n">flow_viz</span><span class="o">.</span><span class="n">flow_to_image</span><span class="p">(</span><span class="n">flo</span><span class="p">)</span>
+    <span class="n">img_flo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">img</span><span class="p">,</span> <span class="n">flo</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># import matplotlib.pyplot as plt</span>
+    <span class="c1"># plt.imshow(img_flo / 255.0)</span>
+    <span class="c1"># plt.show()</span>
+
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="n">img_flo</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">/</span><span class="mf">255.0</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SlalomLowVelocityChecker"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.SlalomLowVelocityChecker">[docs]</a><span class="k">class</span> <span class="nc">SlalomLowVelocityChecker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to check if the vehicle has done the slalom at low velocity in the correct way. To estimate the trajectory of the vehicle, the optical flow is used.</span>
+<span class="sd">        The position of the cones is manually set in the code.</span>
+
+<span class="sd">        :param video_post_csv_path: path to the csv file with the video information</span>
+<span class="sd">        :type video_post_csv_path: str</span>
+
+<span class="sd">        :param video_post_path: path to the video file</span>
+<span class="sd">        :type video_post_path: str</span>
+
+<span class="sd">        :param camera_matrix: camera matrix</span>
+<span class="sd">        :type camera_matrix: np.array</span>
+
+<span class="sd">        :param dist_coefs: distortion coefficients</span>
+<span class="sd">        :type dist_coefs: np.array</span>
+
+<span class="sd">        :param post: post number. It can be 12, 13, 14 or 15</span>
+<span class="sd">        :type post: int</span>
+
+<span class="sd">        :param view_image: if True, it shows the image with the optical flow</span>
+<span class="sd">        :type view_image: bool</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_post_csv_path</span><span class="p">,</span> <span class="n">video_post_path</span><span class="p">,</span>
+                <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coefs</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="c1"># Define model parameters</span>
+        <span class="n">current_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">motorcycle_vision_algorithms_path</span> <span class="o">=</span> <span class="n">current_file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;slalom&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="n">motorcycle_vision_algorithms_path</span> <span class="o">+</span> <span class="s2">&quot;RAFT/models/raft-small.pth&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span><span class="n">mixed_precision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;RAFT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c1"># Load RAFT model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">RAFT</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c1"># Open CSV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">video_post_csv_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv_slalom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">post</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">))</span>
+
+        <span class="c1"># Open video</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post_path</span> <span class="o">=</span> <span class="n">video_post_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Video&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Set camera properties</span>
+        <span class="n">frame_width</span> <span class="o">=</span> <span class="mi">1920</span>
+        <span class="n">frame_height</span> <span class="o">=</span> <span class="mi">1080</span>
+        <span class="n">video_fps</span> <span class="o">=</span> <span class="mi">15</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_width</span> <span class="o">=</span> <span class="mi">852</span>  <span class="c1"># For low res RAFT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_height</span> <span class="o">=</span> <span class="mi">480</span> <span class="c1"># For low res RAFT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_dim</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_height</span><span class="p">)</span>
+
+        <span class="c1"># Set cone position based on post</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_num</span> <span class="o">=</span> <span class="n">post</span>
+        <span class="k">if</span> <span class="n">post</span> <span class="o">==</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span> <span class="o">=</span> <span class="n">CONE_POS_X_15</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span> <span class="o">=</span> <span class="n">CONE_POS_Y_15</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">post</span> <span class="o">==</span> <span class="mi">14</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span> <span class="o">=</span> <span class="n">CONE_POS_X_14</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span> <span class="o">=</span> <span class="n">CONE_POS_Y_14</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">post</span> <span class="o">==</span> <span class="mi">13</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span> <span class="o">=</span> <span class="n">CONE_POS_X_13</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span> <span class="o">=</span> <span class="n">CONE_POS_Y_13</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">if</span> <span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span> <span class="o">=</span> <span class="n">CONE_POS_X_12</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span> <span class="o">=</span> <span class="n">CONE_POS_Y_12</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+        <span class="c1"># Save camera matrix and distortion coefficients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span> <span class="o">=</span> <span class="n">camera_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_coefs</span> <span class="o">=</span> <span class="n">dist_coefs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newcameramtx</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getOptimalNewCameraMatrix</span><span class="p">(</span><span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coefs</span><span class="p">,</span> <span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Save view image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span> <span class="o">=</span> <span class="n">view_image</span>
+
+        <span class="c1"># Set empty dictionary for results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Open VideoWriter</span>
+        <span class="n">video_fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>  <span class="c1"># Best</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_slalom</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="s1">&#39;proccessed_slalom.avi&#39;</span><span class="p">,</span><span class="n">video_fourcc</span><span class="p">,</span> <span class="n">video_fps</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_height</span><span class="p">))</span>
+
+<div class="viewcode-block" id="SlalomLowVelocityChecker.process_video"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.SlalomLowVelocityChecker.process_video">[docs]</a>    <span class="k">def</span> <span class="nf">process_video</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to check if the vehicle has done the slalom at low velocity in the correct way.</span>
+
+<span class="sd">            :return: None. The results are saved in a video and a csv file.</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing video...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># init_frame = 2300</span>
+        <span class="c1"># end_frame = 3850</span>
+        <span class="c1"># for ii in range(init_frame):</span>
+        <span class="c1">#     ret_vid, frame_1 = self.video_post.read()</span>
+
+        <span class="n">frame_1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">frame_2</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">current_pos_x</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">current_pos_y</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">prev_pos_x</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">prev_pos_y</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">maintain_text_cone</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="n">counter_maintain_text</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Processing high velocity slalom post </span><span class="si">%i</span><span class="s2">:  </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_num</span><span class="p">,</span> <span class="n">ii</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">frame_1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ret_vid</span><span class="p">,</span> <span class="n">frame_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">frame_1</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_dim</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+                <span class="n">frame_1_rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame_1</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Read frame</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post_csv_slalom</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span>
+            <span class="n">ret_vid</span><span class="p">,</span> <span class="n">frame_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">ret_vid</span><span class="p">:</span>
+
+                <span class="c1"># Convert to RGB</span>
+                <span class="n">frame_2</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame_2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_dim</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+                <span class="n">frame_2_rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame_2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+
+                <span class="c1"># Compute optical flow</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="c1"># Pass images to GPU</span>
+                    <span class="n">image1</span> <span class="o">=</span> <span class="n">load_array_gpu</span><span class="p">(</span><span class="n">frame_1_rgb</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                    <span class="n">image2</span> <span class="o">=</span> <span class="n">load_array_gpu</span><span class="p">(</span><span class="n">frame_2_rgb</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+                    <span class="c1"># Pad images according to model input size</span>
+                    <span class="n">padder</span> <span class="o">=</span> <span class="n">InputPadder</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="n">image1</span><span class="p">,</span> <span class="n">image2</span> <span class="o">=</span> <span class="n">padder</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
+
+                    <span class="c1"># Compute optical flow</span>
+                    <span class="n">flow_low</span><span class="p">,</span> <span class="n">flow_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">,</span> <span class="n">iters</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">test_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="n">image1</span><span class="p">,</span> <span class="n">image2</span>
+
+                    <span class="c1"># Obtain flow images</span>
+                    <span class="n">flow_up_cpu</span>  <span class="o">=</span> <span class="n">flow_up</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>    <span class="c1"># High resolution flow</span>
+
+                    <span class="c1"># Compute abs optical flow and normalize</span>
+                    <span class="n">flow_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">flow_up_cpu</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">flow_up_cpu</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="n">flow_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span> <span class="p">(</span><span class="n">flow_mag</span> <span class="o">/</span> <span class="n">flow_mag</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">*</span> <span class="mi">255</span> <span class="p">)</span>
+
+                    <span class="c1"># Threshold optical flow</span>
+                    <span class="n">flow_mag_thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">flow_mag</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="c1"># Show image</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="p">:</span>
+                        <span class="n">im_thresholded</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">flow_mag_thresh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;im_thresholded&#39;</span><span class="p">,</span> <span class="n">im_thresholded</span><span class="p">)</span>
+                        <span class="n">keypressed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">keypressed</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                            <span class="k">break</span>
+
+                    <span class="c1">#- Get center of mass of optical flow</span>
+                    <span class="n">cnts</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">flow_mag_thresh</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RETR_EXTERNAL</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+                    <span class="n">cnts</span> <span class="o">=</span> <span class="n">imutils</span><span class="o">.</span><span class="n">grab_contours</span><span class="p">(</span><span class="n">cnts</span><span class="p">)</span>
+                    <span class="c1"># print(&quot;Length contours init: &quot;, len(cnts))</span>
+
+                    <span class="c1">#- Filter contours by area</span>
+                    <span class="n">new_cnts</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">cnts</span><span class="p">:</span>
+                        <span class="n">area</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">contourArea</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="mi">3000</span> <span class="ow">and</span> <span class="n">area</span> <span class="o">&lt;</span> <span class="mi">50000</span><span class="p">:</span>
+                            <span class="n">new_cnts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
+                    <span class="n">cnts</span> <span class="o">=</span> <span class="n">new_cnts</span>
+                    <span class="c1"># print(&quot;Length contours after: &quot;, len(cnts))</span>
+
+                    <span class="c1">#- Update dataframe</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_X&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_Y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="p">[],</span> <span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="p">[]}</span>
+                        <span class="k">else</span><span class="p">:</span> 
+                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_X&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Pos_Y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">):</span> <span class="p">[]}</span>
+
+                    <span class="c1">#- Set image to display</span>
+                    <span class="n">img_display</span> <span class="o">=</span> <span class="n">frame_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">)):</span>
+                            <span class="n">img_display</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="n">ii</span><span class="p">]),</span> <span class="mi">15</span><span class="p">,</span> <span class="p">(</span><span class="mi">63</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Cone</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">img_display</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">),</span> <span class="mi">15</span><span class="p">,</span> <span class="p">(</span><span class="mi">63</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Cone</span>
+                        <span class="c1">#img_display = cv2.line(img_display, (self.cone_pos_x,0), (self.cone_pos_x,self.final_height), (0,0,255), thickness=2)</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cnts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1">#- Get contour with largest area</span>
+                        <span class="n">contour</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cnts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">contourArea</span><span class="p">)</span>
+                        <span class="c1">#print(&quot;Area of contour:  &quot;, cv2.contourArea(contour))</span>
+
+                        <span class="c1">#- Compute the center of the contour</span>
+                        <span class="n">Moments</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
+                        <span class="n">cX</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Moments</span><span class="p">[</span><span class="s2">&quot;m10&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Moments</span><span class="p">[</span><span class="s2">&quot;m00&quot;</span><span class="p">])</span>
+                        <span class="n">cY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Moments</span><span class="p">[</span><span class="s2">&quot;m01&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Moments</span><span class="p">[</span><span class="s2">&quot;m00&quot;</span><span class="p">])</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cX</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Pos_Y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cY</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">prev_pos_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">prev_pos_x</span> <span class="o">=</span> <span class="n">cX</span>
+                            <span class="n">prev_pos_y</span> <span class="o">=</span> <span class="n">cY</span>
+
+                        <span class="n">current_pos_x</span> <span class="o">=</span> <span class="n">cX</span>
+                        <span class="n">current_pos_y</span> <span class="o">=</span> <span class="n">cY</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                            <span class="c1">#- First cone</span>
+                            <span class="k">if</span> <span class="n">current_pos_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">prev_pos_x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                                <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">crossed_cone_number</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="n">counter_maintain_text</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">if</span> <span class="n">current_pos_y</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crossed_cone_dir</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                            <span class="c1"># Second cone</span>
+                            <span class="k">if</span> <span class="n">current_pos_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">prev_pos_x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                                <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">crossed_cone_number</span> <span class="o">=</span> <span class="mi">1</span>
+                                <span class="n">counter_maintain_text</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">if</span> <span class="n">current_pos_y</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crossed_cone_dir</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">current_pos_x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span> <span class="ow">and</span> <span class="n">prev_pos_x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">:</span>
+                                <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">counter_maintain_text</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">if</span> <span class="n">current_pos_y</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">crossed_cone_dir</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crossed_cone_dir</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Crossed_cone_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_number</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+                        <span class="n">prev_pos_x</span> <span class="o">=</span> <span class="n">current_pos_x</span>
+                        <span class="n">prev_pos_y</span> <span class="o">=</span> <span class="n">current_pos_y</span>
+                    
+                        <span class="c1"># Draw the contour and center of the shape on the image</span>
+                        <span class="n">img_display</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">drawContours</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="p">[</span><span class="n">contour</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">cX</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cY</span> <span class="o">-</span> <span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">str_pos</span> <span class="o">=</span> <span class="s1">&#39;X: </span><span class="si">{:2.0f}</span><span class="s1"> Y: </span><span class="si">{:2.0f}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">)</span>
+                        <span class="n">img_display</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="n">str_pos</span><span class="p">,</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span><span class="mi">450</span><span class="p">)</span> <span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">crossed_cone</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                            <span class="c1">#- First cone</span>
+                            <span class="k">if</span> <span class="n">crossed_cone_number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">crossed_cone_dir</span> <span class="o">==</span> <span class="s2">&quot;Right&quot;</span><span class="p">:</span>
+                                    <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                                <span class="n">counter_maintain_text</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">if</span> <span class="n">counter_maintain_text</span> <span class="o">&gt;</span> <span class="n">maintain_text_cone</span><span class="p">:</span>
+                                    <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="c1">#- Second cone</span>
+                            <span class="k">elif</span> <span class="n">crossed_cone_number</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">crossed_cone_dir</span> <span class="o">==</span> <span class="s2">&quot;Right&quot;</span><span class="p">:</span>
+                                    <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                                <span class="n">counter_maintain_text</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">if</span> <span class="n">counter_maintain_text</span> <span class="o">&gt;</span> <span class="n">maintain_text_cone</span><span class="p">:</span>
+                                    <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">crossed_cone_dir</span> <span class="o">==</span> <span class="s2">&quot;Right&quot;</span><span class="p">:</span>
+                                <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="o">+</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">img_display</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="s2">&quot;Crossed cone &quot;</span> <span class="o">+</span> <span class="n">crossed_cone_dir</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_x</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cone_pos_y</span><span class="o">-</span><span class="mi">100</span><span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                            
+                            <span class="n">counter_maintain_text</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">if</span> <span class="n">counter_maintain_text</span> <span class="o">&gt;</span> <span class="n">maintain_text_cone</span><span class="p">:</span>
+                                <span class="n">crossed_cone</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="c1"># Save frame in video</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">out_slalom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">img_display</span><span class="p">)</span>
+
+                    <span class="c1"># Show image</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="p">:</span>
+                        <span class="n">im_out_area</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="n">im_out_area</span><span class="p">)</span>
+                        <span class="n">keypressed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">keypressed</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                            <span class="k">break</span>
+
+                    <span class="c1"># Update frame</span>
+                    <span class="n">frame_1</span> <span class="o">=</span> <span class="n">frame_2</span>
+                    <span class="n">frame_1_rgb</span> <span class="o">=</span> <span class="n">frame_2_rgb</span>
+
+        <span class="c1"># Close video</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_post</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_slalom</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Close video&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert results to dataframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_post_path</span> <span class="o">+</span> <span class="s2">&quot;slalom_results.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

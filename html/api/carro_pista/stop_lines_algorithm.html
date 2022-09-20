@@ -19,6 +19,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Moto pista" href="../moto_pista/index.html" />
     <link rel="prev" title="Reverse Parking Algorithm" href="reverse_parking_algorithm.html" /> 
 </head>
 
@@ -45,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -52,6 +56,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../carro_circulacion/index.html">Carro Circulación</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Carro pista</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test">How to run the Car’s track test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-run-the-car-s-track-test-data-acquisition-pipeline">How to run the Car’s track test data acquisition pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#description-of-the-car-s-track-test-algorithms">Description of the Car’s track test algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#parameters-to-change">Parameters to change</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="index.html#algorithms-used">Algorithms used</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="turn_algorithm.html">Turn Algorithm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="inline_parking_algorithm.html">Inline parking Algorithm</a></li>
@@ -62,6 +70,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_pista/index.html">Moto pista</a></li>
 </ul>
 </li>
 </ul>
@@ -111,7 +120,7 @@
 <p class="admonition-title">Note</p>
 <p>If the size or ID of the Aruco markers are changed, the parameters must be updated.</p>
 </div>
-<p>The parameters related to <strong>reverse parking spots</strong> are the shown in the following excerpt of file. The <strong>LINE_STOP</strong> parameter is the line that the vehicle must stop before. The <strong>AREA_ALLOWED</strong> parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.</p>
+<p>The parameters related to the <strong>stop lines</strong> are the shown in the following excerpt of file. The <strong>LINE_STOP</strong> parameter is the line that the vehicle must stop before. The <strong>AREA_ALLOWED</strong> parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 22</span><span class="c1"># Post 6</span>
 <span class="linenos"> 23</span>
 <span class="linenos"> 24</span><span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -342,6 +351,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="reverse_parking_algorithm.html" class="btn btn-neutral float-left" title="Reverse Parking Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../moto_pista/index.html" class="btn btn-neutral float-right" title="Moto pista" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

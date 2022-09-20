@@ -1,0 +1,62 @@
+Stop Lines Algorithm
+=====================
+
+The stop line algorithm uses the **Aruco markers** located in the vehicle to check if the vehicle stops before the stop line. To check if the vehicle is stopped a Savitzky-Golay filter is used to estimate the speed of the vehicle from the position of markers.
+
+.. note:: The Savitzky-Golay filter used to obtain the velocity is not as accurate as a GPS reading and **it is preferred to use the GPS readings when available to know if the vehicle is stopped or not**.
+
+The parameters related to the Aruco markers are the shown in the following excerpt of file:
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/stop_lines/stop_lines_functions.py
+    :language: python
+    :lines: 13-17
+    :lineno-start: 13
+    :linenos:
+
+.. note:: If the size or ID of the Aruco markers are changed, the parameters must be updated.
+
+The parameters related to the **stop lines** are the shown in the following excerpt of file. The **LINE_STOP** parameter is the line that the vehicle must stop before. The **AREA_ALLOWED** parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/stop_lines/stop_lines_functions.py
+    :language: python
+    :lines: 21-80
+    :lineno-start: 21
+    :linenos:
+
+.. note:: If the  **Stop lines** or the **camera position** are changed, the **parameters must be updated**.
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame.
+- In area: Variable that indicates if the vehicle is before the stop line.
+- Pos X: X position of the vehicle.
+- Pos Y: Y position of the vehicle.
+- Ori Yaw: Yaw orientation of the vehicle.
+- Vel X: X velocity of the vehicle.
+- Vel Y: Y velocity of the vehicle.
+- Abs Vel: Absolute velocity of the vehicle.
+- Stopped before line: Variable that indicates if the vehicle is stopped before the stop line. **True** if the vehicle has stopped before the stop line, **False** otherwise.
+
+Class docs
+---------------------
+
+.. autoclass:: Motorcycle_algorithms.stop_lines.stop_lines_functions.StopLinesParkingChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Motorcycle_algorithms.stop_lines.stop_lines_functions.rotationMatrixToEulerAngles
+
+.. autofunction:: Motorcycle_algorithms.stop_lines.stop_lines_functions.sg_filter
+
+.. autofunction:: Motorcycle_algorithms.stop_lines.stop_lines_functions.smooth
+
+.. autofunction:: Motorcycle_algorithms.stop_lines.stop_lines_functions.get_Vel
+

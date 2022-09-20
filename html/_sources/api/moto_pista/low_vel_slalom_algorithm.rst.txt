@@ -1,0 +1,44 @@
+Low Velocity Slalom Algorithm
+===============================
+
+The low velocity slalom algorithm checks if the vehicle realized the slalom in the correct way, i.e., if the vehicle passes the cones in the correct order and side. The algorithm uses optical flow to estimate the position of the vehicle. After obtaining the moving pixels, which correspond to the vehicle, the center of mass of the moving pixels is calculated. The center of mass is compared to manually coded reference points, which are located at the center of the cones.
+
+The position of the cones are manually obtained and are shown in the following excerpt.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/slalom/low_vel_slalom_functions.py
+    :language: python
+    :lines: 34-57
+    :lineno-start: 34
+    :linenos:
+
+.. note:: If the  **cone position** or the **camera position** are changed, the **parameters must be updated**.
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame.
+- Pos X: X position of the center of mass.
+- Pos Y: Y position of the center of mass.
+- Crossed cone: Direction of the cone crossed. Left or Right.
+
+Class docs
+---------------------
+
+.. autoclass:: Motorcycle_algorithms.slalom.low_vel_slalom_functions.SlalomLowVelocityChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_image
+
+.. autofunction:: Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_array_gpu
+
+.. autofunction:: Motorcycle_algorithms.slalom.low_vel_slalom_functions.viz
+
+

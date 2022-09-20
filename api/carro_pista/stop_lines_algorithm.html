@@ -19,6 +19,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Moto pista" href="../moto_pista/index.html" />
     <link rel="prev" title="Reverse Parking Algorithm" href="reverse_parking_algorithm.html" /> 
 </head>
 
@@ -69,6 +70,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_pista/index.html">Moto pista</a></li>
 </ul>
 </li>
 </ul>
@@ -118,7 +120,7 @@
 <p class="admonition-title">Note</p>
 <p>If the size or ID of the Aruco markers are changed, the parameters must be updated.</p>
 </div>
-<p>The parameters related to <strong>reverse parking spots</strong> are the shown in the following excerpt of file. The <strong>LINE_STOP</strong> parameter is the line that the vehicle must stop before. The <strong>AREA_ALLOWED</strong> parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.</p>
+<p>The parameters related to the <strong>stop lines</strong> are the shown in the following excerpt of file. The <strong>LINE_STOP</strong> parameter is the line that the vehicle must stop before. The <strong>AREA_ALLOWED</strong> parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 22</span><span class="c1"># Post 6</span>
 <span class="linenos"> 23</span>
 <span class="linenos"> 24</span><span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -235,14 +237,14 @@
 <li><p><strong>dist_coeffs</strong> (<em>numpy.array</em>) – Distortion coefficients</p></li>
 <li><p><strong>vel_stopped</strong> (<em>float</em>) – Velocity threshold to consider the vehicle stopped</p></li>
 <li><p><strong>post</strong> (<em>int</em>) – Post number. From 6 to 9.</p></li>
-<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the image with the parking area. Default is False</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the image. Default is False</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video">
 <span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/stop_lines/stop_lines_algorithms.html#StopLinesParkingChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video" title="Permalink to this definition"></a></dt>
-<dd><p>Function to calculate the estimate the position and velocity of the vehicle in the ramp maneuver.</p>
+<dd><p>Function to check if the vehicle has stopped before the stop line.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>
@@ -349,6 +351,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="reverse_parking_algorithm.html" class="btn btn-neutral float-left" title="Reverse Parking Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../moto_pista/index.html" class="btn btn-neutral float-right" title="Moto pista" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

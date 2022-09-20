@@ -43,6 +43,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -332,7 +335,7 @@
 <span class="sd">        :param post: Post number. From 6 to 9.</span>
 <span class="sd">        :type post: int</span>
 
-<span class="sd">        :param view_image: Flag to show the image with the parking area. Default is False</span>
+<span class="sd">        :param view_image: Flag to show the image. Default is False</span>
 <span class="sd">        :type view_image: bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -372,7 +375,7 @@
 
 <div class="viewcode-block" id="StopLinesParkingChecker.process_video"><a class="viewcode-back" href="../../../api/carro_pista/stop_lines_algorithm.html#Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video">[docs]</a>    <span class="k">def</span> <span class="nf">process_video</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Function to calculate the estimate the position and velocity of the vehicle in the ramp maneuver.</span>
+<span class="sd">            Function to check if the vehicle has stopped before the stop line.</span>
 
 <span class="sd">            :return: None. The results are saved in a video and a csv file.</span>
 <span class="sd">            :rtype: None</span>

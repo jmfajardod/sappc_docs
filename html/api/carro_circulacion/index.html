@@ -46,6 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -103,7 +106,7 @@
 <li><p>Open the <em>/ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py</em> file and edit <strong>line 23</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">22</span>    <span class="c1"># Open video</span>
-<span class="hll"><span class="linenos">23</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_02_09_2022_13_20_11&quot;</span>
+<span class="hll"><span class="linenos">23</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_16_09_2022_12_28_51&quot;</span>
 </span><span class="linenos">24</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">25</span>    <span class="n">date_test</span> <span class="o">=</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
@@ -124,7 +127,7 @@
 <p>The algorithms used in the Car’s public highway test are: <strong>Lane detection, Traffic light Recognition, Object Recognition, and Dashboard visualization</strong>. The main file of the process is located in <em>/ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py</em>.</p>
 <p>In the <em>process_video.py</em> file, the test folder is selected and opened to know the date and time of the test.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">19</span>    <span class="c1"># Open video</span>
-<span class="linenos">20</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_02_09_2022_13_20_11&quot;</span>
+<span class="linenos">20</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_16_09_2022_12_28_51&quot;</span>
 <span class="linenos">21</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">22</span>    <span class="n">date_test</span> <span class="o">=</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 <span class="linenos">23</span>

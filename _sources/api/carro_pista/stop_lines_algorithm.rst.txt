@@ -15,7 +15,7 @@ The parameters related to the Aruco markers are the shown in the following excer
 
 .. note:: If the size or ID of the Aruco markers are changed, the parameters must be updated.
 
-The parameters related to **reverse parking spots** are the shown in the following excerpt of file. The **LINE_STOP** parameter is the line that the vehicle must stop before. The **AREA_ALLOWED** parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.
+The parameters related to the **stop lines** are the shown in the following excerpt of file. The **LINE_STOP** parameter is the line that the vehicle must stop before. The **AREA_ALLOWED** parameter is the area where the markers of the vehicle are allowed to be, to consider a valid stop.
 
 .. literalinclude:: /../Pista/Vision/Car_algorithms/stop_lines/stop_lines_algorithms.py
     :language: python

@@ -1,0 +1,43 @@
+Eights Algorithm
+=====================
+
+The eights algorithm checks if the vehicle is inside the allowed area. It uses the algorithm RAFT by Teed and Deng [2020], to detect where the vehicle is. After locating the moving pixels, which will correspond to the vehicle the center of mass is calculated. Manually masks are created to define the allowed area and are dilated to give a margin to the vehicle. The center of mass is then compared to the allowed area. If the center of mass is inside the allowed area, the output CSV file will contain a 1, otherwise it will contain a 0.
+
+An example of the parameters related to the **eights allowed area** are the shown in the following excerpt of file. Each post has its own mask and the mask can be comprised of one or many contours.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/eights/eights_singleframe_functions.py
+    :language: python
+    :lines: 43-180
+    :lineno-start: 43
+    :linenos:
+
+.. note:: If the  **allowed area** or the **camera position** are changed, the **parameters must be updated**.
+
+
+Output format
+-------------
+
+The output CSV of the algorithm contains the following columns:
+
+- Time: timestamp of the frame.
+- Pos X: X position of the center of mass.
+- Pos Y: Y position of the center of mass.
+- In area: True if the center of mass is inside the allowed area, False otherwise.
+
+Class docs
+---------------------
+
+.. autoclass:: Motorcycle_algorithms.eights.eights_singleframe_functions.EightsSingleFrameChecker
+   :members:
+   :member-order: bysource
+   :private-members:
+   :inherited-members:
+
+Functions docs
+---------------------
+
+.. autofunction:: Motorcycle_algorithms.eights.eights_singleframe_functions.load_image
+
+.. autofunction:: Motorcycle_algorithms.eights.eights_singleframe_functions.load_array_gpu
+
+.. autofunction:: Motorcycle_algorithms.eights.eights_singleframe_functions.viz

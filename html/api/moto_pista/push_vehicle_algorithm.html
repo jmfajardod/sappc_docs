@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Push Vehicle Algorithm &mdash; SAPPC 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Eights Algorithm" href="eights_algorithm.html" />
+    <link rel="prev" title="High Velocity Slalom Algorithm" href="high_vel_slalom_algorithm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SAPPC
+            <img src="../../_static/SAPPC_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to SAPPC documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../carro_circulacion/index.html">Carro Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Moto pista</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#algorithms-used">Algorithms used</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="stop_lines_algorithm.html">Stop Lines Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="low_vel_slalom_algorithm.html">Low Velocity Slalom Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="high_vel_slalom_algorithm.html">High Velocity Slalom Algorithm</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Push Vehicle Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eights_algorithm.html">Eights Algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SAPPC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API</a> &raquo;</li>
+          <li><a href="index.html">Moto pista</a> &raquo;</li>
+      <li>Push Vehicle Algorithm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/moto_pista/push_vehicle_algorithm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="push-vehicle-algorithm">
+<h1>Push Vehicle Algorithm<a class="headerlink" href="#push-vehicle-algorithm" title="Permalink to this heading"></a></h1>
+<p>The push vehicle algorithm checks if the driver is pushing correctly the vehicle. The algorithm uses a CNN model to detect the person. After the person is detected, the algorithm calculates its center of mass. The vehicle is detected through an Aruco marker located on top of the vehicle. By comparing the center of mass of the person with the center of the vehicle, the algorithm can determine if the person is pushing the vehicle correctly.</p>
+<p>The parameters related to the Aruco markers are the shown in the following excerpt of file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">24</span><span class="c1"># Marker specifications</span>
+<span class="linenos">25</span><span class="n">MARKER_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span>
+<span class="linenos">26</span><span class="n">MARKER_ID_BACK</span>   <span class="o">=</span> <span class="mi">11</span>
+<span class="linenos">27</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the size or ID of the Aruco markers are changed, the parameters must be updated.</p>
+</div>
+<section id="output-format">
+<h2>Output format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
+<p>The output CSV of the algorithm contains the following columns:</p>
+<ul class="simple">
+<li><p>Time: timestamp of the frame.</p></li>
+<li><p>Pos X: X coordinate of the center of mass of the person.</p></li>
+<li><p>Pos Y: Y coordinate of the center of mass of the person.</p></li>
+<li><p>Holding left: True if the person is holding the vehicle from the left side. False otherwise.</p></li>
+</ul>
+</section>
+<section id="class-docs">
+<h2>Class docs<a class="headerlink" href="#class-docs" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.PushMotorcycleChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.</span></span><span class="sig-name descname"><span class="pre">PushMotorcycleChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_post_csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_post_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/push_motorcycle/push_motorcycle_functions.html#PushMotorcycleChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.PushMotorcycleChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Class to check if the person is pushing correctly the motorcycle. It uses a CNN model to detect the person and Aruco markers to detect the motorcycle.
+Comparing the position of the person with respect to the motorcycle, it checks if the person is pushing correctly the motorcycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_post_csv_path</strong> (<em>str</em>) – path to the csv file containing the data</p></li>
+<li><p><strong>video_post_path</strong> (<em>str</em>) – path to the video file</p></li>
+<li><p><strong>camera_matrix</strong> (<em>numpy.ndarray</em>) – camera matrix</p></li>
+<li><p><strong>dist_coeffs</strong> (<em>numpy.ndarray</em>) – distortion coefficients</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – flag to view the image. Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.PushMotorcycleChecker.process_video">
+<span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/push_motorcycle/push_motorcycle_functions.html#PushMotorcycleChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.PushMotorcycleChecker.process_video" title="Permalink to this definition"></a></dt>
+<dd><p>Function to check if the person is pushing correctly the motorcycle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="functions-docs">
+<h2>Functions docs<a class="headerlink" href="#functions-docs" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_keypoints_per_person">
+<span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.</span></span><span class="sig-name descname"><span class="pre">draw_keypoints_per_person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_keypoints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keypoint_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/push_motorcycle/push_motorcycle_functions.html#draw_keypoints_per_person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_keypoints_per_person" title="Permalink to this definition"></a></dt>
+<dd><p>Function to draw the person keypoints on the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – image on which the keypoints are to be drawn</p></li>
+<li><p><strong>all_keypoints</strong> (<em>list</em>) – list of keypoints for all the persons</p></li>
+<li><p><strong>all_scores</strong> (<em>list</em>) – list of scores for all the persons</p></li>
+<li><p><strong>confs</strong> (<em>list</em>) – list of confidence scores for all the persons</p></li>
+<li><p><strong>keypoint_threshold</strong> (<em>int</em>) – threshold for the keypoint score. Default is 2</p></li>
+<li><p><strong>conf_threshold</strong> (<em>float</em>) – threshold for the confidence score. Default is 0.9</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>image with the keypoints drawn, list of valid points</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray, list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_skeleton_per_person">
+<span class="sig-prename descclassname"><span class="pre">Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.</span></span><span class="sig-name descname"><span class="pre">draw_skeleton_per_person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limbs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_keypoints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keypoint_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Motorcycle_algorithms/push_motorcycle/push_motorcycle_functions.html#draw_skeleton_per_person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Motorcycle_algorithms.push_motorcycle.push_motorcycle_functions.draw_skeleton_per_person" title="Permalink to this definition"></a></dt>
+<dd><p>Function to draw the person skeleton on the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – image on which the skeleton is to be drawn</p></li>
+<li><p><strong>output</strong> (<em>dict</em>) – output of the model</p></li>
+<li><p><strong>limbs</strong> (<em>list</em>) – list of limbs</p></li>
+<li><p><strong>all_keypoints</strong> (<em>list</em>) – list of keypoints for all the persons</p></li>
+<li><p><strong>all_scores</strong> (<em>list</em>) – list of scores for all the persons</p></li>
+<li><p><strong>confs</strong> (<em>list</em>) – list of confidence scores for all the persons</p></li>
+<li><p><strong>keypoint_threshold</strong> (<em>int</em>) – threshold for the keypoint score. Default is 2</p></li>
+<li><p><strong>conf_threshold</strong> (<em>float</em>) – threshold for the confidence score. Default is 0.9</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>image with the skeleton drawn</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="high_vel_slalom_algorithm.html" class="btn btn-neutral float-left" title="High Velocity Slalom Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="eights_algorithm.html" class="btn btn-neutral float-right" title="Eights Algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, UNAL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
