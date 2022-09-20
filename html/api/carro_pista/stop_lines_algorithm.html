@@ -237,14 +237,14 @@
 <li><p><strong>dist_coeffs</strong> (<em>numpy.array</em>) – Distortion coefficients</p></li>
 <li><p><strong>vel_stopped</strong> (<em>float</em>) – Velocity threshold to consider the vehicle stopped</p></li>
 <li><p><strong>post</strong> (<em>int</em>) – Post number. From 6 to 9.</p></li>
-<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the image with the parking area. Default is False</p></li>
+<li><p><strong>view_image</strong> (<em>bool</em>) – Flag to show the image. Default is False</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video">
 <span class="sig-name descname"><span class="pre">process_video</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Car_algorithms/stop_lines/stop_lines_algorithms.html#StopLinesParkingChecker.process_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Car_algorithms.stop_lines.stop_lines_algorithms.StopLinesParkingChecker.process_video" title="Permalink to this definition"></a></dt>
-<dd><p>Function to calculate the estimate the position and velocity of the vehicle in the ramp maneuver.</p>
+<dd><p>Function to check if the vehicle has stopped before the stop line.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None. The results are saved in a video and a csv file.</p>

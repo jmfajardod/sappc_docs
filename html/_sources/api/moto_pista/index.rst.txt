@@ -1,6 +1,120 @@
 Moto pista
 ==================
 
+How to run the Motorcycle's track test
+----------------------------------------
+
+To run the Motorcycle's track test (Moto pista), the following steps must be followed:
+
+1. Open the */ansv_componente3/Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py* file and edit  **line 30**, changing the *test_path* variable to the folder of the test to be processed.
+
+    .. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+        :language: python
+        :lines: 29-33
+        :lineno-start: 29
+        :linenos:
+        :emphasize-lines: 2
+
+2. Then run the command in a terminal:
+
+    .. code-block:: bash
+        
+        cd ~/ansv_componente3/Pista/Vision/Motorcycle_algorithms/
+        python3 motorcycle_vision_algorithms.py
+
+How to run the Motorcycle's track test data acquisition pipeline
+-----------------------------------------------------------------
+
+The data acquisition pipeline can be used in two ways: to acquire data from the camera and save it to a file, or simply visualize it.
+
+Saving data to a file
+~~~~~~~~~~~~~~~~~~~~~~
+
+To save data to a file, the following steps must be followed:
+
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./save_camera_threads_motorcycle
+
+
+Visualizing data
+~~~~~~~~~~~~~~~~~
+
+To visualize data, the following steps must be followed:
+
+.. code-block:: bash
+
+    cd Pista/Vision/Data_acquisition/build
+    ./view_camera_threads
+
+Description of the Motorcycle's track test algorithms
+-------------------------------------------------------
+
+The algorithms used in the Motorcycle's track test are based on the detection of the **Aruco markers** located on the vehicle, the estimation of Optical Flow using **RAFT**, and the detection of a person using a Recurrent Convolutional Neural Network (**RCNN**). The main file of the process is located in */ansv_componente3/Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py*.
+
+First in the *motorcycle_vision_algorithms.py* file the camera calibration matrix and distortion coefficients are loaded.  These values are obtained from the calibration process of the camera, which can be done following the instructions in the link: https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+    :language: python
+    :lines: 23-27
+    :lineno-start: 23
+    :linenos:
+
+Then, the test folder is selected and opened to know the date and time of the test.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+    :language: python
+    :lines: 29-33
+    :lineno-start: 29
+    :linenos:
+
+With the path of the test folder, all the videos used for the Motorcycle's track test are loaded:
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+    :language: python
+    :lines: 35-118
+    :lineno-start: 35
+    :linenos:
+
+After the videos are loaded, a thread is created to process each of the files, according to the algorithm needed for that video, e.g., the video from post 12, 15, and 16 need the stop line algorithm. The algorithms that use the GPU are all executed in the same thread, while the algorithms that use the CPU are executed in different threads.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+    :language: python
+    :lines: 124-201
+    :lineno-start: 124
+    :linenos:
+
+Finally, the application will wait for all the threads to finish and then will stop.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py
+    :language: python
+    :lines: 203-206
+    :lineno-start: 203
+    :linenos:
+
+Parameters to change
+--------------------
+
+Aruco markers parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Among the parameters that can be changed in the Motorcycle's track test are the ones related to the **Aruco markers**. If the size or ID of the Aruco markers are changed, all the files must be updated with the new values. All the files have a first section in which the aruco markers parameters are defined. An example of this is shown below:
+
+.. code-block:: python
+
+   # Parameters of the Aruco markers located on the vehicle
+   MARKER_SIZE = 0.20
+   MARKER_ID_BACK   = 11
+   MARKER_ID_HELMET = 10
+
+Line stops parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The other relevant parameters to change are the ones related to the line stops. The guide to change these parameters is located in ???.
+
+
 
 Algorithms used
 --------------------

@@ -57,6 +57,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../moto_circulacion/index.html">Moto Circulación</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../carro_pista/index.html">Carro pista</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Moto pista</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-motorcycle-s-track-test">How to run the Motorcycle’s track test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-motorcycle-s-track-test-data-acquisition-pipeline">How to run the Motorcycle’s track test data acquisition pipeline</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#saving-data-to-a-file">Saving data to a file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visualizing-data">Visualizing data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#description-of-the-motorcycle-s-track-test-algorithms">Description of the Motorcycle’s track test algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters-to-change">Parameters to change</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#aruco-markers-parameters">Aruco markers parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#line-stops-parameters">Line stops parameters</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#algorithms-used">Algorithms used</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="stop_lines_algorithm.html">Stop Lines Algorithm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="low_vel_slalom_algorithm.html">Low Velocity Slalom Algorithm</a></li>
@@ -98,6 +110,263 @@
              
   <section id="moto-pista">
 <h1>Moto pista<a class="headerlink" href="#moto-pista" title="Permalink to this heading"></a></h1>
+<section id="how-to-run-the-motorcycle-s-track-test">
+<h2>How to run the Motorcycle’s track test<a class="headerlink" href="#how-to-run-the-motorcycle-s-track-test" title="Permalink to this heading"></a></h2>
+<p>To run the Motorcycle’s track test (Moto pista), the following steps must be followed:</p>
+<ol class="arabic">
+<li><p>Open the <em>/ansv_componente3/Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py</em> file and edit  <strong>line 30</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">29</span>    <span class="c1"># Open video</span>
+<span class="hll"><span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Moto_pista/Prueba_07_07_2022_17_37_02&quot;</span>
+</span><span class="linenos">31</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Then run the command in a terminal:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/Motorcycle_algorithms/
+python3 motorcycle_vision_algorithms.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="how-to-run-the-motorcycle-s-track-test-data-acquisition-pipeline">
+<h2>How to run the Motorcycle’s track test data acquisition pipeline<a class="headerlink" href="#how-to-run-the-motorcycle-s-track-test-data-acquisition-pipeline" title="Permalink to this heading"></a></h2>
+<p>The data acquisition pipeline can be used in two ways: to acquire data from the camera and save it to a file, or simply visualize it.</p>
+<section id="saving-data-to-a-file">
+<h3>Saving data to a file<a class="headerlink" href="#saving-data-to-a-file" title="Permalink to this heading"></a></h3>
+<p>To save data to a file, the following steps must be followed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> Pista/Vision/Data_acquisition/build
+./save_camera_threads_motorcycle
+</pre></div>
+</div>
+</section>
+<section id="visualizing-data">
+<h3>Visualizing data<a class="headerlink" href="#visualizing-data" title="Permalink to this heading"></a></h3>
+<p>To visualize data, the following steps must be followed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> Pista/Vision/Data_acquisition/build
+./view_camera_threads
+</pre></div>
+</div>
+</section>
+</section>
+<section id="description-of-the-motorcycle-s-track-test-algorithms">
+<h2>Description of the Motorcycle’s track test algorithms<a class="headerlink" href="#description-of-the-motorcycle-s-track-test-algorithms" title="Permalink to this heading"></a></h2>
+<p>The algorithms used in the Motorcycle’s track test are based on the detection of the <strong>Aruco markers</strong> located on the vehicle, the estimation of Optical Flow using <strong>RAFT</strong>, and the detection of a person using a Recurrent Convolutional Neural Network (<strong>RCNN</strong>). The main file of the process is located in <em>/ansv_componente3/Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py</em>.</p>
+<p>First in the <em>motorcycle_vision_algorithms.py</em> file the camera calibration matrix and distortion coefficients are loaded.  These values are obtained from the calibration process of the camera, which can be done following the instructions in the link: <a class="reference external" href="https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html">https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">23</span>    <span class="c1"># Set camera matrix and distortion coefficients</span>
+<span class="linenos">24</span>    <span class="n">camera_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">909.267507</span><span class="p">,</span> <span class="mf">0.000000</span><span class="p">,</span> <span class="mf">940.086159</span><span class="p">],</span>
+<span class="linenos">25</span>                              <span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="mf">909.619940</span><span class="p">,</span> <span class="mf">625.273047</span><span class="p">],</span>
+<span class="linenos">26</span>                              <span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="mf">0.000000</span><span class="p">,</span> <span class="mf">1.000000</span><span class="p">]])</span>
+<span class="linenos">27</span>    <span class="n">dist_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.276573</span><span class="p">,</span> <span class="mf">0.049113</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000638</span><span class="p">,</span> <span class="mf">0.001628</span><span class="p">,</span> <span class="mf">0.000000</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Then, the test folder is selected and opened to know the date and time of the test.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">29</span>    <span class="c1"># Open video</span>
+<span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Moto_pista/Prueba_07_07_2022_17_37_02&quot;</span>
+<span class="linenos">31</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>
+</pre></div>
+</div>
+<p>With the path of the test folder, all the videos used for the Motorcycle’s track test are loaded:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 35</span>    <span class="c1"># Folder for camera of post 1</span>
+<span class="linenos"> 36</span>    <span class="n">video_path_post_1</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_1/&quot;</span>
+<span class="linenos"> 37</span>    <span class="n">video_csv_path_1</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_1</span> <span class="o">+</span> <span class="s2">&quot;/Poste_1_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 38</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_1</span><span class="p">)</span>
+<span class="linenos"> 39</span>
+<span class="linenos"> 40</span>    <span class="c1"># Folder for camera of post 2</span>
+<span class="linenos"> 41</span>    <span class="n">video_path_post_2</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_2/&quot;</span>
+<span class="linenos"> 42</span>    <span class="n">video_csv_path_2</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_2</span> <span class="o">+</span> <span class="s2">&quot;/Poste_2_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 43</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_2</span><span class="p">)</span>
+<span class="linenos"> 44</span>
+<span class="linenos"> 45</span>    <span class="c1"># Folder for camera of post 3</span>
+<span class="linenos"> 46</span>    <span class="n">video_path_post_3</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_3/&quot;</span>
+<span class="linenos"> 47</span>    <span class="n">video_csv_path_3</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_3</span> <span class="o">+</span> <span class="s2">&quot;/Poste_3_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 48</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_3</span><span class="p">)</span>
+<span class="linenos"> 49</span>
+<span class="linenos"> 50</span>    <span class="c1"># Folder for camera of post 4</span>
+<span class="linenos"> 51</span>    <span class="n">video_path_post_4</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_4/&quot;</span>
+<span class="linenos"> 52</span>    <span class="n">video_csv_path_4</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_4</span> <span class="o">+</span> <span class="s2">&quot;/Poste_4_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 53</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_4</span><span class="p">)</span>
+<span class="linenos"> 54</span>
+<span class="linenos"> 55</span>    <span class="c1"># Folder for camera of post 5</span>
+<span class="linenos"> 56</span>    <span class="n">video_path_post_5</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_5/&quot;</span>
+<span class="linenos"> 57</span>    <span class="n">video_csv_path_5</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_5</span> <span class="o">+</span> <span class="s2">&quot;/Poste_5_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 58</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_5</span><span class="p">)</span>
+<span class="linenos"> 59</span>
+<span class="linenos"> 60</span>    <span class="c1"># Folder for camera of post 12_1</span>
+<span class="linenos"> 61</span>    <span class="n">video_path_post_12_1</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_12_1/&quot;</span>
+<span class="linenos"> 62</span>    <span class="n">video_csv_path_12_1</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_12_1</span> <span class="o">+</span> <span class="s2">&quot;/Poste_12_1_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 63</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_12_1</span><span class="p">)</span>
+<span class="linenos"> 64</span>
+<span class="linenos"> 65</span>    <span class="c1"># Folder for camera of post 12_2</span>
+<span class="linenos"> 66</span>    <span class="n">video_path_post_12_2</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_12_2/&quot;</span>
+<span class="linenos"> 67</span>    <span class="n">video_csv_path_12_2</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_12_2</span> <span class="o">+</span> <span class="s2">&quot;/Poste_12_2_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 68</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_12_2</span><span class="p">)</span>
+<span class="linenos"> 69</span>
+<span class="linenos"> 70</span>    <span class="c1"># Folder for camera of post 13</span>
+<span class="linenos"> 71</span>    <span class="n">video_path_post_13</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_13/&quot;</span>
+<span class="linenos"> 72</span>    <span class="n">video_csv_path_13</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_13</span> <span class="o">+</span> <span class="s2">&quot;/Poste_13_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 73</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_13</span><span class="p">)</span>
+<span class="linenos"> 74</span>
+<span class="linenos"> 75</span>    <span class="c1"># Folder for camera of post 14</span>
+<span class="linenos"> 76</span>    <span class="n">video_path_post_14</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_14/&quot;</span>
+<span class="linenos"> 77</span>    <span class="n">video_csv_path_14</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_14</span> <span class="o">+</span> <span class="s2">&quot;/Poste_14_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 78</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_14</span><span class="p">)</span>
+<span class="linenos"> 79</span>
+<span class="linenos"> 80</span>    <span class="c1"># Folder for camera of post 15</span>
+<span class="linenos"> 81</span>    <span class="n">video_path_post_15</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_15/&quot;</span>
+<span class="linenos"> 82</span>    <span class="n">video_csv_path_15</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_15</span> <span class="o">+</span> <span class="s2">&quot;/Poste_15_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 83</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_15</span><span class="p">)</span>
+<span class="linenos"> 84</span>
+<span class="linenos"> 85</span>    <span class="c1"># Folder for camera of post 16</span>
+<span class="linenos"> 86</span>    <span class="n">video_path_post_16</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_16/&quot;</span>
+<span class="linenos"> 87</span>    <span class="n">video_csv_path_16</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_16</span> <span class="o">+</span> <span class="s2">&quot;/Poste_16_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 88</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_16</span><span class="p">)</span>
+<span class="linenos"> 89</span>
+<span class="linenos"> 90</span>    <span class="c1"># Folder for camera of post 17</span>
+<span class="linenos"> 91</span>    <span class="n">video_path_post_17</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_17/&quot;</span>
+<span class="linenos"> 92</span>    <span class="n">video_csv_path_17</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_17</span> <span class="o">+</span> <span class="s2">&quot;/Poste_17_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 93</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_17</span><span class="p">)</span>
+<span class="linenos"> 94</span>
+<span class="linenos"> 95</span>    <span class="c1"># Folder for camera of post 18</span>
+<span class="linenos"> 96</span>    <span class="n">video_path_post_18</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_18/&quot;</span>
+<span class="linenos"> 97</span>    <span class="n">video_csv_path_18</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_18</span> <span class="o">+</span> <span class="s2">&quot;/Poste_18_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos"> 98</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_18</span><span class="p">)</span>
+<span class="linenos"> 99</span>
+<span class="linenos">100</span>    <span class="c1"># Folder for camera of post 19</span>
+<span class="linenos">101</span>    <span class="n">video_path_post_19</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_19/&quot;</span>
+<span class="linenos">102</span>    <span class="n">video_csv_path_19</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_19</span> <span class="o">+</span> <span class="s2">&quot;/Poste_19_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos">103</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_19</span><span class="p">)</span>
+<span class="linenos">104</span>
+<span class="linenos">105</span>    <span class="c1"># Folder for camera of post 20</span>
+<span class="linenos">106</span>    <span class="n">video_path_post_20</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_20/&quot;</span>
+<span class="linenos">107</span>    <span class="n">video_csv_path_20</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_20</span> <span class="o">+</span> <span class="s2">&quot;/Poste_20_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos">108</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_20</span><span class="p">)</span>
+<span class="linenos">109</span>
+<span class="linenos">110</span>    <span class="c1"># Folder for camera of post 21</span>
+<span class="linenos">111</span>    <span class="n">video_path_post_21</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_21/&quot;</span>
+<span class="linenos">112</span>    <span class="n">video_csv_path_21</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_21</span> <span class="o">+</span> <span class="s2">&quot;/Poste_21_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos">113</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_21</span><span class="p">)</span>
+<span class="linenos">114</span>
+<span class="linenos">115</span>    <span class="c1"># Folder for camera of post 22</span>
+<span class="linenos">116</span>    <span class="n">video_path_post_22</span> <span class="o">=</span> <span class="n">video_folder</span> <span class="o">+</span> <span class="s2">&quot;/Poste_22/&quot;</span>
+<span class="linenos">117</span>    <span class="n">video_csv_path_22</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">video_path_post_22</span> <span class="o">+</span> <span class="s2">&quot;/Poste_22_*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos">118</span>    <span class="nb">print</span><span class="p">(</span><span class="n">video_csv_path_22</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After the videos are loaded, a thread is created to process each of the files, according to the algorithm needed for that video, e.g., the video from post 12, 15, and 16 need the stop line algorithm. The algorithms that use the GPU are all executed in the same thread, while the algorithms that use the CPU are executed in different threads.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">124</span>    <span class="c1">#- Stop Line - Post 12</span>
+<span class="linenos">125</span>    <span class="n">stop_line_proccesor_12</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_12_2</span><span class="p">,</span> <span class="n">video_path_post_12_2</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">126</span>    <span class="n">process_stop_line_12</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_12</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
+<span class="linenos">127</span>    <span class="n">process_stop_line_12</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">128</span>
+<span class="linenos">129</span>    <span class="c1">#- Stop Line - Post 15</span>
+<span class="linenos">130</span>    <span class="n">stop_line_proccesor_15</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_15</span><span class="p">,</span> <span class="n">video_path_post_15</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">131</span>    <span class="n">process_stop_line_15</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_15</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
+<span class="linenos">132</span>    <span class="n">process_stop_line_15</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">133</span>
+<span class="linenos">134</span>    <span class="c1">#- Stop Line - Post 16</span>
+<span class="linenos">135</span>    <span class="n">stop_line_proccesor_16</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_16</span><span class="p">,</span> <span class="n">video_path_post_16</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">136</span>    <span class="n">process_stop_line_16</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_16</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
+<span class="linenos">137</span>    <span class="n">process_stop_line_16</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">138</span>
+<span class="linenos">139</span>    <span class="c1">#- Eights algorithm in single frames - Post 17</span>
+<span class="linenos">140</span>    <span class="n">eight_proccesor_17</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_17</span><span class="p">,</span> <span class="n">video_path_post_17</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">141</span>    <span class="n">eight_proccesor_17</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">142</span>
+<span class="linenos">143</span>    <span class="c1"># #- Eights algorithm in single frames - Post 18</span>
+<span class="linenos">144</span>    <span class="n">eight_proccesor_18</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_18</span><span class="p">,</span> <span class="n">video_path_post_18</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">145</span>    <span class="n">eight_proccesor_18</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">146</span>
+<span class="linenos">147</span>    <span class="c1"># #- Eights algorithm in single frames - Post 19</span>
+<span class="linenos">148</span>    <span class="n">eight_proccesor_19</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_19</span><span class="p">,</span> <span class="n">video_path_post_19</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">149</span>    <span class="n">eight_proccesor_19</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">150</span>
+<span class="linenos">151</span>    <span class="c1"># #- Eights algorithm in single frames - Post 20</span>
+<span class="linenos">152</span>    <span class="n">eight_proccesor_20</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_20</span><span class="p">,</span> <span class="n">video_path_post_20</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">153</span>    <span class="n">eight_proccesor_20</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">154</span>
+<span class="linenos">155</span>    <span class="c1"># #- Eights algorithm in single frames - Post 21</span>
+<span class="linenos">156</span>    <span class="n">eight_proccesor_21</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_21</span><span class="p">,</span> <span class="n">video_path_post_21</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">157</span>    <span class="n">eight_proccesor_21</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">158</span>
+<span class="linenos">159</span>    <span class="c1"># #- Eights algorithm in single frames - Post 22</span>
+<span class="linenos">160</span>    <span class="n">eight_proccesor_22</span> <span class="o">=</span> <span class="n">EightsSingleFrameChecker</span><span class="p">(</span><span class="n">video_csv_path_22</span><span class="p">,</span> <span class="n">video_path_post_22</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">161</span>    <span class="n">eight_proccesor_22</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">162</span>
+<span class="linenos">163</span>    <span class="c1">#- High velocity Slalom - Post 1</span>
+<span class="linenos">164</span>    <span class="n">high_vel_slalom_proccesor_1</span> <span class="o">=</span> <span class="n">SlalomHighVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_1</span><span class="p">,</span> <span class="n">video_path_post_1</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">165</span>    <span class="n">high_vel_slalom_proccesor_1</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">166</span>
+<span class="linenos">167</span>    <span class="c1">#- High velocity Slalom - Post 2</span>
+<span class="linenos">168</span>    <span class="n">high_vel_slalom_proccesor_2</span> <span class="o">=</span> <span class="n">SlalomHighVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_2</span><span class="p">,</span> <span class="n">video_path_post_2</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">169</span>    <span class="n">high_vel_slalom_proccesor_2</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">170</span>
+<span class="linenos">171</span>    <span class="c1">#- High velocity Slalom - Post 3</span>
+<span class="linenos">172</span>    <span class="n">high_vel_slalom_proccesor_3</span> <span class="o">=</span> <span class="n">SlalomHighVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_3</span><span class="p">,</span> <span class="n">video_path_post_3</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">173</span>    <span class="n">high_vel_slalom_proccesor_3</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">174</span>
+<span class="linenos">175</span>    <span class="c1">#- High velocity Slalom - Post 4</span>
+<span class="linenos">176</span>    <span class="n">high_vel_slalom_proccesor_4</span> <span class="o">=</span> <span class="n">SlalomHighVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_4</span><span class="p">,</span> <span class="n">video_path_post_4</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">177</span>    <span class="n">high_vel_slalom_proccesor_4</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">178</span>
+<span class="linenos">179</span>    <span class="c1">#- High velocity Slalom - Post 5</span>
+<span class="linenos">180</span>    <span class="n">high_vel_slalom_proccesor_5</span> <span class="o">=</span> <span class="n">SlalomHighVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_5</span><span class="p">,</span> <span class="n">video_path_post_5</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">181</span>    <span class="n">high_vel_slalom_proccesor_5</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">182</span>
+<span class="linenos">183</span>    <span class="c1">#- Low velocity Slalom - Post 15</span>
+<span class="linenos">184</span>    <span class="n">low_vel_slalom_proccesor_15</span> <span class="o">=</span> <span class="n">SlalomLowVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_15</span><span class="p">,</span> <span class="n">video_path_post_15</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">185</span>    <span class="n">low_vel_slalom_proccesor_15</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">186</span>
+<span class="linenos">187</span>    <span class="c1">#- Low velocity Slalom - Post 14</span>
+<span class="linenos">188</span>    <span class="n">low_vel_slalom_proccesor_14</span> <span class="o">=</span> <span class="n">SlalomLowVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_14</span><span class="p">,</span> <span class="n">video_path_post_14</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">189</span>    <span class="n">low_vel_slalom_proccesor_14</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">190</span>
+<span class="linenos">191</span>    <span class="c1">#- Low velocity Slalom - Post 13</span>
+<span class="linenos">192</span>    <span class="n">low_vel_slalom_proccesor_13</span> <span class="o">=</span> <span class="n">SlalomLowVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_13</span><span class="p">,</span> <span class="n">video_path_post_13</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">193</span>    <span class="n">low_vel_slalom_proccesor_13</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">194</span>
+<span class="linenos">195</span>    <span class="c1">#- Low velocity Slalom - Post 12</span>
+<span class="linenos">196</span>    <span class="n">low_vel_slalom_proccesor_12</span> <span class="o">=</span> <span class="n">SlalomLowVelocityChecker</span><span class="p">(</span><span class="n">video_csv_path_12_1</span><span class="p">,</span> <span class="n">video_path_post_12_1</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">197</span>    <span class="n">low_vel_slalom_proccesor_12</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">198</span>
+<span class="linenos">199</span>    <span class="c1"># - Push motorcycle - Post 16</span>
+<span class="linenos">200</span>    <span class="n">push_motorcycle_proccesor_16</span> <span class="o">=</span> <span class="n">PushMotorcycleChecker</span><span class="p">(</span><span class="n">video_csv_path_16</span><span class="p">,</span> <span class="n">video_path_post_16</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">201</span>    <span class="n">push_motorcycle_proccesor_16</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Finally, the application will wait for all the threads to finish and then will stop.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">203</span>    <span class="c1">#- Join all processes</span>
+<span class="linenos">204</span>    <span class="n">process_stop_line_12</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="linenos">205</span>    <span class="n">process_stop_line_15</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="linenos">206</span>    <span class="n">process_stop_line_16</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="parameters-to-change">
+<h2>Parameters to change<a class="headerlink" href="#parameters-to-change" title="Permalink to this heading"></a></h2>
+<section id="aruco-markers-parameters">
+<h3>Aruco markers parameters<a class="headerlink" href="#aruco-markers-parameters" title="Permalink to this heading"></a></h3>
+<p>Among the parameters that can be changed in the Motorcycle’s track test are the ones related to the <strong>Aruco markers</strong>. If the size or ID of the Aruco markers are changed, all the files must be updated with the new values. All the files have a first section in which the aruco markers parameters are defined. An example of this is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Parameters of the Aruco markers located on the vehicle</span>
+<span class="n">MARKER_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span>
+<span class="n">MARKER_ID_BACK</span>   <span class="o">=</span> <span class="mi">11</span>
+<span class="n">MARKER_ID_HELMET</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</section>
+<section id="line-stops-parameters">
+<h3>Line stops parameters<a class="headerlink" href="#line-stops-parameters" title="Permalink to this heading"></a></h3>
+<p>The other relevant parameters to change are the ones related to the line stops. The guide to change these parameters is located in ???.</p>
+</section>
+</section>
 <section id="algorithms-used">
 <h2>Algorithms used<a class="headerlink" href="#algorithms-used" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
