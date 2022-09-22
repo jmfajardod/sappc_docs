@@ -100,13 +100,21 @@
 <span class="c1">#-------------------------------------------------------------#</span>
 <span class="c1"># Post 6</span>
 
-<span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                            <span class="p">[</span><span class="mi">477</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                            <span class="p">[</span><span class="mi">488</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
-                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
 <span class="n">AREA_ALLOWED_post6</span> <span class="o">=</span> <span class="n">LINE_STOP_post6</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">offset_x_post6</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+<span class="n">offset_x_post6</span> <span class="o">=</span> <span class="o">-</span><span class="mi">137</span>
 
 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">AREA_ALLOWED_post6</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">AREA_ALLOWED_post6</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offset_x_post6</span>

@@ -20,7 +20,7 @@ Contents
    guide/data_acquisition
    guide/process_data
    guide/update_line_stops
-   
+   guide/update_parking_areas
 
 .. toctree::
    :maxdepth: 4

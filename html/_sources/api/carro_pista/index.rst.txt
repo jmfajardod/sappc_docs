@@ -91,7 +91,7 @@ Finally, the application will wait for all the threads to finish and then will s
 
 .. literalinclude:: /../Pista/Vision/Car_algorithms/car_vision_algorithms.py
     :language: python
-    :lines: 149-160
+    :lines: 149-159
     :lineno-start: 149
     :linenos:
 
@@ -114,7 +114,7 @@ Among the parameters that can be changed in the Car's track test are the ones re
 Parking spots or line stops parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The other relevant parameters to change are the ones related to the parking spots or line stops. The guide to change these parameters is located in ???? and ???? depending on the algorithm used. If the parking spots are change then it is necessary to update the files **inline_parking_algorithms** and **reverse_parking_algorithms**. If the line stops are changed then it is necessary to update the file **stop_lines_algorithms**.
+The other relevant parameters to change are the ones related to the parking spots or line stops. The guide to change these parameters is located in ???? and :doc:`/guide/update_line_stops` depending on the algorithm used. If the parking spots are change then it is necessary to update the files **inline_parking_algorithms** and **reverse_parking_algorithms**. If the line stops are changed then it is necessary to update the file **stop_lines_algorithms**.
 
 
 Velocity threshold
@@ -134,3 +134,4 @@ Algorithms used
    ramp_algorithm
    reverse_parking_algorithm
    stop_lines_algorithm
+

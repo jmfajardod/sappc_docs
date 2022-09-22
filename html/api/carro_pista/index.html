@@ -49,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/process_data.html">How to process the data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/update_parking_areas.html">Update areas for parking spots</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -240,69 +241,69 @@ python3 car_vision_algorithms.py
 <p>After the videos are loaded, a thread is created to process each of the files, according to the algorithm needed for that video, e.g., the video from post 6 to 9 need the stop line algorithm. All the threads will be executed simultaneously and will be creating a processed video file as well as a CSV file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 97</span>    <span class="c1"># Proccess videos</span>
 <span class="linenos"> 98</span>
-<span class="linenos"> 99</span>    <span class="c1">#- Stop line algorithm - Post 6</span>
-<span class="linenos">100</span>    <span class="n">stop_line_proccesor_6</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_6</span><span class="p">,</span> <span class="n">video_path_post_6</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="linenos">101</span>    <span class="n">process_post6</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_6</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">102</span>    <span class="n">process_post6</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos"> 99</span>    <span class="c1"># #- Stop line algorithm - Post 6</span>
+<span class="linenos">100</span>    <span class="c1"># stop_line_proccesor_6 = StopLinesParkingChecker(video_csv_path_6, video_path_post_6, camera_matrix, dist_coeff, 0.05, post=6, view_image=True)</span>
+<span class="linenos">101</span>    <span class="c1"># process_post6 = Process(target= stop_line_proccesor_6.process_video)</span>
+<span class="linenos">102</span>    <span class="c1"># process_post6.start()</span>
 <span class="linenos">103</span>
-<span class="linenos">104</span>    <span class="c1"># #- Stop line algorithm - Post 7</span>
-<span class="linenos">105</span>    <span class="n">stop_line_proccesor_7</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_7</span><span class="p">,</span> <span class="n">video_path_post_7</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">106</span>    <span class="n">process_post7</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_7</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">107</span>    <span class="n">process_post7</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">104</span>    <span class="c1"># # #- Stop line algorithm - Post 7</span>
+<span class="linenos">105</span>    <span class="c1"># stop_line_proccesor_7 = StopLinesParkingChecker(video_csv_path_7, video_path_post_7, camera_matrix, dist_coeff, 0.05, post=7, view_image=False)</span>
+<span class="linenos">106</span>    <span class="c1"># process_post7 = Process(target= stop_line_proccesor_7.process_video)</span>
+<span class="linenos">107</span>    <span class="c1"># process_post7.start()</span>
 <span class="linenos">108</span>
-<span class="linenos">109</span>    <span class="c1"># # - Stop line algorithm - Post 8</span>
-<span class="linenos">110</span>    <span class="n">stop_line_proccesor_8</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_8</span><span class="p">,</span> <span class="n">video_path_post_8</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">111</span>    <span class="n">process_post8</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_8</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">112</span>    <span class="n">process_post8</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">109</span>    <span class="c1"># # # - Stop line algorithm - Post 8</span>
+<span class="linenos">110</span>    <span class="c1"># stop_line_proccesor_8 = StopLinesParkingChecker(video_csv_path_8, video_path_post_8, camera_matrix, dist_coeff, 0.05, post=8, view_image=False)</span>
+<span class="linenos">111</span>    <span class="c1"># process_post8 = Process(target= stop_line_proccesor_8.process_video)</span>
+<span class="linenos">112</span>    <span class="c1"># process_post8.start()</span>
 <span class="linenos">113</span>
-<span class="linenos">114</span>    <span class="c1"># # - Stop line algorithm - Post 9</span>
-<span class="linenos">115</span>    <span class="n">stop_line_proccesor_9</span> <span class="o">=</span> <span class="n">StopLinesParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_9</span><span class="p">,</span> <span class="n">video_path_post_9</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">116</span>    <span class="n">process_post9</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">stop_line_proccesor_9</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">117</span>    <span class="n">process_post9</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">114</span>    <span class="c1"># # # - Stop line algorithm - Post 9</span>
+<span class="linenos">115</span>    <span class="c1"># stop_line_proccesor_9 = StopLinesParkingChecker(video_csv_path_9, video_path_post_9, camera_matrix, dist_coeff, 0.05, post=9, view_image=False)</span>
+<span class="linenos">116</span>    <span class="c1"># process_post9 = Process(target= stop_line_proccesor_9.process_video)</span>
+<span class="linenos">117</span>    <span class="c1"># process_post9.start()</span>
 <span class="linenos">118</span>
-<span class="linenos">119</span>    <span class="c1"># # - Ramp algorithm - Post 10</span>
-<span class="linenos">120</span>    <span class="n">ramp_proccesor_10</span> <span class="o">=</span> <span class="n">RampStopChecker</span><span class="p">(</span><span class="n">video_csv_path_10</span><span class="p">,</span> <span class="n">video_path_post_10</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="linenos">121</span>    <span class="n">process_post10</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">ramp_proccesor_10</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">122</span>    <span class="n">process_post10</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">119</span>    <span class="c1"># # # - Ramp algorithm - Post 10</span>
+<span class="linenos">120</span>    <span class="c1"># ramp_proccesor_10 = RampStopChecker(video_csv_path_10, video_path_post_10, camera_matrix, dist_coeff, 0.05)</span>
+<span class="linenos">121</span>    <span class="c1"># process_post10 = Process(target= ramp_proccesor_10.process_video)</span>
+<span class="linenos">122</span>    <span class="c1"># process_post10.start()</span>
 <span class="linenos">123</span>
-<span class="linenos">124</span>    <span class="c1"># # - Turn algorithm - Post 17</span>
-<span class="linenos">125</span>    <span class="n">turn_proccesor_17</span> <span class="o">=</span> <span class="n">TurnChecker</span><span class="p">(</span><span class="n">video_csv_path_17</span><span class="p">,</span> <span class="n">video_path_post_17</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="linenos">126</span>    <span class="n">process_post17</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">turn_proccesor_17</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">127</span>    <span class="n">process_post17</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">124</span>    <span class="c1"># # # - Turn algorithm - Post 17</span>
+<span class="linenos">125</span>    <span class="c1"># turn_proccesor_17 = TurnChecker(video_csv_path_17, video_path_post_17, camera_matrix, dist_coeff, 0.05)</span>
+<span class="linenos">126</span>    <span class="c1"># process_post17 = Process(target= turn_proccesor_17.process_video)</span>
+<span class="linenos">127</span>    <span class="c1"># process_post17.start()</span>
 <span class="linenos">128</span>
-<span class="linenos">129</span>    <span class="c1"># # - Turn algorithm - Post 22</span>
-<span class="linenos">130</span>    <span class="n">turn_proccesor_22</span> <span class="o">=</span> <span class="n">TurnChecker</span><span class="p">(</span><span class="n">video_csv_path_22</span><span class="p">,</span> <span class="n">video_path_post_22</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="linenos">131</span>    <span class="n">process_post22</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">turn_proccesor_22</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">132</span>    <span class="n">process_post22</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">129</span>    <span class="c1"># # # - Turn algorithm - Post 22</span>
+<span class="linenos">130</span>    <span class="c1"># turn_proccesor_22 = TurnChecker(video_csv_path_22, video_path_post_22, camera_matrix, dist_coeff, 0.05)</span>
+<span class="linenos">131</span>    <span class="c1"># process_post22 = Process(target= turn_proccesor_22.process_video)</span>
+<span class="linenos">132</span>    <span class="c1"># process_post22.start()</span>
 <span class="linenos">133</span>
 <span class="linenos">134</span>    <span class="c1"># #- Reverse parking algorithm - Post 18</span>
-<span class="linenos">135</span>    <span class="n">reverse_parking_proccesor_18</span> <span class="o">=</span> <span class="n">ReverseParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_18</span><span class="p">,</span> <span class="n">video_path_post_18</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">135</span>    <span class="n">reverse_parking_proccesor_18</span> <span class="o">=</span> <span class="n">ReverseParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_18</span><span class="p">,</span> <span class="n">video_path_post_18</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="linenos">136</span>    <span class="n">process_post18</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">reverse_parking_proccesor_18</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
 <span class="linenos">137</span>    <span class="n">process_post18</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 <span class="linenos">138</span>
-<span class="linenos">139</span>    <span class="c1"># #- Inline parking algorithm - Post 19</span>
-<span class="linenos">140</span>    <span class="n">inline_parking_proccesor_19</span> <span class="o">=</span> <span class="n">InlineParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_19</span><span class="p">,</span> <span class="n">video_path_post_19</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">141</span>    <span class="n">process_post19</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">inline_parking_proccesor_19</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">142</span>    <span class="n">process_post19</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">139</span>    <span class="c1"># # #- Inline parking algorithm - Post 19</span>
+<span class="linenos">140</span>    <span class="c1"># inline_parking_proccesor_19 = InlineParkingChecker(video_csv_path_19, video_path_post_19, camera_matrix, dist_coeff, 0.05, post=19, view_image=False)</span>
+<span class="linenos">141</span>    <span class="c1"># process_post19 = Process(target= inline_parking_proccesor_19.process_video)</span>
+<span class="linenos">142</span>    <span class="c1"># process_post19.start()</span>
 <span class="linenos">143</span>
-<span class="linenos">144</span>    <span class="c1"># #- Inline parking algorithm - Post 20</span>
-<span class="linenos">145</span>    <span class="n">inline_parking_proccesor_20</span> <span class="o">=</span> <span class="n">InlineParkingChecker</span><span class="p">(</span><span class="n">video_csv_path_20</span><span class="p">,</span> <span class="n">video_path_post_20</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">146</span>    <span class="n">process_post20</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span> <span class="n">inline_parking_proccesor_20</span><span class="o">.</span><span class="n">process_video</span><span class="p">)</span>
-<span class="linenos">147</span>    <span class="n">process_post20</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="linenos">144</span>    <span class="c1"># # #- Inline parking algorithm - Post 20</span>
+<span class="linenos">145</span>    <span class="c1"># inline_parking_proccesor_20 = InlineParkingChecker(video_csv_path_20, video_path_post_20, camera_matrix, dist_coeff, 0.05, post=20, view_image=False)</span>
+<span class="linenos">146</span>    <span class="c1"># process_post20 = Process(target= inline_parking_proccesor_20.process_video)</span>
+<span class="linenos">147</span>    <span class="c1"># process_post20.start()</span>
 </pre></div>
 </div>
 <p>Finally, the application will wait for all the threads to finish and then will stop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">149</span>    <span class="c1"># # Join processes</span>
-<span class="linenos">150</span>    <span class="n">process_post6</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">151</span>    <span class="n">process_post7</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">152</span>    <span class="n">process_post8</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">153</span>    <span class="n">process_post9</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">154</span>    <span class="n">process_post10</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">155</span>    <span class="n">process_post17</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">156</span>    <span class="n">process_post22</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="linenos">150</span>    <span class="c1"># process_post6.join()</span>
+<span class="linenos">151</span>    <span class="c1"># process_post7.join()</span>
+<span class="linenos">152</span>    <span class="c1"># process_post8.join()</span>
+<span class="linenos">153</span>    <span class="c1"># process_post9.join()</span>
+<span class="linenos">154</span>    <span class="c1"># process_post10.join()</span>
+<span class="linenos">155</span>    <span class="c1"># process_post17.join()</span>
+<span class="linenos">156</span>    <span class="c1"># process_post22.join()</span>
 <span class="linenos">157</span>    <span class="n">process_post18</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">158</span>    <span class="n">process_post19</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-<span class="linenos">159</span>    <span class="n">process_post20</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="linenos">158</span>    <span class="c1"># process_post19.join()</span>
+<span class="linenos">159</span>    <span class="c1"># process_post20.join()</span>
 </pre></div>
 </div>
 </section>
@@ -321,7 +322,7 @@ python3 car_vision_algorithms.py
 </section>
 <section id="parking-spots-or-line-stops-parameters">
 <h3>Parking spots or line stops parameters<a class="headerlink" href="#parking-spots-or-line-stops-parameters" title="Permalink to this heading"></a></h3>
-<p>The other relevant parameters to change are the ones related to the parking spots or line stops. The guide to change these parameters is located in ???? and ???? depending on the algorithm used. If the parking spots are change then it is necessary to update the files <strong>inline_parking_algorithms</strong> and <strong>reverse_parking_algorithms</strong>. If the line stops are changed then it is necessary to update the file <strong>stop_lines_algorithms</strong>.</p>
+<p>The other relevant parameters to change are the ones related to the parking spots or line stops. The guide to change these parameters is located in ???? and <a class="reference internal" href="../../guide/update_line_stops.html"><span class="doc">Update lines for Line stop maneuvers</span></a> depending on the algorithm used. If the parking spots are change then it is necessary to update the files <strong>inline_parking_algorithms</strong> and <strong>reverse_parking_algorithms</strong>. If the line stops are changed then it is necessary to update the file <strong>stop_lines_algorithms</strong>.</p>
 </section>
 <section id="velocity-threshold">
 <h3>Velocity threshold<a class="headerlink" href="#velocity-threshold" title="Permalink to this heading"></a></h3>

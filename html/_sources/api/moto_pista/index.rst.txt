@@ -112,8 +112,7 @@ Among the parameters that can be changed in the Motorcycle's track test are the 
 Line stops parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The other relevant parameters to change are the ones related to the line stops. The guide to change these parameters is located in ???.
-
+The other relevant parameters to change are the ones related to the line stops. The guide to change these parameters is located in :doc:`/guide/update_line_stops`.
 
 
 Algorithms used

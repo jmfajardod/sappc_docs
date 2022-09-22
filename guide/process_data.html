@@ -55,6 +55,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update_parking_areas.html">Update areas for parking spots</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -95,7 +96,7 @@
 <li><p>Open the <em>/ansv_componente3/Vehiculos/Automovil_circulacion/Vision/process_video.py</em> file and edit <strong>line 23</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">22</span>    <span class="c1"># Open video</span>
-<span class="hll"><span class="linenos">23</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_circ/Prueba_16_09_2022_12_28_51&quot;</span>
+<span class="hll"><span class="linenos">23</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_16_09_2022_12_28_51/Prueba_16_09_2022_12_28_51&quot;</span>
 </span><span class="linenos">24</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">25</span>    <span class="n">date_test</span> <span class="o">=</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">datetime_test</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
@@ -141,7 +142,7 @@
 <li><p>Open the <em>/ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py</em> file and edit  <strong>line 29</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">28</span>    <span class="c1"># Open video</span>
-<span class="hll"><span class="linenos">29</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA&quot;</span>
+<span class="hll"><span class="linenos">29</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_13_09_2022_12_47_11&quot;</span>
 </span><span class="linenos">30</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">31</span>
 <span class="linenos">32</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>
@@ -166,7 +167,7 @@ python3 car_vision_algorithms.py
 <li><p>Open the <em>/ansv_componente3/Pista/Vision/Car_algorithms/car_vision_algorithms.py</em> file and edit  <strong>line 30</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">29</span>    <span class="c1"># Open video</span>
-<span class="hll"><span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Moto_pista/Prueba_07_07_2022_17_37_02&quot;</span>
+<span class="hll"><span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_19_09_2022_11_37_57&quot;</span>
 </span><span class="linenos">31</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">32</span>
 <span class="linenos">33</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>

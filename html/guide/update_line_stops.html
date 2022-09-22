@@ -48,7 +48,12 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_data.html">How to process the data</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Update lines for Line stop maneuvers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Update lines for Line stop maneuvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#obtain-the-countour-of-the-line">Obtain the countour of the line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#obtain-the-offset">Obtain the offset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-the-updated-line">Validate the updated line</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -81,7 +86,251 @@
              
   <section id="update-lines-for-line-stop-maneuvers">
 <h1>Update lines for Line stop maneuvers<a class="headerlink" href="#update-lines-for-line-stop-maneuvers" title="Permalink to this heading"></a></h1>
-<p>If the line for line stop maneuver is changed or the camera is moved, the line for line stop maneuver must be updated.</p>
+<p>If the line for line stop maneuver is changed or the camera is moved, the line for line stop maneuver must be updated. The line for line stop maneuver has two important parameters: the <strong>countour of the line</strong> and the <strong>offset</strong> from the countour of the line to account for the distance from the Aruco marker to the front of the vehicle. The <strong>countour of the line</strong> is defined by a list of points while the <strong>offset</strong> is given as a single integer.</p>
+<p>The parameters of the <strong>countour of the line</strong> and the <strong>offset</strong> are located on the top of the files <strong>ansv_componente3/Pista/Vision/Car_algorithms/stop_lines/stop_lines_algorithms.py</strong> and <strong>ansv_componente3/Pista/Vision/Motorcycle_algorithms/stop_lines/stop_lines_functions.py</strong>. As an example the stop line for post 9 of the Car’s track test is shown below.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Post 9</span>
+
+<span class="n">LINE_STOP_post9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">381</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">380</span><span class="p">,</span>  <span class="mi">30</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">380</span><span class="p">,</span> <span class="mi">105</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">378</span><span class="p">,</span> <span class="mi">175</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">379</span><span class="p">,</span> <span class="mi">250</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">383</span><span class="p">,</span> <span class="mi">329</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">388</span><span class="p">,</span> <span class="mi">416</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">394</span><span class="p">,</span> <span class="mi">495</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">396</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="n">AREA_ALLOWED_post9</span> <span class="o">=</span> <span class="n">LINE_STOP_post9</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">offset_x_post9</span> <span class="o">=</span> <span class="o">-</span><span class="mi">130</span>
+
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">AREA_ALLOWED_post9</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">AREA_ALLOWED_post9</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offset_x_post9</span>
+</pre></div>
+</div>
+</div></blockquote>
+<section id="obtain-the-countour-of-the-line">
+<h2>Obtain the countour of the line<a class="headerlink" href="#obtain-the-countour-of-the-line" title="Permalink to this heading"></a></h2>
+<p>To obtain the countour of the line, the following steps must be followed:</p>
+<ol class="arabic">
+<li><p>Open the file <em>ansv_componente3/Pista/Vision/utils/line_stops_contour.py</em> and edit the <strong>video_path</strong> variable to point to the video file that will be used to obtain the countour of the line.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">35</span>    <span class="c1"># Set the direction of the video</span>
+<span class="hll"><span class="linenos">36</span>    <span class="n">video_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA/videos/Poste_6/Poste_6_06_09_2022_10_24_36.avi&quot;</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Open a terminal and execute the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/utils
+python3 line_stops_contour.py
+</pre></div>
+</div>
+</li>
+<li><p>A window will open with the video. As shown below:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/window_line_stops.png"><img alt="Window for line stop contour" class="align-center" src="../_images/window_line_stops.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>In the video you can <strong>use the left click to add points</strong> to the countour. The points need to be added in a <strong>clockwise manner</strong> starting with the upper-left corner of the image. You can add as many points as needed to define the countour. An example with 10 points is shown below, where the points are marked with a red circle and are numbered from 1 to 10, noting that they are added in a clockwise manner.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/contour_line_stops.png"><img alt="Window for line stop contour" class="align-center" src="../_images/contour_line_stops.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>The first and final points should be the upper-left and lower-left corners of the image respectively.</strong></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To remove the latest point added use the right click on the image.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DO NOT FORGET THAT THE COUNTOURS SHOULD BE DEFINED IN A CLOCKWISE MANNER</strong>. As shown in the image below.</p>
+<a class="reference internal image-reference" href="../_images/clockwise_contour.png"><img alt="clockwise_contour" class="align-center" src="../_images/clockwise_contour.png" style="width: 100%;" /></a>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the countour is defined, press the <strong>letter q</strong> or <strong>ESC</strong> on the keyboard to print the final countour in the terminal and close the window. As an example, the countour of the previous image is shown below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1078</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The countour is printed in the terminal as a list of points. The points are printed as a tuple of two integers. The first integer is the x coordinate and the second integer is the y coordinate.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Edit the first and last point to be exactly the corners of the image, i.e., (0, 0) and (0, 1080). As an example the previous countour should look like the one below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Paste the previous contour in the respective file for Car or Motorcycle (<strong>ansv_componente3/Pista/Vision/Car_algorithms/stop_lines/stop_lines_algorithms.py</strong> or <strong>ansv_componente3/Pista/Vision/Motorcycle_algorithms/stop_lines/stop_lines_functions.py</strong>). Accordingly to the post number, the countour should be pasted in the variable <strong>LINE_STOP_postX</strong>. As an example, the countour for post 6 using the previously obtained contour should look like the one below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Post 6</span>
+
+<span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="obtain-the-offset">
+<h2>Obtain the offset<a class="headerlink" href="#obtain-the-offset" title="Permalink to this heading"></a></h2>
+<p>As the contour previously obtained only takes into account the location of the line in the image, it is needed to obtain the offset to take into account the distance from the front marker to the most front point of the vehicle. To obtain the offset, the following steps must be followed:</p>
+<ol class="arabic">
+<li><p>Open the file <em>ansv_componente3/Pista/Vision/utils/line_stops_offset.py</em> and replace the <strong>LINE_Points</strong> with the points of the countour obtained in the previous steps. As an example the countour for post 6 should look like the one below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># List of line points</span>
+<span class="n">LINE_Points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+                        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>In the file <em>ansv_componente3/Pista/Vision/utils/line_stops_offset.py</em> edit the <strong>video_path</strong> variable to point to the video file that will be used to obtain the offset from the line to the Aruco marker.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">48</span>    <span class="c1"># Set the direction of the video</span>
+<span class="hll"><span class="linenos">49</span>    <span class="n">video_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA/videos/Poste_6/Poste_6_06_09_2022_10_24_36.avi&quot;</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>In the same file edit the <strong>initial_frame</strong> to an integer that represents the frame number where the vehicle is close to the line but before passing it.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">51</span>    <span class="c1"># Set initial frame</span>
+<span class="hll"><span class="linenos">52</span>    <span class="n">initial_frame</span> <span class="o">=</span> <span class="mi">1335</span>
+</span></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The initial frame can be estimated using the fps of the video and the time when the vehicle is close to the line but before passing it. E.g.: If the video has a fps of 15 and the vehicle is close to the line at 100 seconds, the initial frame would be 1500.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Open a terminal and run the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/utils/
+python3 line_stops_offset.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>A window showing the line and the Aruco marker should appear. As an example, the window for the countour of post 6 is shown below:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/window_line_offset.png"><img alt="Window for line stop offset" class="align-center" src="../_images/window_line_offset.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Press the <strong>letter p</strong> or the <strong>Space bar</strong> to pass the frame until the front of the vehicle has almost passed the line. As an example, the image below shows the frame where the vehicle is close to the line but before passing it.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/vehicle_before_passing_line.png"><img alt="Frame for line stop offset" class="align-center" src="../_images/vehicle_before_passing_line.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>Click on the closest point of the Aruco marker to the line. When clicked a yellow point will appear and the perpendicular line from this point to the stop line will appear in green. As an example, the image below shows the point that should be clicked.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Selected_offset_stop_line.png"><img alt="Point clicked" class="align-center" src="../_images/Selected_offset_stop_line.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can click on other part of the image to override the previous point.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>After selecting the point, press the <strong>letter q</strong> or <strong>ESC</strong> to exit the program. The offset will be printed in the terminal. As an example, the offset for the countour of post 6 is shown below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Offset</span> <span class="n">Distance</span><span class="p">:</span> <span class="o">-</span><span class="mi">137</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Paste the distance in the <strong>offset_x_postX</strong> variable which is located below the contour of the line that you are updating. As an example, for the post 6 with the countour obtained in the first section of this tutorial, the offset should be pasted in the variable <strong>offset_x_post6</strong>. The variable should look like the one below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Post 6</span>
+
+<span class="n">LINE_STOP_post6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">944</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">946</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">954</span><span class="p">,</span> <span class="mi">210</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">382</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">976</span><span class="p">,</span> <span class="mi">586</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">984</span><span class="p">,</span> <span class="mi">792</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">994</span><span class="p">,</span> <span class="mi">1002</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">996</span><span class="p">,</span> <span class="mi">1076</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="n">AREA_ALLOWED_post6</span> <span class="o">=</span> <span class="n">LINE_STOP_post6</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">offset_x_post6</span> <span class="o">=</span> <span class="o">-</span><span class="mi">137</span>
+
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">AREA_ALLOWED_post6</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">AREA_ALLOWED_post6</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offset_x_post6</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="validate-the-updated-line">
+<h2>Validate the updated line<a class="headerlink" href="#validate-the-updated-line" title="Permalink to this heading"></a></h2>
+<p>After updating the line, it is needed to validate that the line is correctly detected. To do so, process the video again and check that the line is correct. As an example the image below shows the line updated for post 6, in which can be seen that the offseted line (GREEN line) corresponds to the closest point of the aruco marker when the vehicle is just before passing the line.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Updated_stop_line.png"><img alt="Updated stop line" class="align-center" src="../_images/Updated_stop_line.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/Updated_stop_line_w_vehicle_1.png"><img alt="Updated stop line" class="align-center" src="../_images/Updated_stop_line_w_vehicle_1.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/Updated_stop_line_w_vehicle_2.png"><img alt="Updated stop line" class="align-center" src="../_images/Updated_stop_line_w_vehicle_2.png" style="width: 100%;" /></a>
+</div></blockquote>
+</section>
 </section>
 
 
