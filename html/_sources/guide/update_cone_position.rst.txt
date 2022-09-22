@@ -1,0 +1,67 @@
+Update cone position for slaloms
+====================================
+
+To update the cone position for slaloms, you need to change the variables on top of the files *~/ansv_componente_3/Pista/Vision/Motorcycle_algorithms/slalom/high_vel_slalom_functions.py* and *~/ansv_componente_3/Pista/Vision/Motorcycle_algorithms/slalom/low_vel_slalom_functions.py*.
+
+As an example, the following code shows the cone positions for the high_vel_slalom_functions.
+
+.. literalinclude:: /../Pista/Vision/Motorcycle_algorithms/slalom/high_vel_slalom_functions.py
+        :language: python
+        :lines: 34-64
+        :lineno-start: 34
+        :linenos:
+
+Obtain and update the cone position
+-----------------------------------
+
+To update the cone positions, you need to change the variable **CONE_POS_X_NUM**  and **CONE_POS_Y_NUM**. To do so, you need to know the position of the cones in the image. To do so, you can use the following steps:
+
+1. Open the file *~/ansv_componente_3/Pista/utils/cone_position.py* and change the variable **video_path** to the path of the video you want to use to find the cone positions. 
+
+    .. literalinclude:: /../Pista/Vision/utils/cone_position.py
+        :language: python
+        :lines: 33-34
+        :lineno-start: 33
+        :linenos:
+        :emphasize-lines: 2
+
+2. Open a terminal and run the following commands:
+
+    .. code-block:: bash
+
+        cd ~/ansv_componente_3/Pista/utils
+        python3 cone_position.py
+
+3. A window will open showing the video which path corresponds to the one set in step 1.
+
+    .. image:: ../_static/img/window_cone_position.png
+        :width: 100%
+        :align: center
+        :alt: Window for line stop contour
+
+
+4. Click on top of the cone, a blue circle will appear. Repeat this step for all the cones.
+
+    .. image:: ../_static/img/selected_cone_position.png
+            :width: 100%
+            :align: center
+            :alt: Window for line stop contour
+
+
+    .. note:: To override the cone position, simply click on top of the cone again.
+
+5. To end the process, press the **q** or **Esc** key. The positions of the cone will be printed in the terminal. An example in shown below for post 2.
+
+    .. code-block:: python
+
+        Cone position: [[438, 326]]
+
+    .. note:: The first number corresponds to the x position and the second to the y position.
+
+6. Update the cone position of the respective post in the files *~/ansv_componente_3/Pista/Vision/Motorcycle_algorithms/slalom/high_vel_slalom_functions.py* or *~/ansv_componente_3/Pista/Vision/Motorcycle_algorithms/slalom/low_vel_slalom_functions.py* accordingly. An example is shown below for post 2.
+
+    .. code-block:: python
+
+        # Poste 2
+        CONE_POS_X_2 = 438
+        CONE_POS_Y_2 = 326

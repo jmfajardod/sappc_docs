@@ -46,6 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/process_data.html">How to process the data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/update_parking_areas.html">Update areas for parking spots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/update_cone_position.html">Update cone position for slaloms</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -140,7 +142,7 @@
 <span class="n">DEVICE</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
 
 
-<span class="k">def</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">imfile</span><span class="p">):</span>
+<div class="viewcode-block" id="load_image"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_image">[docs]</a><span class="k">def</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">imfile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to load image from file to GPU.</span>
 
@@ -152,9 +154,9 @@
 
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">imfile</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span></div>
 
-<span class="k">def</span> <span class="nf">load_array_gpu</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+<div class="viewcode-block" id="load_array_gpu"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.load_array_gpu">[docs]</a><span class="k">def</span> <span class="nf">load_array_gpu</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to load array to GPU.</span>
 
@@ -166,9 +168,9 @@
 
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span></div>
 
-<span class="k">def</span> <span class="nf">viz</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">flo</span><span class="p">):</span>
+<div class="viewcode-block" id="viz"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.viz">[docs]</a><span class="k">def</span> <span class="nf">viz</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">flo</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to visualize the optical flow.</span>
 
@@ -194,7 +196,7 @@
     <span class="c1"># plt.show()</span>
 
     <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="n">img_flo</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">/</span><span class="mf">255.0</span><span class="p">)</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">()</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SlalomLowVelocityChecker"><a class="viewcode-back" href="../../../api/moto_pista/low_vel_slalom_algorithm.html#Motorcycle_algorithms.slalom.low_vel_slalom_functions.SlalomLowVelocityChecker">[docs]</a><span class="k">class</span> <span class="nc">SlalomLowVelocityChecker</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
