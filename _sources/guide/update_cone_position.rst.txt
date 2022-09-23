@@ -14,7 +14,7 @@ As an example, the following code shows the cone positions for the high_vel_slal
 Obtain and update the cone position
 -----------------------------------
 
-To update the cone positions, you need to change the variable **CONE_POS_X_NUM**  and **CONE_POS_Y_NUM**. To do so, you need to know the position of the cones in the image. To do so, you can use the following steps:
+To update the cone positions, you need to change the variable **CONE_POS_X_NUM**  and **CONE_POS_Y_NUM**, for each of the cones. To do so, you need to know the position of the cones in the image. To do so, you can use the following steps:
 
 1. Open the file *~/ansv_componente_3/Pista/utils/cone_position.py* and change the variable **video_path** to the path of the video you want to use to find the cone positions. 
 
@@ -40,7 +40,7 @@ To update the cone positions, you need to change the variable **CONE_POS_X_NUM**
         :alt: Window for line stop contour
 
 
-4. Click on top of the cone, a blue circle will appear. Repeat this step for all the cones.
+4. Click on top of the cone, a blue circle will appear. Adjust the clicked point to be as centered as possible.
 
     .. image:: ../_static/img/selected_cone_position.png
             :width: 100%
@@ -50,7 +50,7 @@ To update the cone positions, you need to change the variable **CONE_POS_X_NUM**
 
     .. note:: To override the cone position, simply click on top of the cone again.
 
-5. To end the process, press the **q** or **Esc** key. The positions of the cone will be printed in the terminal. An example in shown below for post 2.
+5. To end the process, press the **q** or **Esc** key. The position of the cone will be printed in the terminal. An example in shown below for post 2.
 
     .. code-block:: python
 

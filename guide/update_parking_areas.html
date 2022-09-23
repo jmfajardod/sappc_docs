@@ -49,7 +49,15 @@
 <li class="toctree-l1"><a class="reference internal" href="data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_data.html">How to process the data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update_line_stops.html">Update lines for Line stop maneuvers</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Update areas for parking spots</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Update areas for parking spots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#update-the-parking-area">Update the parking area</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-the-allowed-area">Update the allowed area</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inline-parking">Inline parking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reverse-parking">Reverse parking</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="update_cone_position.html">Update cone position for slaloms</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
@@ -83,6 +91,469 @@
              
   <section id="update-areas-for-parking-spots">
 <h1>Update areas for parking spots<a class="headerlink" href="#update-areas-for-parking-spots" title="Permalink to this heading"></a></h1>
+<p>If the parking spot is changed or the camera is moved to a new location, the area needs to be updated. Each parking spot has two associated variables <strong>AREA_PARKING</strong>, which is the area as seen on the image, and <strong>AREA_ALLOWED</strong>, which is the actual area in which the Aruco markers should be detected to be considered as parked. An example for an inline parking spot is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AREA_PARKING_post19</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">108</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">273</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">776</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">283</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">779</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">332</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">776</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">414</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">774</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">476</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">752</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">483</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">674</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">501</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">592</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">516</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">486</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">524</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">354</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">521</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">261</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">508</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">195</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">493</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">139</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">476</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">117</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">468</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">109</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">409</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">105</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">326</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="n">AREA_ALLOWED_post19</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">109</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">377</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">779</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">382</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">774</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">476</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">752</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">483</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">674</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">501</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">592</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">516</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">486</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">524</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">354</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">521</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">261</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">508</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">195</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">493</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">139</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">476</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">117</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">468</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="update-the-parking-area">
+<h2>Update the parking area<a class="headerlink" href="#update-the-parking-area" title="Permalink to this heading"></a></h2>
+<p>To update the parking area, it is needed to create the contour of the parking area as shown in the video. To do so, the following steps are needed:</p>
+<ol class="arabic">
+<li><p>Open the file <em>~/ansv_componente3/Pista/utils/parking_spots.py</em> and update the variables <strong>video_path</strong> to point to the video file where the parking spot is located.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">35</span>    <span class="c1"># Set the direction of the video</span>
+<span class="hll"><span class="linenos">36</span>    <span class="n">video_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA/videos/Poste_20/Poste_20_06_09_2022_10_24_36.avi&quot;</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Run the <em>parking_spots.py</em> application using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/utils
+python3 parking_spots.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>A window should appear as shown below.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/window_parking_spot.png"><img alt="Window for line stop contour" class="align-center" src="../_images/window_parking_spot.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>In the video you can <strong>use the left click to add points</strong> to the countour. The points need to be added in a <strong>clockwise manner</strong> starting with the upper-left corner of the image. <strong>You can add as many points as needed to define the countour</strong>. An example with 25 points is shown below, where the points are marked with a red circle and are numbered from 1 to 25, noting that they are added in a clockwise manner.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Contour_parking.png"><img alt="Window for line stop contour" class="align-center" src="../_images/Contour_parking.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>The first and final points should be the upper-left and lower-left corners of the image respectively.</strong></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To remove the latest point added use the right click on the image.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DO NOT FORGET THAT THE COUNTOURS SHOULD BE DEFINED IN A CLOCKWISE MANNER</strong>. As shown in the image below.</p>
+<a class="reference internal image-reference" href="../_images/clockwise_contour.png"><img alt="clockwise_contour" class="align-center" src="../_images/clockwise_contour.png" style="width: 100%;" /></a>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the countour is defined, press the <strong>letter q</strong> or <strong>ESC</strong> on the keyboard to print the final countour in the terminal and close the window. As an example, the countour of the previous image is shown below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">218</span><span class="p">,</span> <span class="mi">310</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">288</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">488</span><span class="p">,</span> <span class="mi">264</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">652</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">844</span><span class="p">,</span> <span class="mi">244</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1036</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1190</span><span class="p">,</span> <span class="mi">260</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1318</span><span class="p">,</span> <span class="mi">274</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1406</span><span class="p">,</span> <span class="mi">286</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1484</span><span class="p">,</span> <span class="mi">300</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1532</span><span class="p">,</span> <span class="mi">312</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">418</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1554</span><span class="p">,</span> <span class="mi">524</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1550</span><span class="p">,</span> <span class="mi">614</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">686</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1404</span><span class="p">,</span> <span class="mi">710</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1232</span><span class="p">,</span> <span class="mi">728</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1060</span><span class="p">,</span> <span class="mi">738</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">890</span><span class="p">,</span> <span class="mi">744</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">670</span><span class="p">,</span> <span class="mi">742</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">454</span><span class="p">,</span> <span class="mi">734</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">276</span><span class="p">,</span> <span class="mi">718</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">208</span><span class="p">,</span> <span class="mi">714</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">198</span><span class="p">,</span> <span class="mi">562</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">202</span><span class="p">,</span> <span class="mi">440</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The countour is printed in the terminal as a list of points. The points are printed as a tuple of two integers. The first integer is the x coordinate and the second integer is the y coordinate.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Paste the previous contour in the respective file to update the desired parking spot. As an example, the previous contour of the parking spot of the post 20 should look like the code below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1"># Post 20</span>
+
+<span class="n">AREA_PARKING_post20</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                                <span class="p">[</span><span class="mi">218</span><span class="p">,</span> <span class="mi">310</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">288</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">488</span><span class="p">,</span> <span class="mi">264</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">652</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">844</span><span class="p">,</span> <span class="mi">244</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1036</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1190</span><span class="p">,</span> <span class="mi">260</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1318</span><span class="p">,</span> <span class="mi">274</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1406</span><span class="p">,</span> <span class="mi">286</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1484</span><span class="p">,</span> <span class="mi">300</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1532</span><span class="p">,</span> <span class="mi">312</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">418</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1554</span><span class="p">,</span> <span class="mi">524</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1550</span><span class="p">,</span> <span class="mi">614</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">686</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1404</span><span class="p">,</span> <span class="mi">710</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1232</span><span class="p">,</span> <span class="mi">728</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1060</span><span class="p">,</span> <span class="mi">738</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">890</span><span class="p">,</span> <span class="mi">744</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">670</span><span class="p">,</span> <span class="mi">742</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">454</span><span class="p">,</span> <span class="mi">734</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">276</span><span class="p">,</span> <span class="mi">718</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">208</span><span class="p">,</span> <span class="mi">714</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">198</span><span class="p">,</span> <span class="mi">562</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">202</span><span class="p">,</span> <span class="mi">440</span><span class="p">],</span>
+                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="update-the-allowed-area">
+<h2>Update the allowed area<a class="headerlink" href="#update-the-allowed-area" title="Permalink to this heading"></a></h2>
+<p>As the parking area is just a visual cue and has no relevance in the scoring, the <strong>AREA_ALLOWED</strong> is the most important variable in the parking maneuvers. This variable defines the area where the Aruco markers should be detected to be considered as a valid parking maneuver. Depending if the parking is inline or in reverse the way of updating this parameter is slightly different.</p>
+<section id="inline-parking">
+<h3>Inline parking<a class="headerlink" href="#inline-parking" title="Permalink to this heading"></a></h3>
+<p>To update the allowed area for inline parking, it is needed to <strong>manually</strong> create the contour of the allowed area, i.e., where the Aruco markers have to be detected to be considered as a valid parking maneuver. This area should generally be inside the <strong>AREA_PARKING</strong> but it is not mandatory. To do so, the following steps are needed:</p>
+<ol class="arabic">
+<li><p>Open the file <em>~/ansv_componente3/Pista/utils/allowed_area_parking.py</em> and update the variables <strong>video_path</strong> to point to the video file where the parking spot is located.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the direction of the video</span>
+<span class="n">video_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA/videos/Poste_20/Poste_20_06_09_2022_10_24_36.avi&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>In the same file edit the <strong>initial_frame</strong> to an integer that represents the frame number where the vehicle is close to the line but before passing it.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">41</span>    <span class="c1"># Initial frame</span>
+<span class="hll"><span class="linenos">42</span>    <span class="n">initial_frame</span> <span class="o">=</span> <span class="mi">5000</span>
+</span></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The initial frame can be estimated using the fps of the video and the time when the vehicle is close to the line but before passing it. E.g.: If the video has a fps of 15 and the vehicle is close to the line at 100 seconds, the initial frame would be 1500.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Open a terminal and run the <em>allowed_area_parking.py</em> application using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/utils
+python3 allowed_area_parking.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>A window should appear as shown below.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/window_allowed_area_parking.png"><img alt="Window for allowed area parking" class="align-center" src="../_images/window_allowed_area_parking.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>In the video you can <strong>use the left click to add points</strong> to the countour. The area to define is the maximum area where <strong>ALL the Aruco markers must be located</strong> so the vehicle is inside the parking spot.</p>
+<blockquote>
+<div><p>The points need to be added in a <strong>clockwise manner</strong> starting with the upper-left corner of the area. <strong>You can add as many points as needed to define the countour</strong>. An example with 17 points is shown below, where the points are marked with a red circle and are numbered from 1 to 17, noting that they are added in a clockwise manner.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The process to define the <strong>AREA_ALLOWED</strong> is very manual and iterative. So this process may have to be repeated several times to get the desired result.</p>
+</div>
+<a class="reference internal image-reference" href="../_images/Allowed_area_parking_inline.png"><img alt="Window for allowed area parking" class="align-center" src="../_images/Allowed_area_parking_inline.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>The first and final points should be the upper-left and lower-left corners of the image respectively.</strong></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To remove the latest point added use the right click on the image.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DO NOT FORGET THAT THE COUNTOURS SHOULD BE DEFINED IN A CLOCKWISE MANNER</strong>. As shown in the image below.</p>
+<a class="reference internal image-reference" href="../_images/clockwise_contour.png"><img alt="clockwise_contour" class="align-center" src="../_images/clockwise_contour.png" style="width: 100%;" /></a>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the countour is defined, press the <strong>letter q</strong> or <strong>ESC</strong> on the keyboard to print the final countour in the terminal and close the window. As an example, the countour of the previous image is shown below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">294</span><span class="p">,</span> <span class="mi">370</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">552</span><span class="p">,</span> <span class="mi">346</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">848</span><span class="p">,</span> <span class="mi">346</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1022</span><span class="p">,</span> <span class="mi">348</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1194</span><span class="p">,</span> <span class="mi">356</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1348</span><span class="p">,</span> <span class="mi">370</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1450</span><span class="p">,</span> <span class="mi">388</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1520</span><span class="p">,</span> <span class="mi">410</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1532</span><span class="p">,</span> <span class="mi">536</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1524</span><span class="p">,</span> <span class="mi">614</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1514</span><span class="p">,</span> <span class="mi">654</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1308</span><span class="p">,</span> <span class="mi">672</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">940</span><span class="p">,</span> <span class="mi">680</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">652</span><span class="p">,</span> <span class="mi">660</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">258</span><span class="p">,</span> <span class="mi">652</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">246</span><span class="p">,</span> <span class="mi">532</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">254</span><span class="p">,</span> <span class="mi">426</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The countour is printed in the terminal as a list of points. The points are printed as a tuple of two integers. The first integer is the x coordinate and the second integer is the y coordinate</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Paste the previous contour in the respective file to update the desired parking spot. As an example, the previous contour of the parking spot of the post 20 should look like the code below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#-------------------------------------------------------------------------#</span>
+<span class="c1"># Post 20</span>
+
+<span class="n">AREA_PARKING_post20</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                                <span class="p">[</span><span class="mi">218</span><span class="p">,</span> <span class="mi">310</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">288</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">488</span><span class="p">,</span> <span class="mi">264</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">652</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">844</span><span class="p">,</span> <span class="mi">244</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1036</span><span class="p">,</span> <span class="mi">248</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1190</span><span class="p">,</span> <span class="mi">260</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1318</span><span class="p">,</span> <span class="mi">274</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1406</span><span class="p">,</span> <span class="mi">286</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1484</span><span class="p">,</span> <span class="mi">300</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1532</span><span class="p">,</span> <span class="mi">312</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">418</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1554</span><span class="p">,</span> <span class="mi">524</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1550</span><span class="p">,</span> <span class="mi">614</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1548</span><span class="p">,</span> <span class="mi">686</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1404</span><span class="p">,</span> <span class="mi">710</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1232</span><span class="p">,</span> <span class="mi">728</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1060</span><span class="p">,</span> <span class="mi">738</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">890</span><span class="p">,</span> <span class="mi">744</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">670</span><span class="p">,</span> <span class="mi">742</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">454</span><span class="p">,</span> <span class="mi">734</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">276</span><span class="p">,</span> <span class="mi">718</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">208</span><span class="p">,</span> <span class="mi">714</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">198</span><span class="p">,</span> <span class="mi">562</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">202</span><span class="p">,</span> <span class="mi">440</span><span class="p">],</span>
+                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="n">AREA_ALLOWED_post20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                                <span class="p">[</span><span class="mi">294</span><span class="p">,</span> <span class="mi">370</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">552</span><span class="p">,</span> <span class="mi">346</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">848</span><span class="p">,</span> <span class="mi">346</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1022</span><span class="p">,</span> <span class="mi">348</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1194</span><span class="p">,</span> <span class="mi">356</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1348</span><span class="p">,</span> <span class="mi">370</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1450</span><span class="p">,</span> <span class="mi">388</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1520</span><span class="p">,</span> <span class="mi">410</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1532</span><span class="p">,</span> <span class="mi">536</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1524</span><span class="p">,</span> <span class="mi">614</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1514</span><span class="p">,</span> <span class="mi">654</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">1308</span><span class="p">,</span> <span class="mi">672</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">940</span><span class="p">,</span> <span class="mi">680</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">652</span><span class="p">,</span> <span class="mi">660</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">258</span><span class="p">,</span> <span class="mi">652</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">246</span><span class="p">,</span> <span class="mi">532</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">254</span><span class="p">,</span> <span class="mi">426</span><span class="p">],</span>
+                                <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="reverse-parking">
+<h3>Reverse parking<a class="headerlink" href="#reverse-parking" title="Permalink to this heading"></a></h3>
+<p>The reverse parking spot differs a little to the inline parking in the way that the <strong>AREA_ALLOWED</strong> is separated in two variables <strong>AREA_ALLOWED_FRONT</strong> and <strong>AREA_ALLOWED_BACK</strong>. The <strong>AREA_ALLOWED_FRONT</strong> is the area where the <strong>front and middle</strong> Aruco marker should be detected to be considered inside the parking spot. The <strong>AREA_ALLOWED_BACK</strong> is the area where the <strong>middle and back</strong> Aruco marker should be detected to be considered inside the parking spot. The <strong>AREA_ALLOWED_FRONT</strong> and <strong>AREA_ALLOWED_BACK</strong> are defined in the same way as the <strong>AREA_ALLOWED</strong> in the inline parking.</p>
+<p>To update any of the <strong>AREA_ALLOWED</strong> variables, follow the steps below.</p>
+<ol class="arabic">
+<li><p>Open the file <em>~/ansv_componente3/Pista/utils/allowed_area_parking.py</em> and update the variables <strong>video_path</strong> to point to the video file where the parking spot is located.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">35</span>    <span class="c1"># Set the direction of the video</span>
+<span class="hll"><span class="linenos">36</span>    <span class="n">video_path</span> <span class="o">=</span> <span class="s2">&quot;/home/josefajardo/Documents/Set_datos_ANSV/Carro_pista/Prueba_06_09_2022_10_24_36_HONDA/videos/Poste_18/Poste_18_06_09_2022_10_24_36.avi&quot;</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>In the same file edit the <strong>initial_frame</strong> to an integer that represents the frame number where the vehicle is close to the line but before passing it.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">41</span>    <span class="c1"># Initial frame</span>
+<span class="hll"><span class="linenos">42</span>    <span class="n">initial_frame</span> <span class="o">=</span> <span class="mi">5000</span>
+</span></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The initial frame can be estimated using the fps of the video and the time when the vehicle is close to the line but before passing it. E.g.: If the video has a fps of 15 and the vehicle is close to the line at 100 seconds, the initial frame would be 1500.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Open a terminal and run the <em>allowed_area_parking.py</em> application using the following commands:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/ansv_componente3/Pista/Vision/utils
+python3 allowed_area_parking.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>A window will open as shown below.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/window_allowed_area_reverse.png"><img alt="Window for allowed area parking" class="align-center" src="../_images/window_allowed_area_reverse.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p>First, create the contour of the <strong>AREA_ALLOWED_FRONT</strong>, where the <strong>front and middle</strong> Aruco markers should be located to consider a valid parking. To do this you can  <strong>use the left click to add points</strong> to the countour. <strong>You can use as many points as desired to define the contour</strong>. An example is shown below:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Area_allowed_front_reverse.png"><img alt="allowed_area_front" class="align-center" src="../_images/Area_allowed_front_reverse.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To remove the latest point added use the right click on the image.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DO NOT FORGET THAT THE COUNTOURS SHOULD BE DEFINED IN A CLOCKWISE MANNER</strong>. As shown in the image below.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the countour is defined, press the <strong>letter q</strong> or <strong>ESC</strong> on the keyboard to print the final countour in the terminal and close the window. As an example, the countour of the previous image is shown below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">674</span><span class="p">,</span> <span class="mi">36</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">922</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1138</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1156</span><span class="p">,</span> <span class="mi">384</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1150</span><span class="p">,</span> <span class="mi">658</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">908</span><span class="p">,</span> <span class="mi">680</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">738</span><span class="p">,</span> <span class="mi">670</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">680</span><span class="p">,</span> <span class="mi">392</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">676</span><span class="p">,</span> <span class="mi">166</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The countour is printed in the terminal as a list of points. The points are printed as a tuple of two integers. The first integer is the x coordinate and the second integer is the y coordinate</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Paste the previous contour in the respective file to update the desired parking spot. As an example, the variable <strong>AREA_ALLOWED_FRONT</strong> should like the excerpt below:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AREA_ALLOWED_FRONT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">674</span><span class="p">,</span> <span class="mi">36</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">922</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1138</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1156</span><span class="p">,</span> <span class="mi">384</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1150</span><span class="p">,</span> <span class="mi">658</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">908</span><span class="p">,</span> <span class="mi">680</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">738</span><span class="p">,</span> <span class="mi">670</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">680</span><span class="p">,</span> <span class="mi">392</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">676</span><span class="p">,</span> <span class="mi">166</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Re-launch the application using the steps 1-4.</p></li>
+<li><p>Now define the <strong>AREA_ALLOWED_BACK</strong>, which is the area where the <strong>middle and back</strong> Aruco markers should be located to consider a valid parking. To do this you can  <strong>use the left click to add points</strong> to the countour. <strong>You can use as many points as desired to define the contour</strong>. An example is shown below:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/Area_allowed_back_reverse.png"><img alt="allowed_area_back" class="align-center" src="../_images/Area_allowed_back_reverse.png" style="width: 100%;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To remove the latest point added use the right click on the image.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DO NOT FORGET THAT THE COUNTOURS SHOULD BE DEFINED IN A CLOCKWISE MANNER</strong>. As shown in the image below.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the countour is defined, press the <strong>letter q</strong> or <strong>ESC</strong> on the keyboard to print the final countour in the terminal and close the window. As an example, the countour of the previous image is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FINAL POINTS</span>
+<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[</span><span class="mi">752</span><span class="p">,</span> <span class="mi">494</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">940</span><span class="p">,</span> <span class="mi">478</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1144</span><span class="p">,</span> <span class="mi">470</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1168</span><span class="p">,</span> <span class="mi">666</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1186</span><span class="p">,</span> <span class="mi">868</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">1182</span><span class="p">,</span> <span class="mi">1028</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">1056</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">756</span><span class="p">,</span> <span class="mi">1052</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">722</span><span class="p">,</span> <span class="mi">844</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">720</span><span class="p">,</span> <span class="mi">652</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The countour is printed in the terminal as a list of points. The points are printed as a tuple of two integers. The first integer is the x coordinate and the second integer is the y coordinate</p>
+</div>
+</li>
+<li><p>Paste the previous contour in the respective file to update the desired parking spot. As an example, the variable <strong>AREA_ALLOWED_FRONT</strong> should like the excerpt below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AREA_ALLOWED_FRONT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">674</span><span class="p">,</span> <span class="mi">36</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">922</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1138</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1156</span><span class="p">,</span> <span class="mi">384</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1150</span><span class="p">,</span> <span class="mi">658</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">908</span><span class="p">,</span> <span class="mi">680</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">738</span><span class="p">,</span> <span class="mi">670</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">680</span><span class="p">,</span> <span class="mi">392</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">676</span><span class="p">,</span> <span class="mi">166</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="n">AREA_ALLOWED_BACK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                            <span class="p">[</span><span class="mi">752</span><span class="p">,</span> <span class="mi">494</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">940</span><span class="p">,</span> <span class="mi">478</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1144</span><span class="p">,</span> <span class="mi">470</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1168</span><span class="p">,</span> <span class="mi">666</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1186</span><span class="p">,</span> <span class="mi">868</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1182</span><span class="p">,</span> <span class="mi">1028</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">964</span><span class="p">,</span> <span class="mi">1056</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">756</span><span class="p">,</span> <span class="mi">1052</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">722</span><span class="p">,</span> <span class="mi">844</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">720</span><span class="p">,</span> <span class="mi">652</span><span class="p">],</span>
+                            <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>To validate the areas you can process the reverse parking video using the <em>car_vision_algorithms.py</em> application. An example where the <strong>AREA_PARKING</strong>, <strong>AREA_ALLOWED_FRONT</strong> and <strong>AREA_ALLOWED_BACK</strong> can be seen is showned below. The <strong>AREA_PARKING</strong> is shown in color blue, the <strong>AREA_ALLOWED_FRONT</strong> is shown in color green and the <strong>AREA_ALLOWED_BACK</strong> is shown in color red.</p>
+<a class="reference internal image-reference" href="../_images/areas_reverse_parking.png"><img alt="areas_reverse" class="align-center" src="../_images/areas_reverse_parking.png" style="width: 100%;" /></a>
+</li>
+</ol>
+</section>
+</section>
 </section>
 
 

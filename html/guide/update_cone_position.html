@@ -123,7 +123,7 @@
 </div>
 <section id="obtain-and-update-the-cone-position">
 <h2>Obtain and update the cone position<a class="headerlink" href="#obtain-and-update-the-cone-position" title="Permalink to this heading"></a></h2>
-<p>To update the cone positions, you need to change the variable <strong>CONE_POS_X_NUM</strong>  and <strong>CONE_POS_Y_NUM</strong>. To do so, you need to know the position of the cones in the image. To do so, you can use the following steps:</p>
+<p>To update the cone positions, you need to change the variable <strong>CONE_POS_X_NUM</strong>  and <strong>CONE_POS_Y_NUM</strong>, for each of the cones. To do so, you need to know the position of the cones in the image. To do so, you can use the following steps:</p>
 <ol class="arabic">
 <li><p>Open the file <em>~/ansv_componente_3/Pista/utils/cone_position.py</em> and change the variable <strong>video_path</strong> to the path of the video you want to use to find the cone positions.</p>
 <blockquote>
@@ -146,7 +146,7 @@ python3 cone_position.py
 <div><a class="reference internal image-reference" href="../_images/window_cone_position.png"><img alt="Window for line stop contour" class="align-center" src="../_images/window_cone_position.png" style="width: 100%;" /></a>
 </div></blockquote>
 </li>
-<li><p>Click on top of the cone, a blue circle will appear. Repeat this step for all the cones.</p>
+<li><p>Click on top of the cone, a blue circle will appear. Adjust the clicked point to be as centered as possible.</p>
 <blockquote>
 <div><a class="reference internal image-reference" href="../_images/selected_cone_position.png"><img alt="Window for line stop contour" class="align-center" src="../_images/selected_cone_position.png" style="width: 100%;" /></a>
 <div class="admonition note">
@@ -155,7 +155,7 @@ python3 cone_position.py
 </div>
 </div></blockquote>
 </li>
-<li><p>To end the process, press the <strong>q</strong> or <strong>Esc</strong> key. The positions of the cone will be printed in the terminal. An example in shown below for post 2.</p>
+<li><p>To end the process, press the <strong>q</strong> or <strong>Esc</strong> key. The position of the cone will be printed in the terminal. An example in shown below for post 2.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Cone</span> <span class="n">position</span><span class="p">:</span> <span class="p">[[</span><span class="mi">438</span><span class="p">,</span> <span class="mi">326</span><span class="p">]]</span>
 </pre></div>
