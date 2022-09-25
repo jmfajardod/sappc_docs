@@ -158,7 +158,7 @@
 <span class="linenos">52</span>    <span class="c1">#Rpms_Vel_csv = glob(test_path + &quot;/can_data/obc_rs*.csv&quot;)[0]</span>
 <span class="linenos">53</span>    <span class="n">Helmet_csv</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/helmet_data/helmet*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="linenos">54</span>
-<span class="linenos">55</span>    <span class="n">dashboard_vis</span> <span class="o">=</span> <span class="n">Dashboard</span><span class="p">(</span><span class="n">GPS_csv</span><span class="p">,</span> <span class="n">Dashboard_csv</span><span class="p">,</span> <span class="n">Helmet_csv</span><span class="p">,</span> <span class="n">date_test</span><span class="p">)</span>
+<span class="linenos">55</span>    <span class="n">dashboard_vis</span> <span class="o">=</span> <span class="n">Dashboard</span><span class="p">(</span><span class="n">GPS_csv</span><span class="p">,</span> <span class="n">Dashboard_csv</span><span class="p">,</span> <span class="n">Helmet_csv</span><span class="p">,</span> <span class="n">date_test</span><span class="p">,</span> <span class="n">time_offset_can</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>From the CSV of the video the proper video file is selected and opened.</p>

@@ -156,7 +156,7 @@
 <span class="linenos">48</span>    <span class="n">GPS_csv</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/gps_data/gps*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="linenos">49</span>    <span class="n">Dashboard_csv</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/can_data/obc_dash*.csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#TODO change naming of files</span>
 <span class="linenos">50</span>
-<span class="linenos">51</span>    <span class="n">dashboard_vis</span> <span class="o">=</span> <span class="n">Dashboard</span><span class="p">(</span><span class="n">GPS_csv</span><span class="p">,</span> <span class="n">Dashboard_csv</span><span class="p">,</span> <span class="n">date_test</span><span class="p">)</span>
+<span class="linenos">51</span>    <span class="n">dashboard_vis</span> <span class="o">=</span> <span class="n">Dashboard</span><span class="p">(</span><span class="n">GPS_csv</span><span class="p">,</span> <span class="n">Dashboard_csv</span><span class="p">,</span> <span class="n">date_test</span><span class="p">,</span> <span class="n">time_offset_can</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>From the CSV of the video the proper video file is selected and opened.</p>

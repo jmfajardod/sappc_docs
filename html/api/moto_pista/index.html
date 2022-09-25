@@ -119,7 +119,7 @@
 <li><p>Open the <em>/ansv_componente3/Pista/Vision/Motorcycle_algorithms/motorcycle_vision_algorithms.py</em> file and edit  <strong>line 30</strong>, changing the <em>test_path</em> variable to the folder of the test to be processed.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">29</span>    <span class="c1"># Open video</span>
-<span class="hll"><span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_19_09_2022_11_37_57&quot;</span>
+<span class="hll"><span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_19_09_2022_17_07_49&quot;</span>
 </span><span class="linenos">31</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">32</span>
 <span class="linenos">33</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>
@@ -170,7 +170,7 @@ python3 motorcycle_vision_algorithms.py
 </div>
 <p>Then, the test folder is selected and opened to know the date and time of the test.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">29</span>    <span class="c1"># Open video</span>
-<span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_19_09_2022_11_37_57&quot;</span>
+<span class="linenos">30</span>    <span class="n">test_path</span> <span class="o">=</span> <span class="s2">&quot;/media/control-center/91337259-8dce-493b-82b6-ec347b39f11a/home/centro-control/ansv_componente_3/Pista/Vision/Data_acquisition/build/Prueba_19_09_2022_17_07_49&quot;</span>
 <span class="linenos">31</span>    <span class="n">datetime_test</span> <span class="o">=</span> <span class="p">((</span><span class="n">test_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Prueba_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
 <span class="linenos">32</span>
 <span class="linenos">33</span>    <span class="n">video_folder</span> <span class="o">=</span> <span class="n">test_path</span> <span class="o">+</span> <span class="s2">&quot;/videos&quot;</span>
@@ -340,8 +340,8 @@ python3 motorcycle_vision_algorithms.py
 <span class="linenos">197</span>    <span class="n">low_vel_slalom_proccesor_12</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
 <span class="linenos">198</span>
 <span class="linenos">199</span>    <span class="c1"># - Push motorcycle - Post 16</span>
-<span class="linenos">200</span>    <span class="n">push_motorcycle_proccesor_16</span> <span class="o">=</span> <span class="n">PushMotorcycleChecker</span><span class="p">(</span><span class="n">video_csv_path_16</span><span class="p">,</span> <span class="n">video_path_post_16</span><span class="p">,</span> <span class="n">camera_matrix</span><span class="p">,</span> <span class="n">dist_coeff</span><span class="p">,</span> <span class="n">view_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">201</span>    <span class="n">push_motorcycle_proccesor_16</span><span class="o">.</span><span class="n">process_video</span><span class="p">()</span>
+<span class="linenos">200</span>    <span class="c1"># push_motorcycle_proccesor_16 = PushMotorcycleChecker(video_csv_path_16, video_path_post_16, camera_matrix, dist_coeff, view_image=False)</span>
+<span class="linenos">201</span>    <span class="c1"># push_motorcycle_proccesor_16.process_video()</span>
 </pre></div>
 </div>
 <p>Finally, the application will wait for all the threads to finish and then will stop.</p>

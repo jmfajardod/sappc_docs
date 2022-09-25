@@ -46,6 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../guide/data_acquisition.html">How to use the track’s data acquisition pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../guide/process_data.html">How to process the data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../guide/update_line_stops.html">Update lines for Line stop maneuvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../guide/update_parking_areas.html">Update areas for parking spots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../guide/update_cone_position.html">Update cone position for slaloms</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -104,9 +106,12 @@
 
 <span class="sd">        :param date_test: Date of the test.</span>
 <span class="sd">        :type date_test: str</span>
+
+<span class="sd">        :param time_offset_can: Time (seconds) offset between the can and the video data. Default value is 2 seconds.</span>
+<span class="sd">        :type time_offset_can: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps_data_path</span><span class="p">,</span> <span class="n">dashboard_data_path</span><span class="p">,</span> <span class="n">Helmet_data_path</span><span class="p">,</span> <span class="n">date_test</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps_data_path</span><span class="p">,</span> <span class="n">dashboard_data_path</span><span class="p">,</span> <span class="n">Helmet_data_path</span><span class="p">,</span> <span class="n">date_test</span><span class="p">,</span> <span class="n">time_offset_can</span><span class="o">=</span><span class="mf">2.0</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># Data from GPS and dashboard in Pandas DataFrame</span>
         <span class="n">data_gps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gps_data_path</span><span class="p">)</span>
@@ -121,6 +126,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_helmet</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+        <span class="c1"># print(self.data_rpms.head())</span>
 
         <span class="c1"># Save date and time of data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">=</span> <span class="n">date_test</span>
@@ -174,7 +180,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counter_rpms_data</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="c1"># Init objects</span>
+        <span class="c1"># Set offset time for CAN data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset_can_data</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">time_offset_can</span><span class="p">)</span>
+
+        <span class="c1"># Init time and data objects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span>  <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span>  <span class="o">=</span> <span class="kc">None</span>
@@ -189,6 +198,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data_helmet_next</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_act</span>  <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timedata_helmet_next</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># self.data_rpms_act  = None</span>
+        <span class="c1"># self.data_rpms_next = None</span>
+        <span class="c1"># self.timedata_rpms_act  = None</span>
+        <span class="c1"># self.timedata_rpms_next = None</span>
+
 
 <div class="viewcode-block" id="Dashboard.add_transparent_image"><a class="viewcode-back" href="../../../../api/moto_circulacion/dashboard.html#Motocicleta_circulacion.Vision.Dashboard_GUI.functions_dashboard.Dashboard.add_transparent_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_transparent_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">foreground</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
@@ -264,6 +279,7 @@
 <span class="sd">            :rtype: numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+
         <span class="c1"># Get GPS data</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter_gps_data</span><span class="o">+</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_gps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
@@ -284,8 +300,8 @@
                 <span class="k">break</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dashboard</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_dash_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span>  <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span>  <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset_can_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_vid</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_next</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_%m_%Y_%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset_can_data</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span> <span class="o">&lt;</span> <span class="n">time_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_next</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
                 <span class="k">break</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timedata_dash_act</span> <span class="o">&gt;</span> <span class="n">time_frame</span><span class="p">):</span>
@@ -306,6 +322,19 @@
                 <span class="k">break</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">counter_helmet_data</span> <span class="o">+=</span> <span class="mi">1</span>
 
+        <span class="c1"># Get rpms data</span>
+        <span class="c1"># while True:</span>
+        <span class="c1">#     if self.counter_rpms_data+2 &gt;self.data_rpms.shape[0]:</span>
+        <span class="c1">#         break</span>
+        <span class="c1">#     self.data_rpms_act  = self.data_rpms.iloc[self.counter_rpms_data]</span>
+        <span class="c1">#     self.data_rpms_next = self.data_rpms.iloc[self.counter_rpms_data + 1]</span>
+        <span class="c1">#     self.timedata_rpms_act = datetime.datetime.strptime(self.date_vid + &quot;_&quot; + self.data_rpms_act[&#39;Time&#39;],   &#39;%d_%m_%Y_%H:%M:%S.%f&#39;)</span>
+        <span class="c1">#     self.timedata_rpms_next = datetime.datetime.strptime(self.date_vid + &quot;_&quot; + self.data_rpms_next[&#39;Time&#39;], &#39;%d_%m_%Y_%H:%M:%S.%f&#39;)</span>
+        <span class="c1">#     if (self.timedata_rpms_act &lt; time_frame and self.timedata_rpms_next &gt; time_frame):</span>
+        <span class="c1">#         break</span>
+        <span class="c1">#     if (self.timedata_rpms_act &gt; time_frame):</span>
+        <span class="c1">#         break</span>
+        <span class="c1">#     self.counter_rpms_data += 1</span>
 
         <span class="c1"># Put turn lights</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dash_act</span><span class="p">[</span><span class="s1">&#39;left_signal_light&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -351,6 +380,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1550</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_transparent_image</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">helmet_icon_no</span><span class="p">,</span> <span class="n">x_offset</span><span class="o">=</span><span class="mi">1550</span><span class="p">,</span> <span class="n">y_offset</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+        <span class="c1"># Put on/off icon</span>
+        <span class="c1"># if self.data_rpms_act[&#39;rpm&#39;] &gt; 0:</span>
+        <span class="c1">#     self.add_transparent_image(frame, self.on_icon, x_offset=1400, y_offset=30)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     self.add_transparent_image(frame, self.off_icon, x_offset=1400, y_offset=30)</span>
 
         <span class="c1"># Write LAT and LONG of GPS</span>
         <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">380</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>

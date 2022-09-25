@@ -450,7 +450,7 @@ To update any of the **AREA_ALLOWED** variables, follow the steps below.
                                     [720, 652],
                                     ], dtype=np.int32)
 
-12. To validate the areas you can process the reverse parking video using the *car_vision_algorithms.py* application. An example where the **AREA_PARKING**, **AREA_ALLOWED_FRONT** and **AREA_ALLOWED_BACK** can be seen is showned below. The **AREA_PARKING** is shown in color blue, the **AREA_ALLOWED_FRONT** is shown in color green and the **AREA_ALLOWED_BACK** is shown in color red.
+12. To validate the areas you can process the reverse parking video using the *car_vision_algorithms.py* application. An example where the **AREA_PARKING**, **AREA_ALLOWED_FRONT** and **AREA_ALLOWED_BACK** can be seen is showned below. The **AREA_PARKING** is shown in color blue, the **AREA_ALLOWED_FRONT** is shown in color green and the **AREA_ALLOWED_BACK** is shown in color yellow.
 
     .. image:: ../_static/img/areas_reverse_parking.png
         :width: 100%
